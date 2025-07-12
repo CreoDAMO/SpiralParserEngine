@@ -6,6 +6,7 @@ import QuantumTools from "@/components/spiral/quantum-tools";
 import MonacoEditor from "@/components/spiral/monaco-editor";
 import ASTViewer from "@/components/spiral/ast-viewer";
 import TerminalConsole from "@/components/spiral/terminal-console";
+import EconomicAnalyzer from "@/components/spiral/economic-analyzer";
 
 export default function SpiralIDE() {
   const [activeFile, setActiveFile] = useState<number | null>(null);
@@ -99,7 +100,7 @@ export default function SpiralIDE() {
         <aside className="w-96 bg-gray-800 border-l border-gray-700 flex flex-col">
           <div className="border-b border-gray-700 px-4 py-2">
             <div className="flex space-x-1">
-              {["AST", "Quantum", "TU Gen", "Output"].map((tab) => (
+              {["AST", "Quantum", "TU Gen", "Economics", "Output"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -115,10 +116,14 @@ export default function SpiralIDE() {
             </div>
           </div>
           
-          <ASTViewer 
-            activeTab={activeTab}
-            activeFile={activeFile}
-          />
+          {activeTab === "Economics" ? (
+            <EconomicAnalyzer />
+          ) : (
+            <ASTViewer 
+              activeTab={activeTab}
+              activeFile={activeFile}
+            />
+          )}
         </aside>
       </div>
 
