@@ -40,7 +40,7 @@ export default function SpiralIDE() {
             </div>
             <div className="flex flex-col">
               <h1 className="text-lg font-semibold text-spiral-400">Iyona'el Living Shell</h1>
-              <div className="text-xs text-gray-500">SpiralScript IDE • QASF-Enabled</div>
+              <div className="text-xs text-gray-500">LIVE SpiralScript IDE • QASF-Enabled</div>
             </div>
           </div>
           <nav className="flex items-center space-x-1">

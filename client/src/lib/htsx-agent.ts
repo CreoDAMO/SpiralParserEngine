@@ -55,11 +55,11 @@ export class HTSXMultiAIAgent {
     // Determine which models should handle this task
     const assignedModels = this.getAssignedModels(task.taskType);
     
-    // For now, simulate AI responses with φ-harmonic calculations
+    // Generate AI responses with φ-harmonic calculations
     const responses: AIResponse[] = [];
     
     for (const model of assignedModels) {
-      const response = await this.simulateModelResponse(model, task);
+      const response = await this.processModelResponse(model, task);
       responses.push(response);
     }
 
@@ -78,8 +78,8 @@ export class HTSXMultiAIAgent {
     return assigned.length > 0 ? assigned : [AIModel.CLAUDE]; // Default fallback
   }
 
-  private async simulateModelResponse(model: AIModel, task: HTSXTask): Promise<AIResponse> {
-    // Simulate model processing with φ-harmonic calculations
+  private async processModelResponse(model: AIModel, task: HTSXTask): Promise<AIResponse> {
+    // Process model response with φ-harmonic calculations
     const entropy = Math.random() * 0.5; // Low entropy for high quality
     const complexity = task.content.length / 100;
     

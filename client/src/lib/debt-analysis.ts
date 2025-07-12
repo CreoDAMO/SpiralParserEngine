@@ -117,7 +117,7 @@ export class DebtScarcityAnalyzer {
     return (fiatAmount * truthMultiplier) / phiAdjustment;
   }
 
-  generateDebtReport(): string {
+  generateLiveDebtReport(): string {
     const analysis = this.analyzeScarcityCreation();
     
     return `# Global Debt-Scarcity Analysis

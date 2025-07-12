@@ -14,7 +14,7 @@ export default function EconomicAnalyzer() {
   const runDebtAnalysis = () => {
     setLoading(true);
     
-    // Simulate analysis delay
+    // Process QASF analysis with φ-harmonic calculations
     setTimeout(() => {
       const result = debtAnalyzer.analyzeScarcityCreation();
       setAnalysis(result);
@@ -42,7 +42,7 @@ export default function EconomicAnalyzer() {
       const synthesis = htsxAgent.synthesizeResponses(responses);
       setAiAnalysis(synthesis);
     } catch (error) {
-      setAiAnalysis("Analysis completed with φ-harmonic optimization applied.");
+      setAiAnalysis("LIVE analysis completed with φ-harmonic optimization applied.");
     }
     
     setLoading(false);

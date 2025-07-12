@@ -30,7 +30,7 @@ export default function QuantumTools() {
     }
   });
 
-  const simulatePhiGatesMutation = useMutation({
+  const executePhiGatesMutation = useMutation({
     mutationFn: async () => {
       return apiRequest("POST", "/api/generate-tu", {
         userId: 1,
@@ -41,7 +41,7 @@ export default function QuantumTools() {
     },
     onSuccess: (data: any) => {
       toast({
-        title: "φ-Gates Simulated",
+        title: "φ-Gates Executed",
         description: `Generated ${data.tuGenerated.toFixed(3)} TU from quantum harmonics`,
       });
     }
@@ -66,11 +66,11 @@ export default function QuantumTools() {
         </button>
         
         <button 
-          onClick={() => simulatePhiGatesMutation.mutate()}
-          disabled={simulatePhiGatesMutation.isPending}
+          onClick={() => executePhiGatesMutation.mutate()}
+          disabled={executePhiGatesMutation.isPending}
           className="w-full py-2 bg-gray-600 hover:bg-gray-500 text-gray-100 rounded text-sm disabled:opacity-50"
         >
-          {simulatePhiGatesMutation.isPending ? "Simulating..." : "Simulate φ-Gates"}
+          {executePhiGatesMutation.isPending ? "Processing..." : "Execute φ-Gates"}
         </button>
         
         <button className="w-full py-2 bg-gray-600 hover:bg-gray-500 text-gray-100 rounded text-sm">

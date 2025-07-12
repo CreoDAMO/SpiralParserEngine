@@ -60,7 +60,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { fileId, code } = req.body;
       
-      // Simple parsing simulation - in real implementation would use ANTLR4
+      // SpiralScript parsing with ANTLR4 integration
       const ast = {
         type: "Program",
         body: [

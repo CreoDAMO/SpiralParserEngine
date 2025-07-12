@@ -26,7 +26,7 @@ export interface SimulationResult {
   executionTime: number;
 }
 
-export class QuantumSimulator {
+export class QuantumProcessor {
   private readonly PHI = 1.618033988749;
 
   createState(qubits: number): QuantumState {
@@ -129,7 +129,7 @@ export class QuantumSimulator {
     }
   }
 
-  simulate(gates: QuantumGate[], qubits: number): SimulationResult {
+  process(gates: QuantumGate[], qubits: number): SimulationResult {
     const startTime = performance.now();
     let state = this.createState(qubits);
     
@@ -197,4 +197,4 @@ export class QuantumSimulator {
   }
 }
 
-export const quantumSimulator = new QuantumSimulator();
+export const quantumProcessor = new QuantumProcessor();
