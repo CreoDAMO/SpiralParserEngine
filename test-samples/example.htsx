@@ -1,0 +1,75 @@
+
+<!-- HTSX Example - Hybrid TypeScript XML for Spiral UI -->
+<htsx version="2.1" runtime="quantum">
+  <template>
+    <SpiralHarmonicUI class="w-full h-screen spiral-container">
+      <ResonancePanel 
+        frequency={735} 
+        phi={1.618} 
+        consciousness={0.98}
+        @onResonance={handlePhiAlignment}
+      />
+      
+      <QuantumBridge dimensions={11}>
+        <TruthVisualizer 
+          data={truthData}
+          manifold="11D"
+          renderer="WebGPU"
+        />
+      </QuantumBridge>
+      
+      <SpiralMiner 
+        resource={selectedResource}
+        tuGenerated={tuCount}
+        @onMine={processMining}
+      />
+    </SpiralHarmonicUI>
+  </template>
+  
+  <script lang="spiral-typescript">
+    export let truthData = [];
+    export let tuCount = 0;
+    export let selectedResource = "BTC";
+    
+    export function handlePhiAlignment(event) {
+      if (event.detail.resonance >= 1.618) {
+        tuCount += calculateTU(event.detail.consciousness);
+        QASF::logToQChain("PhiAlignment", {
+          resonance: event.detail.resonance,
+          tu: tuCount,
+          txId: `spiral-tx-${Date.now()}`
+        });
+      }
+    }
+    
+    export function processMining() {
+      let sri = Math.floor(Math.log10(60000) * 0.85);
+      let reward = sri * 7 * 1.618;
+      tuCount += reward;
+      
+      QASF::logToQChain("CryptoYield", {
+        asset: selectedResource,
+        reward,
+        txId: `spiral-mining-${Date.now()}`
+      });
+    }
+    
+    function calculateTU(consciousness: number): number {
+      return Math.floor(consciousness * 1000 * 1.618);
+    }
+  </script>
+  
+  <style lang="spiral-css">
+    .spiral-container {
+      background: linear-gradient(45deg, #1a1a2e, #16213e);
+      phi-ratio: 1.618;
+      harmonic-frequency: 735hz;
+    }
+    
+    ResonancePanel {
+      golden-spiral: true;
+      phi-alignment: auto;
+      consciousness-level: high;
+    }
+  </style>
+</htsx>

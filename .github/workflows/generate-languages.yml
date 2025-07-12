@@ -1,0 +1,102 @@
+
+name: Generate Language Support
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'client/src/grammars/**'
+      - 'scripts/generate-languages.ts'
+      - 'client/src/lib/spiral-parser.ts'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  generate-languages:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Generate language files
+      run: |
+        npx tsx scripts/generate-languages.ts
+        
+    - name: Validate generated files
+      run: |
+        # Check if files were generated
+        test -f .gitattributes
+        test -f .github/languages.yml
+        test -f language-configuration.json
+        test -d syntaxes
+        
+    - name: Test parser functionality
+      run: |
+        npx tsx -e "
+          import { spiralParser } from './client/src/lib/spiral-parser';
+          const result = spiralParser.parse('theorem Test { require True; yield Success; }');
+          console.log('Parser test:', result.metrics);
+        "
+        
+    - name: Commit generated files
+      if: github.event_name == 'push'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .gitattributes .github/languages.yml language-configuration.json syntaxes/
+        git diff --staged --quiet || git commit -m "Auto-generate language support files [skip ci]"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+  validate-parsing:
+    runs-on: ubuntu-latest
+    needs: generate-languages
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run comprehensive parser tests
+      run: |
+        npx tsx -e "
+          import { spiralParser } from './client/src/lib/spiral-parser';
+          
+          const testCases = [
+            'theorem Poincare { require SimplyConnected; yield Sphere; }',
+            'φCell Node { substrate: Graphene; entropy: 0.92; }',
+            'function test() { return phi * resonance; }',
+            '@truth(\"Mathematical proof\") class Proof { verify() { return true; } }'
+          ];
+          
+          testCases.forEach((code, i) => {
+            try {
+              const result = spiralParser.parse(code);
+              console.log(\`Test \${i+1}: ✅ Success - TU: \${result.metrics.tuGenerated}\`);
+            } catch (error) {
+              console.error(\`Test \${i+1}: ❌ Failed - \${error.message}\`);
+              process.exit(1);
+            }
+          });
+          
+          console.log('🎉 All parser tests passed!');
+        "

@@ -129,4 +129,42 @@ export interface ParseMetrics {
   tuGenerated: number;
 }
 
+// GitHub language integration
+export interface GitHubLanguageSupport {
+  detectLanguage(filename: string): string | null;
+  getSupportedExtensions(): string[];
+  getLanguageMetadata(language: string): any;
+}
+
+class GitHubLanguageIntegration implements GitHubLanguageSupport {
+  private languageMap = new Map([
+    ['.spiral', 'SpiralScript'],
+    ['.spi', 'SpiralScript'],
+    ['.htsx', 'HTSX'],
+    ['.sprl', 'SpiralLang'],
+    ['.consciousness', 'ConsciousnessScript'],
+    ['.cons', 'ConsciousnessScript']
+  ]);
+
+  detectLanguage(filename: string): string | null {
+    const ext = filename.substring(filename.lastIndexOf('.'));
+    return this.languageMap.get(ext) || null;
+  }
+
+  getSupportedExtensions(): string[] {
+    return Array.from(this.languageMap.keys());
+  }
+
+  getLanguageMetadata(language: string): any {
+    const metadata = {
+      'SpiralScript': { color: '#ff6b6b', id: 1001, layer: 'SpiralWake' },
+      'HTSX': { color: '#4ecdc4', id: 1002, layer: 'SpiralWake' },
+      'SpiralLang': { color: '#45b7d1', id: 1003, layer: 'SpiralWake' },
+      'ConsciousnessScript': { color: '#f9ca24', id: 1004, layer: 'Remembrance Gate' }
+    };
+    return metadata[language] || null;
+  }
+}
+
 export const spiralParser = new SpiralParser();
+export const githubIntegration = new GitHubLanguageIntegration();

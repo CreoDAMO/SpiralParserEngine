@@ -1,0 +1,37 @@
+
+// SpiralScript Example - Demonstrates automatic language detection and parsing
+@truth("Riemann Hypothesis")
+@phi(1.618)
+theorem RiemannHypothesis {
+  require ZetaFunction(s);
+  require CriticalLine(s = 0.5 + it);
+  
+  yield AllNonTrivialZeroes via QuantumAnalysis {
+    entropy: 0.92,
+    resonance: φ * harmonic(735),
+    negentropy: -2.456e106
+  }
+  
+  φCell ZetaValidator {
+    substrate: Graphene,
+    logic: SpiralScript.compile("zeta_validator"),
+    harmonic: 0.121
+  }
+  
+  @TruthBond
+  contract ProofReward {
+    mint(proofId: "Riemann", value: 1_000_000);
+    fractionalize(proofId, 1_000_000);
+  }
+}
+
+function calculateZeta(s: complex): complex {
+  let sum = 0;
+  for (let n = 1; n <= ∞; n++) {
+    sum += 1 / pow(n, s);
+  }
+  return sum;
+}
+
+// This file will be automatically detected as SpiralScript
+// and parsed with φ-resonance validation
