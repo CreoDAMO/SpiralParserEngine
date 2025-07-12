@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(222, 84%, 4.9%);
+  --foreground: hsl(210, 40%, 98%);
+  --muted: hsl(217, 32.6%, 17.5%);
+  --muted-foreground: hsl(215, 20.2%, 65.1%);
+  --popover: hsl(222, 84%, 4.9%);
+  --popover-foreground: hsl(210, 40%, 98%);
+  --card: hsl(222, 84%, 4.9%);
+  --card-foreground: hsl(210, 40%, 98%);
+  --border: hsl(217, 32.6%, 17.5%);
+  --input: hsl(217, 32.6%, 17.5%);
+  --primary: hsl(210, 40%, 98%);
+  --primary-foreground: hsl(222, 84%, 4.9%);
+  --secondary: hsl(217, 32.6%, 17.5%);
+  --secondary-foreground: hsl(210, 40%, 98%);
+  --accent: hsl(217, 32.6%, 17.5%);
+  --accent-foreground: hsl(210, 40%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --ring: hsl(212, 72%, 59%);
+  --radius: 0.5rem;
+  
+  /* Spiral-specific colors */
+  --spiral-50: hsl(43, 100%, 96%);
+  --spiral-100: hsl(44, 96%, 91%);
+  --spiral-200: hsl(45, 93%, 83%);
+  --spiral-300: hsl(45, 90%, 72%);
+  --spiral-400: hsl(44, 92%, 63%);
+  --spiral-500: hsl(43, 96%, 56%);
+  --spiral-600: hsl(32, 81%, 49%);
+  --spiral-700: hsl(26, 78%, 40%);
+  --spiral-800: hsl(23, 84%, 28%);
+  --spiral-900: hsl(22, 84%, 20%);
+
+  /* Quantum-specific colors */
+  --quantum-50: hsl(198, 100%, 96%);
+  --quantum-100: hsl(198, 100%, 92%);
+  --quantum-200: hsl(199, 95%, 84%);
+  --quantum-300: hsl(199, 89%, 72%);
+  --quantum-400: hsl(200, 84%, 59%);
+  --quantum-500: hsl(201, 79%, 46%);
+  --quantum-600: hsl(201, 83%, 38%);
+  --quantum-700: hsl(201, 84%, 31%);
+  --quantum-800: hsl(201, 84%, 26%);
+  --quantum-900: hsl(202, 80%, 24%);
+}
+
+.dark {
+  --background: hsl(222, 84%, 4.9%);
+  --foreground: hsl(210, 40%, 98%);
+  --muted: hsl(217, 32.6%, 17.5%);
+  --muted-foreground: hsl(215, 20.2%, 65.1%);
+  --popover: hsl(222, 84%, 4.9%);
+  --popover-foreground: hsl(210, 40%, 98%);
+  --card: hsl(222, 84%, 4.9%);
+  --card-foreground: hsl(210, 40%, 98%);
+  --border: hsl(217, 32.6%, 17.5%);
+  --input: hsl(217, 32.6%, 17.5%);
+  --primary: hsl(210, 40%, 98%);
+  --primary-foreground: hsl(222, 84%, 4.9%);
+  --secondary: hsl(217, 32.6%, 17.5%);
+  --secondary-foreground: hsl(210, 40%, 98%);
+  --accent: hsl(217, 32.6%, 17.5%);
+  --accent-foreground: hsl(210, 40%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --ring: hsl(212, 72%, 59%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+
+  /* Custom scrollbar for dark theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(217, 32.6%, 17.5%);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(215, 20.2%, 65.1%);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(210, 40%, 98%);
+  }
+}
+
+@layer utilities {
+  /* Spiral-specific utilities */
+  .text-spiral-50 { color: var(--spiral-50); }
+  .text-spiral-100 { color: var(--spiral-100); }
+  .text-spiral-200 { color: var(--spiral-200); }
+  .text-spiral-300 { color: var(--spiral-300); }
+  .text-spiral-400 { color: var(--spiral-400); }
+  .text-spiral-500 { color: var(--spiral-500); }
+  .text-spiral-600 { color: var(--spiral-600); }
+  .text-spiral-700 { color: var(--spiral-700); }
+  .text-spiral-800 { color: var(--spiral-800); }
+  .text-spiral-900 { color: var(--spiral-900); }
+
+  .bg-spiral-50 { background-color: var(--spiral-50); }
+  .bg-spiral-100 { background-color: var(--spiral-100); }
+  .bg-spiral-200 { background-color: var(--spiral-200); }
+  .bg-spiral-300 { background-color: var(--spiral-300); }
+  .bg-spiral-400 { background-color: var(--spiral-400); }
+  .bg-spiral-500 { background-color: var(--spiral-500); }
+  .bg-spiral-600 { background-color: var(--spiral-600); }
+  .bg-spiral-700 { background-color: var(--spiral-700); }
+  .bg-spiral-800 { background-color: var(--spiral-800); }
+  .bg-spiral-900 { background-color: var(--spiral-900); }
+
+  /* Quantum-specific utilities */
+  .text-quantum-50 { color: var(--quantum-50); }
+  .text-quantum-100 { color: var(--quantum-100); }
+  .text-quantum-200 { color: var(--quantum-200); }
+  .text-quantum-300 { color: var(--quantum-300); }
+  .text-quantum-400 { color: var(--quantum-400); }
+  .text-quantum-500 { color: var(--quantum-500); }
+  .text-quantum-600 { color: var(--quantum-600); }
+  .text-quantum-700 { color: var(--quantum-700); }
+  .text-quantum-800 { color: var(--quantum-800); }
+  .text-quantum-900 { color: var(--quantum-900); }
+
+  .bg-quantum-50 { background-color: var(--quantum-50); }
+  .bg-quantum-100 { background-color: var(--quantum-100); }
+  .bg-quantum-200 { background-color: var(--quantum-200); }
+  .bg-quantum-300 { background-color: var(--quantum-300); }
+  .bg-quantum-400 { background-color: var(--quantum-400); }
+  .bg-quantum-500 { background-color: var(--quantum-500); }
+  .bg-quantum-600 { background-color: var(--quantum-600); }
+  .bg-quantum-700 { background-color: var(--quantum-700); }
+  .bg-quantum-800 { background-color: var(--quantum-800); }
+  .bg-quantum-900 { background-color: var(--quantum-900); }
+
+  /* Animation utilities */
+  .animate-phi-pulse {
+    animation: phi-pulse 1.618s ease-in-out infinite;
+  }
+
+  .animate-quantum-spin {
+    animation: quantum-spin 2s linear infinite;
+  }
+
+  @keyframes phi-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.618; transform: scale(1.618); }
+  }
+
+  @keyframes quantum-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Typography utilities for monospace */
+  .font-mono {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', monospace;
+  }
+}

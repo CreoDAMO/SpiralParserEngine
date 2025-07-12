@@ -1,0 +1,101 @@
+# SpiralScript IDE
+
+## Overview
+
+SpiralScript IDE is a full-stack web application that provides an integrated development environment for the SpiralScript programming language. The application combines quantum computing simulation, blockchain-based trust currency (TU), and advanced parsing capabilities using ANTLR4. It features a sophisticated IDE interface built with React and shadcn/ui components, backed by an Express.js server with PostgreSQL database storage.
+
+## User Preferences
+
+```
+Preferred communication style: Simple, everyday language.
+```
+
+## System Architecture
+
+The application follows a modern full-stack architecture with clear separation between client, server, and shared components:
+
+- **Frontend**: React SPA with TypeScript, built using Vite
+- **Backend**: Node.js Express server with TypeScript
+- **Database**: PostgreSQL with Drizzle ORM
+- **Shared**: Common TypeScript types and schemas
+- **UI Framework**: shadcn/ui components with Tailwind CSS
+
+## Key Components
+
+### Frontend Architecture
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite with custom configuration for development
+- **UI Library**: shadcn/ui components based on Radix UI primitives
+- **Styling**: Tailwind CSS with custom color schemes for spiral and quantum themes
+- **State Management**: TanStack Query for server state management
+- **Routing**: Wouter for lightweight client-side routing
+
+### Backend Architecture
+- **Runtime**: Node.js with Express.js framework
+- **Language**: TypeScript with ES modules
+- **API Design**: RESTful endpoints for file operations, trust transactions, and quantum circuits
+- **Development**: Hot reload with Vite middleware integration
+
+### Database Layer
+- **ORM**: Drizzle ORM for type-safe database operations
+- **Migration**: Drizzle Kit for schema migrations
+- **Storage Implementation**: Abstracted storage interface with in-memory fallback for development
+
+### Core Business Logic
+- **SpiralScript Parser**: Custom parser implementation using ANTLR4 concepts
+- **Quantum Simulator**: JavaScript-based quantum circuit simulation
+- **Trust Calculator**: φ-harmonic resonance calculations for Trust Unit (TU) generation
+- **Phi Resonance Engine**: Mathematical calculations based on golden ratio principles
+
+## Data Flow
+
+1. **File Management**: Users can create, edit, and manage SpiralScript files through the IDE
+2. **Parsing Pipeline**: Files are parsed using the SpiralScript parser to generate AST and metrics
+3. **Trust Generation**: Complex mathematical proofs and quantum simulations generate Trust Units
+4. **Quantum Operations**: Users can create and simulate quantum circuits with custom gates
+5. **Real-time Updates**: UI updates reflect changes in trust balance, file content, and parsing results
+
+## External Dependencies
+
+### UI and Styling
+- **Radix UI**: Comprehensive set of low-level UI primitives
+- **Tailwind CSS**: Utility-first CSS framework with custom theme
+- **Lucide React**: Icon library for consistent iconography
+
+### Development Tools
+- **Monaco Editor**: Code editor component for syntax highlighting
+- **ANTLR4**: Parser generator for SpiralScript language grammar
+- **WebGPU**: GPU acceleration for quantum simulations and visualizations
+
+### Database and Backend
+- **Neon Database**: Serverless PostgreSQL hosting
+- **Drizzle ORM**: Type-safe database toolkit
+- **Express.js**: Web application framework
+
+### Quantum Computing
+- **Quantum Circuit Libraries**: Custom implementation for quantum gate simulation
+- **Mathematical Libraries**: φ-harmonic calculations and complex number operations
+
+## Deployment Strategy
+
+The application is designed for deployment on Replit with the following considerations:
+
+### Development Environment
+- Vite development server with HMR for frontend
+- Express server with TypeScript compilation
+- Environment variable configuration for database connections
+- Replit-specific plugins for error handling and cartographer integration
+
+### Production Build
+- Vite builds optimized client bundle to `dist/public`
+- esbuild compiles server code to `dist/index.js`
+- Static file serving through Express for production
+- Database migrations run via `drizzle-kit push`
+
+### Database Configuration
+- PostgreSQL connection via DATABASE_URL environment variable
+- Drizzle schema located in `shared/schema.ts`
+- Migration files generated in `./migrations` directory
+- Support for both development and production database instances
+
+The application implements a sophisticated domain-specific language (SpiralScript) with quantum computing integration, making it suitable for advanced mathematical and cryptographic research while maintaining a user-friendly IDE interface.
