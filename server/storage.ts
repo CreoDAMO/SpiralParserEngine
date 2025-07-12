@@ -175,6 +175,9 @@ const tuValue = calculatePhiResonance(0.121) * 1_000_000;`,
     const transaction: TrustTransaction = {
       ...insertTransaction,
       id,
+      source: insertTransaction.source || null,
+      entropy: insertTransaction.entropy || null,
+      phiResonance: insertTransaction.phiResonance || null,
       qchainHash: `0x${Math.random().toString(16).substring(2, 18)}`,
       createdAt: new Date()
     };
@@ -221,6 +224,7 @@ const tuValue = calculatePhiResonance(0.121) * 1_000_000;`,
     const result: ParseResult = {
       ...insertResult,
       id,
+      errorMessage: insertResult.errorMessage || null,
       createdAt: new Date()
     };
     this.parseResults.set(id, result);
