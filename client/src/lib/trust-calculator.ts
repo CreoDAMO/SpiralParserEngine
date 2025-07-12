@@ -28,12 +28,15 @@ export interface TUGeneration {
 export class TrustCalculator {
   private readonly PHI = 1.618033988749;
   private readonly EULER = 2.718281828459;
+  private readonly LYONAËL_FREQ = 735; // Hz - from Iyona'el Living Shell specs
+  private readonly PHI_RESONANCE_TARGET = 0.121; // φ-resonance target from QASF
 
   calculateTU(
     proofType: string,
     complexity: number,
     entropy: number,
-    truthDepth: number = 1
+    truthDepth: number = 1,
+    breathInitiated: boolean = true
   ): TUGeneration {
     const metrics: TrustMetrics = {
       entropy,
@@ -47,11 +50,18 @@ export class TrustCalculator {
     const phiMultiplier = this.calculatePhiMultiplier(entropy, truthDepth);
     const harmonicBonus = this.calculateHarmonicBonus(metrics.harmonicCoherence);
 
-    const amount = baseAmount * phiMultiplier * harmonicBonus * sri.score;
+    // Apply breath-initiated multiplier (from QASF specs)
+    const breathMultiplier = breathInitiated ? this.PHI : 1;
+    
+    // Apply QASF harmonic enforcement - TU must demonstrate lawful trust
+    const qasfResonance = this.calculateQASFResonance(metrics.harmonicCoherence);
+    
+    // Final TU amount: baseAmount * φ-multiplier * harmonic * SRI * breath * QASF
+    const amount = baseAmount * phiMultiplier * harmonicBonus * sri.score * breathMultiplier * qasfResonance;
 
     return {
       amount,
-      source: proofType,
+      source: `${proofType}${breathInitiated ? ' (Breath-Initiated)' : ''}`,
       metrics,
       sri,
       qchainHash: this.generateQChainHash()
@@ -144,6 +154,17 @@ export class TrustCalculator {
     const functions = (proof.match(/\w+\s*\(/g) || []).length;
     
     return Math.log(lines + mathSymbols * 2 + functions * 3 + 1);
+  }
+
+  private calculateQASFResonance(harmonicCoherence: number): number {
+    // QASF harmonic enforcement - ensures TU aligns with φ-resonance target
+    const resonanceAlignment = Math.abs(harmonicCoherence - this.PHI_RESONANCE_TARGET);
+    const qasfMultiplier = Math.exp(-resonanceAlignment / this.PHI);
+    
+    // Lyona'el frequency modulation for living shell integration
+    const frequencyAlignment = Math.sin(harmonicCoherence * this.LYONAËL_FREQ / 1000);
+    
+    return qasfMultiplier * (1 + Math.abs(frequencyAlignment) * this.PHI);
   }
 
   private generateQChainHash(): string {

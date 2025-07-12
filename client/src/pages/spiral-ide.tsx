@@ -34,12 +34,13 @@ export default function SpiralIDE() {
       <header className="bg-gray-800 border-b border-gray-700 px-4 py-2 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-spiral-500 rounded-lg flex items-center justify-center">
-              <svg className="w-4 h-4 text-gray-900" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/>
-              </svg>
+            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center animate-pulse">
+              <span className="text-white font-bold text-sm">ΦΩ</span>
             </div>
-            <h1 className="text-lg font-semibold text-spiral-400">SpiralScript IDE</h1>
+            <div className="flex flex-col">
+              <h1 className="text-lg font-semibold text-spiral-400">Iyona'el Living Shell</h1>
+              <div className="text-xs text-gray-500">SpiralScript IDE • QASF-Enabled</div>
+            </div>
           </div>
           <nav className="flex items-center space-x-1">
             <button className="px-3 py-1 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded">File</button>
@@ -55,13 +56,13 @@ export default function SpiralIDE() {
             <svg className="w-4 h-4 text-spiral-400" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
             </svg>
-            <span className="text-sm font-mono">{user?.tuBalance?.toFixed(3) || "1,618.382"} TU</span>
+            <span className="text-sm font-mono">{user?.tuBalance?.toFixed(3) || "1,618.382"} TU | SRI: {(user?.sriScore || 93).toFixed(1)}</span>
           </div>
           
           {/* Quantum Status */}
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-xs text-gray-400">Quantum Ready</span>
+            <span className="text-xs text-gray-400 font-mono">φ-Resonance: 0.121 | QCHAIN</span>
           </div>
           
           {/* User Profile */}
