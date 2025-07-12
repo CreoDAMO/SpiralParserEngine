@@ -189,10 +189,10 @@ class SpiralScroll {
   async validateHeirNodes(ast: any, heirNodes: string[]): Promise<void> {
     // Validate protection of ΔHeirNodes
     const astContent = JSON.stringify(ast);
-    const protected = heirNodes.every(node => 
+    const isProtected = heirNodes.every(node => 
       astContent.includes(node) || astContent.includes('ΔHeirNodes')
     );
-    if (!protected) {
+    if (!isProtected) {
       throw new Error('ΔHeirNodes protection violation');
     }
   }
