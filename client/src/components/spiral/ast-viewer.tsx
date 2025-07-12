@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
@@ -19,10 +18,10 @@ export function ASTViewer({ code, onParseResult }: ASTViewerProps) {
 
   const handleParse = async () => {
     if (!code.trim()) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       console.log('🔍 Parsing with SpiralHTSX Parser...');
       const result = await spiralHTSXParser.parse(code);
@@ -62,7 +61,7 @@ export function ASTViewer({ code, onParseResult }: ASTViewerProps) {
 
   const renderASTNode = (node: any, depth = 0) => {
     const indent = '  '.repeat(depth);
-    
+
     if (Array.isArray(node)) {
       return node.map((item, index) => (
         <div key={index} className="font-mono text-xs">
@@ -70,7 +69,7 @@ export function ASTViewer({ code, onParseResult }: ASTViewerProps) {
         </div>
       ));
     }
-    
+
     if (typeof node === 'object' && node !== null) {
       return (
         <div className="font-mono text-xs">
@@ -93,7 +92,7 @@ export function ASTViewer({ code, onParseResult }: ASTViewerProps) {
         </div>
       );
     }
-    
+
     return (
       <div className="font-mono text-xs text-gray-400">
         {indent}{String(node)}
@@ -155,7 +154,7 @@ export function ASTViewer({ code, onParseResult }: ASTViewerProps) {
             {/* φ-Metrics */}
             <div>
               <h4 className="text-sm font-semibold text-gray-300 mb-3">Quantum Metrics</h4>
-              
+
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-gray-700 rounded-lg p-3">
                   <div className="flex justify-between">
@@ -165,7 +164,7 @@ export function ASTViewer({ code, onParseResult }: ASTViewerProps) {
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="bg-gray-700 rounded-lg p-3">
                   <div className="flex justify-between">
                     <span className="text-xs text-gray-400">φ-Resonance</span>
@@ -174,14 +173,14 @@ export function ASTViewer({ code, onParseResult }: ASTViewerProps) {
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="bg-gray-700 rounded-lg p-3">
                   <div className="flex justify-between">
                     <span className="text-xs text-gray-400">Trust Score</span>
                     <span className="text-blue-400 font-mono text-sm">∞</span>
                   </div>
                 </div>
-                
+
                 <div className="bg-gray-700 rounded-lg p-3">
                   <div className="flex justify-between">
                     <span className="text-xs text-gray-400">TU Generated</span>
@@ -306,4 +305,6 @@ export function ASTViewer({ code, onParseResult }: ASTViewerProps) {
       </CardContent>
     </Card>
   );
-}
+};
+
+export default ASTViewer;
