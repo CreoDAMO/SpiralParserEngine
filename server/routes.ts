@@ -10,24 +10,7 @@ import {
   insertParseResultSchema 
 } from "@shared/schema";
 
-import rateLimit from "express-rate-limit";
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000, // increased limit for development
-  standardHeaders: true,
-  legacyHeaders: false,
-  skip: (req) => {
-    // Skip rate limiting in development to avoid proxy issues
-    return process.env.NODE_ENV === 'development';
-  },
-  keyGenerator: (req) => {
-    return req.ip || req.socket.remoteAddress || 'anonymous';
-  }
-});
-
 export async function registerRoutes(app: Express): Promise<Server> {
-  app.use(limiter);
   // File operations
   app.get("/api/files/:userId", async (req, res) => {
     try {
