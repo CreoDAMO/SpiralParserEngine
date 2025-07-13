@@ -9,6 +9,7 @@ import QuantumTools from "@/components/spiral/quantum-tools";
 import EconomicAnalyzer from "@/components/spiral/economic-analyzer";
 import MolecularAssembly from "@/components/spiral/molecular-assembly";
 import RevenueDashboard from "@/components/spiral/revenue-dashboard";
+import { HybridBlockchainViewer } from '../components/spiral/hybrid-blockchain';
 
 export default function SpiralIDE() {
   const [activeFile, setActiveFile] = useState<number | null>(null);
