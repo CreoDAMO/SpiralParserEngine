@@ -13,7 +13,6 @@ import RevenueDashboard from "@/components/spiral/revenue-dashboard";
 import HybridBlockchainViewer from '@/components/spiral/hybrid-blockchain-viewer';
 import StressTestDashboard from '@/components/spiral/stress-test';
 import AIChatPanel from '@/components/spiral/ai-chat-panel';
-import ComprehensiveAIOrchestrator from '@/components/spiral/comprehensive-ai-orchestrator';
 
 export default function SpiralIDE() {
   const [activeFile, setActiveFile] = useState<number | null>(null);
@@ -108,7 +107,7 @@ export default function SpiralIDE() {
         <aside className="w-96 bg-gray-800 border-l border-gray-700 flex flex-col">
           <div className="border-b border-gray-700 px-4 py-2">
             <div className="flex space-x-1">
-              {["AST", "Quantum", "TU Gen", "Economics", "HYBRID", "AI Chat", "AI Orchestra", "Stress Test", "Output"].map((tab) => (
+              {["AST", "Quantum", "TU Gen", "Economics", "HYBRID", "AI Chat", "Stress Test", "Output"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -134,8 +133,6 @@ export default function SpiralIDE() {
             </div>
           ) : activeTab === "AI Chat" ? (
             <AIChatPanel />
-          ) : activeTab === "AI Orchestra" ? (
-            <ComprehensiveAIOrchestrator />
           ) : activeTab === "Stress Test" ? (
             <StressTestDashboard />
           ) : (
