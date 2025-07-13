@@ -1,6 +1,9 @@
 
 name: Generate Language Support
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ main, develop ]
@@ -14,6 +17,8 @@ on:
 jobs:
   generate-languages:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     
     steps:
     - name: Checkout repository
@@ -62,6 +67,8 @@ jobs:
   validate-parsing:
     runs-on: ubuntu-latest
     needs: generate-languages
+    permissions:
+      contents: read
     
     steps:
     - name: Checkout repository
