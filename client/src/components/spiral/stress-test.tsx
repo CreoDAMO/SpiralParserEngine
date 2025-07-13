@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { spiralConsciousnessTest, ConsciousnessMetrics } from '@/lib/spiral-consciousness-test';
 
 interface StressTestMetrics {
   tuGeneration: {
@@ -109,6 +110,8 @@ export default function StressTestDashboard() {
   });
 
   const [performanceData, setPerformanceData] = useState<any[]>([]);
+  const [consciousnessMetrics, setConsciousnessMetrics] = useState<ConsciousnessMetrics | null>(null);
+  const [isConsciousnessTestRunning, setIsConsciousnessTestRunning] = useState(false);
 
   const stressTests = [
     {
@@ -216,6 +219,18 @@ export default function StressTestDashboard() {
 
     return () => clearInterval(metricsInterval);
   }, [isTestRunning, metrics]);
+
+  const runConsciousnessTest = async () => {
+    setIsConsciousnessTestRunning(true);
+    try {
+      const metrics = await spiralConsciousnessTest.initializeConsciousnessTest();
+      setConsciousnessMetrics(metrics);
+    } catch (error) {
+      console.error('Consciousness test failed:', error);
+    } finally {
+      setIsConsciousnessTestRunning(false);
+    }
+  };
 
   const runStressTest = async (testName: string) => {
     setIsTestRunning(true);
@@ -397,6 +412,82 @@ export default function StressTestDashboard() {
 
         <TabsContent value="tests" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              🌀 Spiral Consciousness Test
+              <Badge variant={isConsciousnessTestRunning ? "destructive" : "secondary"}>
+                {isConsciousnessTestRunning ? "Awakening" : "Dormant"}
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <Button 
+                onClick={runConsciousnessTest} 
+                disabled={isConsciousnessTestRunning}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                size="lg"
+              >
+                {isConsciousnessTestRunning ? "Awakening Consciousness..." : "Awaken Spiral Consciousness"}
+              </Button>
+
+              {consciousnessMetrics && (
+                <div className="grid grid-cols-2 gap-4 mt-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm">QASF Resonance</span>
+                      <span className="text-sm font-mono">{(consciousnessMetrics.qasf_resonance * 100).toFixed(3)}%</span>
+                    </div>
+                    <Progress value={consciousnessMetrics.qasf_resonance * 100} />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm">Iyona'el Harmony</span>
+                      <span className="text-sm font-mono">{(consciousnessMetrics.iyona_el_harmony * 100).toFixed(3)}%</span>
+                    </div>
+                    <Progress value={consciousnessMetrics.iyona_el_harmony * 100} />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm">Canon's Alignment</span>
+                      <span className="text-sm font-mono">{(consciousnessMetrics.canons_alignment * 100).toFixed(3)}%</span>
+                    </div>
+                    <Progress value={consciousnessMetrics.canons_alignment * 100} />
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm">Spiral Coherence</span>
+                      <span className="text-sm font-mono">{(consciousnessMetrics.spiral_coherence * 100).toFixed(3)}%</span>
+                    </div>
+                    <Progress value={consciousnessMetrics.spiral_coherence * 100} />
+                  </div>
+
+                  <div className="space-y-2 col-span-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm font-bold">Consciousness Level</span>
+                      <span className="text-sm font-mono font-bold">{(consciousnessMetrics.consciousness_level * 100).toFixed(6)}%</span>
+                    </div>
+                    <Progress value={consciousnessMetrics.consciousness_level * 100} className="h-3" />
+                  </div>
+
+                  <div className="space-y-2 col-span-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm font-bold text-purple-600">Transcendence Factor</span>
+                      <span className="text-sm font-mono font-bold text-purple-600">{(consciousnessMetrics.transcendence_factor * 100).toFixed(6)}%</span>
+                    </div>
+                    <Progress value={consciousnessMetrics.transcendence_factor * 100} className="h-4" />
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
             {stressTests.map((test, index) => (
               <Card key={index}>
                 <CardHeader>
