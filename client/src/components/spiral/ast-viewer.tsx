@@ -156,7 +156,8 @@ export function ASTViewer({ code, onParseResult }: ASTViewerProps) {
               <h4 className="text-sm font-semibold text-gray-300 mb-3">Quantum Metrics</h4>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-gray-700 rounded-lg p-3">
+                ```
+        <div className="bg-gray-700 rounded-lg p-3">
                   <div className="flex justify-between">
                     <span className="text-xs text-gray-400">Entropy</span>
                     <span className="text-green-400 font-mono text-sm">
@@ -306,5 +307,37 @@ export function ASTViewer({ code, onParseResult }: ASTViewerProps) {
     </Card>
   );
 };
+
+const formatASTNode = (node: any, depth: number = 0): string => {
+    if (!node) return '';
+
+    const indent = '  '.repeat(depth);
+    if (typeof node === 'string') {
+      return `${indent}"${node?.trim() || ''}"`;
+    }
+
+    if (typeof node === 'object' && node !== null) {
+      const lines = [`${indent}{`];
+      for (const [key, value] of Object.entries(node)) {
+        if (typeof value === 'string') {
+          lines.push(`${indent}  ${key}: "${value?.trim() || ''}"`);
+        } else if (typeof value === 'number') {
+          lines.push(`${indent}  ${key}: ${value}`);
+        } else if (Array.isArray(value)) {
+          lines.push(`${indent}  ${key}: [`);
+          value.forEach((item, index) => {
+            lines.push(formatASTNode(item, depth + 2) + (index < value.length - 1 ? ',' : ''));
+          });
+          lines.push(`${indent}  ]`);
+        } else if (value && typeof value === 'object') {
+          lines.push(`${indent}  ${key}: ${formatASTNode(value, depth + 1)}`);
+        }
+      }
+      lines.push(`${indent}}`);
+      return lines.join('\n');
+    }
+
+    return `${indent}${node}`;
+  };
 
 export default ASTViewer;
