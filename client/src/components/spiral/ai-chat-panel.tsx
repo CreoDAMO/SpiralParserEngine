@@ -57,6 +57,328 @@ interface ChatMessage {
   isVoice?: boolean;
 }
 
+const AIChatPanel: React.FC = () => {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState<string>('all');
+  const [activeAgents, setActiveAgents] = useState<AIAgent[]>([
+    {
+      id: 'gpt4-turbo',
+      name: 'GPT-4 Turbo',
+      model: 'gpt-4-turbo-preview',
+      status: 'active',
+      responseTime: 1200,
+      confidence: 0.92,
+      cost: 0.003,
+      specialty: ['coding', 'reasoning', 'analysis'],
+      avatar: '🤖',
+      color: 'bg-blue-500'
+    },
+    {
+      id: 'claude-3',
+      name: 'Claude 3',
+      model: 'claude-3-opus',
+      status: 'active',
+      responseTime: 1100,
+      confidence: 0.89,
+      cost: 0.002,
+      specialty: ['writing', 'creative', 'ethical'],
+      avatar: '🧠',
+      color: 'bg-purple-500'
+    },
+    {
+      id: 'gemini-pro',
+      name: 'Gemini Pro',
+      model: 'gemini-pro',
+      status: 'active',
+      responseTime: 800,
+      confidence: 0.85,
+      cost: 0.001,
+      specialty: ['multimodal', 'reasoning', 'coding'],
+      avatar: '💎',
+      color: 'bg-green-500'
+    }
+  ]);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<any>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  // Voice recognition setup
+  useEffect(() => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+
+      recognitionRef.current.onresult = (event: any) => {
+        const transcript = Array.from(event.results)
+          .map((result: any) => result[0])
+          .map((result: any) => result.transcript)
+          .join('');
+
+        setInputMessage(transcript);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+    }
+  }, []);
+
+  const startListening = () => {
+    if (recognitionRef.current) {
+      setIsListening(true);
+      recognitionRef.current.start();
+    }
+  };
+
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      setIsListening(false);
+      recognitionRef.current.stop();
+    }
+  };
+
+  const speak = (text: string) => {
+    if ('speechSynthesis' in window) {
+      setIsSpeaking(true);
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.onend = () => setIsSpeaking(false);
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!inputMessage.trim()) return;
+
+    const userMessage: ChatMessage = {
+      id: `msg-${Date.now()}`,
+      type: 'user',
+      content: inputMessage,
+      timestamp: new Date(),
+      isVoice: isListening
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
+
+    // Simulate AI responses
+    const targetAgents = selectedAgent === 'all' 
+      ? activeAgents.filter(agent => agent.status === 'active')
+      : activeAgents.filter(agent => agent.id === selectedAgent);
+
+    for (const agent of targetAgents) {
+      setTimeout(() => {
+        const aiResponse: ChatMessage = {
+          id: `msg-${Date.now()}-${agent.id}`,
+          type: 'ai',
+          content: `Hello! I'm ${agent.name}. I understand you're asking about "${inputMessage}". Let me help you with that...`,
+          timestamp: new Date(),
+          agentId: agent.id,
+          confidence: agent.confidence,
+          phiResonance: Math.random() * 1.618,
+          tuGenerated: Math.floor(Math.random() * 100)
+        };
+
+        setMessages(prev => [...prev, aiResponse]);
+      }, agent.responseTime + Math.random() * 500);
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      {/* Header */}
+      <div className="p-4 border-b border-purple-500/30 bg-black/20">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <Brain className="w-6 h-6 text-purple-400" />
+            Multi-AI Chat Assistant
+          </h2>
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="bg-purple-500/20 text-purple-300">
+              {activeAgents.filter(a => a.status === 'active').length} Active
+            </Badge>
+            <Button size="sm" variant="outline" className="border-purple-500/50">
+              <Settings className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Agent Selection */}
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant={selectedAgent === 'all' ? 'default' : 'outline'}
+            onClick={() => setSelectedAgent('all')}
+            className="text-xs"
+          >
+            All Agents
+          </Button>
+          {activeAgents.map(agent => (
+            <Button
+              key={agent.id}
+              size="sm"
+              variant={selectedAgent === agent.id ? 'default' : 'outline'}
+              onClick={() => setSelectedAgent(agent.id)}
+              className={`text-xs ${agent.color} border-opacity-50`}
+            >
+              {agent.avatar} {agent.name}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {/* Messages */}
+      <ScrollArea className="flex-1 p-4">
+        <div className="space-y-4">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`max-w-[80%] rounded-lg p-3 ${
+                  message.type === 'user'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-slate-800 text-white border border-purple-500/30'
+                }`}
+              >
+                {message.type === 'ai' && (
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-lg">
+                      {activeAgents.find(a => a.id === message.agentId)?.avatar || '🤖'}
+                    </span>
+                    <span className="text-sm font-medium text-purple-300">
+                      {activeAgents.find(a => a.id === message.agentId)?.name || 'AI Assistant'}
+                    </span>
+                    {message.confidence && (
+                      <Badge variant="secondary" className="text-xs bg-green-500/20 text-green-300">
+                        {(message.confidence * 100).toFixed(0)}%
+                      </Badge>
+                    )}
+                  </div>
+                )}
+                
+                <p className="text-sm">{message.content}</p>
+                
+                {message.type === 'ai' && (
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-purple-500/20">
+                    <div className="flex items-center gap-2 text-xs text-purple-300">
+                      {message.phiResonance && (
+                        <span>φ: {message.phiResonance.toFixed(3)}</span>
+                      )}
+                      {message.tuGenerated && (
+                        <span>TU: +{message.tuGenerated}</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => speak(message.content)}
+                        className="h-6 w-6 p-0 text-purple-400 hover:text-white"
+                      >
+                        {isSpeaking ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3" />}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => navigator.clipboard.writeText(message.content)}
+                        className="h-6 w-6 p-0 text-purple-400 hover:text-white"
+                      >
+                        <Copy className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="text-xs text-gray-400 mt-1">
+                  {message.timestamp.toLocaleTimeString()}
+                  {message.isVoice && <Mic className="w-3 h-3 inline ml-1" />}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div ref={messagesEndRef} />
+      </ScrollArea>
+
+      {/* Input */}
+      <div className="p-4 border-t border-purple-500/30 bg-black/20">
+        <div className="flex items-center gap-2">
+          <div className="flex-1 relative">
+            <Input
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              placeholder="Ask me anything..."
+              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+              className="bg-slate-800 border-purple-500/50 text-white placeholder-gray-400 pr-12"
+            />
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={isListening ? stopListening : startListening}
+              className={`absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 ${
+                isListening ? 'text-red-400' : 'text-purple-400'
+              }`}
+            >
+              {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+            </Button>
+          </div>
+          <Button 
+            onClick={sendMessage}
+            disabled={!inputMessage.trim()}
+            className="bg-purple-600 hover:bg-purple-700"
+          >
+            <Send className="w-4 h-4" />
+          </Button>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="flex flex-wrap gap-2 mt-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setInputMessage("Analyze this code for optimization opportunities")}
+            className="text-xs border-purple-500/50 text-purple-300"
+          >
+            🔍 Code Analysis
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setInputMessage("Generate unit tests for the current function")}
+            className="text-xs border-purple-500/50 text-purple-300"
+          >
+            🧪 Generate Tests
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setInputMessage("Explain this algorithm step by step")}
+            className="text-xs border-purple-500/50 text-purple-300"
+          >
+            📚 Explain Code
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AIChatPanel;
+
 interface VoiceState {
   isListening: boolean;
   isProcessing: boolean;

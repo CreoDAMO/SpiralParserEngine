@@ -3,15 +3,8 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
-// Configure Express to trust Replit's proxy
+// Configure Express to trust Replit's proxy in all environments
 app.set('trust proxy', true);
-
-// Configure trust proxy for Replit environment
-if (process.env.NODE_ENV === 'production') {
-  app.set('trust proxy', 1);
-} else {
-  app.set('trust proxy', false);
-}
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 
