@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { livingSpiralMolecular, MolecularStructure } from '@/lib/spiral-molecular-assembly';
 
-export function MolecularAssemblyDashboard() {
+export default function MolecularAssembly() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [assemblyProgress, setAssemblyProgress] = useState(0);
   const [activeStructures, setActiveStructures] = useState<MolecularStructure[]>([]);

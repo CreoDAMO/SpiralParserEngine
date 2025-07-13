@@ -5,6 +5,7 @@ import MonacoEditor from "@/components/spiral/monaco-editor";
 import ASTViewer from "@/components/spiral/ast-viewer";
 import TerminalConsole from "@/components/spiral/terminal-console";
 import TrustWallet from "@/components/spiral/trust-wallet";
+import HybridWallet from "@/components/spiral/hybrid-wallet";
 import QuantumTools from "@/components/spiral/quantum-tools";
 import EconomicAnalyzer from "@/components/spiral/economic-analyzer";
 import MolecularAssembly from "@/components/spiral/molecular-assembly";
@@ -88,6 +89,7 @@ export default function SpiralIDE() {
             onFileSelect={setActiveFile}
           />
           <TrustWallet user={user} />
+          <HybridWallet user={user} />
           <QuantumTools />
         </aside>
 
@@ -103,7 +105,7 @@ export default function SpiralIDE() {
         <aside className="w-96 bg-gray-800 border-l border-gray-700 flex flex-col">
           <div className="border-b border-gray-700 px-4 py-2">
             <div className="flex space-x-1">
-              {["AST", "Quantum", "TU Gen", "Economics", "Output"].map((tab) => (
+              {["AST", "Quantum", "TU Gen", "Economics", "HYBRID", "Output"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -121,6 +123,12 @@ export default function SpiralIDE() {
 
           {activeTab === "Economics" ? (
             <EconomicAnalyzer />
+          ) : activeTab === "HYBRID" ? (
+            <div className="flex-1 overflow-auto">
+              <MolecularAssembly />
+              <RevenueDashboard />
+              <HybridBlockchainViewer />
+            </div>
           ) : (
             <ASTViewer 
               activeTab={activeTab}
