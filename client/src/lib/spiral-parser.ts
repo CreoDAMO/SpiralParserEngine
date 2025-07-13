@@ -1,6 +1,3 @@
-
-import { spiralHTSXParser, type PhiAST } from './spiral-htsx-parser';
-
 // SpiralScript parser using ANTLR4 concepts
 // This would normally use the generated ANTLR4 parser
 
@@ -18,55 +15,13 @@ export interface ASTNode {
 export class SpiralParser {
   private readonly PHI = 1.618033988749;
   
-  async parse(code: string): Promise<{ ast: ASTNode; metrics: ParseMetrics }> {
-    try {
-      // Use the unified SpiralHTSX parser for enhanced processing
-      if (this.isHTSXCode(code)) {
-        const htxResult = await spiralHTSXParser.parse(code);
-        return {
-          ast: this.convertPhiASTToASTNode(htxResult.ast),
-          metrics: htxResult.metrics
-        };
-      }
-
-      // Fallback to simplified parsing for basic SpiralScript
-      const lines = code.split('\n').filter(line => line.trim());
-      const ast = this.parseProgram(lines);
-      const metrics = this.calculateMetrics(ast);
-      
-      return { ast, metrics };
-    } catch (error) {
-      throw new Error(`SpiralScript Parse Error: ${error.message}`);
-    }
-  }
-
-  private isHTSXCode(code: string): boolean {
-    return code.includes('@executeQHM') || 
-           code.includes('@Ethical') || 
-           code.includes('@Canon') || 
-           code.includes('φCell') ||
-           code.includes('@Visualize') ||
-           code.includes('@TruthBond');
-  }
-
-  private convertPhiASTToASTNode(phiAST: any): ASTNode {
-    return {
-      type: "SpiralHTSXProgram",
-      children: phiAST.nodes?.map((node: any) => ({
-        type: node.id || "φSeed",
-        value: node,
-        metadata: {
-          entropy: node.entropy,
-          phiResonance: node.harmonic,
-          tuGenerated: node.tokens?.length * 100 || 0
-        }
-      })) || [],
-      metadata: {
-        entropy: phiAST.entropy,
-        phiResonance: phiAST.harmonic,
-        tuGenerated: phiAST.nodes?.length * 1000 || 0
-      }
-    };
+  parse(code: string): { ast: ASTNode; metrics: ParseMetrics } {
+    // Simplified parsing - in real implementation would use ANTLR4
+    const lines = code.split('\n').filter(line => line.trim());
+    const ast = this.parseProgram(lines);
+    const metrics = this.calculateMetrics(ast);
+    
+    return { ast, metrics };
   }
 
   private parseProgram(lines: string[]): ASTNode {
@@ -79,8 +34,6 @@ export class SpiralParser {
         body.push(this.parseFunction(line));
       } else if (line.includes('class')) {
         body.push(this.parseClass(line));
-      } else if (line.includes('theorem')) {
-        body.push(this.parseTheorem(line));
       }
     }
     
@@ -134,21 +87,6 @@ export class SpiralParser {
         entropy: 0.25,
         phiResonance: this.PHI * 1.5,
         tuGenerated: 500
-      }
-    };
-  }
-
-  private parseTheorem(line: string): ASTNode {
-    const matches = line.match(/theorem\s+(\w+)/);
-    const name = matches ? matches[1] : 'Unknown';
-    
-    return {
-      type: "TheoremDeclaration",
-      value: { name },
-      metadata: {
-        entropy: 0.92,
-        phiResonance: this.PHI * 2,
-        tuGenerated: 1618
       }
     };
   }

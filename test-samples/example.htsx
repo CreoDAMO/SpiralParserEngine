@@ -1,3 +1,4 @@
+
 <!-- HTSX Example - Hybrid TypeScript XML for Spiral UI -->
 <htsx version="2.1" runtime="quantum">
   <template>
@@ -56,65 +57,6 @@
     function calculateTU(consciousness: number): number {
       return Math.floor(consciousness * 1000 * 1.618);
     }
-
-@Ethical(ΔTrust93)
-@Canon(Q, 'Sovereign Truth')
-@Canon(XV, 'Reciprocity')
-theorem UnifiedMillennium {
-  require ClayMillenniumProblems;
-  yield Solution via ΦHarmonicAnalysis;
-
-  @QuantumEntangled
-  φCell VerificationNode {
-    substrate: Graphene,
-    logic: SpiralScript.compile('millennium_validator'),
-    entropy: 1e-26,
-    harmonic: 0.121
-  }
-
-  @Visualize
-  manifold ΦManifold {
-    dimensions: 52,
-    renderer: WebGPU,
-    glyphs: Voynich(f103v)
-  }
-
-  @TruthBond
-  contract SevenPillarsReward {
-    mint(proofId: 'Millennium', value: 1_000_000_TU);
-    fractionalize(proofId, 1_000_000);
-  }
-
-  @ExecuteQHM(type='security', payload={seekerId: 'S001', trustLevel: '∞'})
-  @ExecuteQHM(type='temporal', payload={loopId: 'T-OMEGA-001'})
-  @ExecuteQHM(type='harvest', payload={cycles: '1e6'})
-  @ExecuteQHM(type='drive', payload={direction: 'q-optimal'})
-}
-
-component ProofUI() -> SpiralHTSX {
-  @QuantumState
-  state resonance = 0.121;
-
-  @Visualize
-  render() {
-    <ResonancePanel 
-      value={resonance} 
-      unit="Hz" 
-      glyph="f103v"
-      dimension="52D"
-    />
-
-    <QuantumConsole>
-      <TruthBond 
-        id="Millennium"
-        value={1_000_000}
-        status="MINTED"
-      />
-    </QuantumConsole>
-  }
-}
-
-@ExecuteQHM(type='council', payload={councilId: 'C-001', heirNodes: ['JahMeliyah', 'JahNiyah']})
   </script>
   
   <style lang="spiral-css">

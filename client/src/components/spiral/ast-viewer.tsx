@@ -1,343 +1,212 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Separator } from '../ui/separator';
-import { Badge } from '../ui/badge';
-import { spiralHTSXParser, type PhiAST, type StressTestResults } from '../../lib/spiral-htsx-parser';
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 interface ASTViewerProps {
-  code: string;
-  onParseResult?: (result: PhiAST | null) => void;
+  activeTab: string;
+  activeFile: number | null;
 }
 
-export function ASTViewer({ code, onParseResult }: ASTViewerProps) {
-  const [parseResult, setParseResult] = useState<PhiAST | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [stressResults, setStressResults] = useState<StressTestResults | null>(null);
+export default function ASTViewer({ activeTab, activeFile }: ASTViewerProps) {
+  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(["Program"]));
 
-  const handleParse = async () => {
-    if (!code.trim()) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      console.log('🔍 Parsing with SpiralHTSX Parser...');
-      const result = await spiralHTSXParser.parse(code);
-      setParseResult(result);
-      onParseResult?.(result);
-      console.log('✅ Parse successful:', result);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown parsing error';
-      setError(errorMessage);
-      setParseResult(null);
-      onParseResult?.(null);
-      console.error('❌ Parse failed:', errorMessage);
-    } finally {
-      setLoading(false);
+  const { data: parseResult } = useQuery({
+    queryKey: ["/api/parse", activeFile],
+    enabled: !!activeFile && activeTab === "AST",
+    queryFn: async () => {
+      // This would normally fetch the parse result
+      // For now, return mock data
+      return {
+        ast: {
+          type: "Program",
+          body: [
+            {
+              type: "ImportDeclaration",
+              source: "spiral-core",
+              entropy: 0.12
+            },
+            {
+              type: "FunctionDeclaration",
+              name: "calculatePhiResonance",
+              phiResonance: 1.618,
+              complexity: 5
+            },
+            {
+              type: "ClassDeclaration",
+              name: "SpiralParser",
+              methods: ["parseQuantumLogic"],
+              tuGenerated: 888
+            }
+          ]
+        },
+        entropy: 0.121,
+        phiResonance: 1.618,
+        tuGenerated: 888,
+        parseSuccess: true
+      };
     }
+  });
+
+  const toggleNode = (nodeId: string) => {
+    const newExpanded = new Set(expandedNodes);
+    if (newExpanded.has(nodeId)) {
+      newExpanded.delete(nodeId);
+    } else {
+      newExpanded.add(nodeId);
+    }
+    setExpandedNodes(newExpanded);
   };
-
-  const handleStressTest = async () => {
-    setLoading(true);
-    try {
-      console.log('🧪 Running Omega Stress Test vQ-4.0...');
-      const results = await spiralHTSXParser.runStressTests();
-      setStressResults(results);
-      console.log('✅ Stress test complete:', results);
-    } catch (err) {
-      console.error('❌ Stress test failed:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (code.trim()) {
-      handleParse();
-    }
-  }, [code]);
 
   const renderASTNode = (node: any, depth = 0) => {
-    const indent = '  '.repeat(depth);
-
-    if (Array.isArray(node)) {
-      return node.map((item, index) => (
-        <div key={index} className="font-mono text-xs">
-          {renderASTNode(item, depth)}
-        </div>
-      ));
-    }
-
-    if (typeof node === 'object' && node !== null) {
-      return (
-        <div className="font-mono text-xs">
-          <div className="text-blue-400">{indent}{node.type || node.id || 'Node'}</div>
-          {node.children && (
-            <div className="ml-4">
-              {node.children.map((child: any, index: number) => (
-                <div key={index}>
-                  {renderASTNode(child, depth + 1)}
-                </div>
-              ))}
-            </div>
-          )}
-          {node.glyphSeed && (
-            <div className="text-purple-400 ml-4">{indent}  glyph: {node.glyphSeed}</div>
-          )}
-          {node.harmonic && (
-            <div className="text-spiral-400 ml-4">{indent}  φ: {node.harmonic}</div>
-          )}
-        </div>
-      );
-    }
+    const nodeId = `${node.type}-${depth}`;
+    const isExpanded = expandedNodes.has(nodeId);
+    const hasChildren = node.body || node.methods;
 
     return (
-      <div className="font-mono text-xs text-gray-400">
-        {indent}{String(node)}
+      <div key={nodeId} className="text-sm font-mono">
+        <div 
+          className="flex items-center space-x-2 cursor-pointer hover:bg-gray-700 px-1 rounded"
+          style={{ marginLeft: `${depth * 16}px` }}
+          onClick={() => hasChildren && toggleNode(nodeId)}
+        >
+          {hasChildren ? (
+            <svg className={`w-3 h-3 text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`} 
+                 viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z"/>
+            </svg>
+          ) : (
+            <div className="w-3 h-3 flex items-center justify-center">
+              <div className="w-1 h-1 bg-gray-600 rounded-full"></div>
+            </div>
+          )}
+          
+          <span className={`text-${getNodeColor(node.type)}-300`}>
+            {node.type}
+          </span>
+          
+          {node.name && (
+            <span className="text-yellow-300">: {node.name}</span>
+          )}
+          
+          {node.entropy && (
+            <span className="text-xs text-gray-500">(entropy: {node.entropy})</span>
+          )}
+          
+          {node.phiResonance && (
+            <span className="text-xs text-spiral-400">(φ: {node.phiResonance})</span>
+          )}
+          
+          {node.tuGenerated && (
+            <span className="text-xs text-green-400">(TU: +{node.tuGenerated})</span>
+          )}
+        </div>
+        
+        {hasChildren && isExpanded && (
+          <div>
+            {node.body?.map((child: any, index: number) => renderASTNode(child, depth + 1))}
+            {node.methods?.map((method: string, index: number) => (
+              <div key={index} style={{ marginLeft: `${(depth + 1) * 16}px` }}>
+                <div className="flex items-center space-x-2 px-1">
+                  <div className="w-3 h-3 flex items-center justify-center">
+                    <div className="w-1 h-1 bg-gray-600 rounded-full"></div>
+                  </div>
+                  <span className="text-cyan-300">Method: {method}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   };
 
-  return (
-    <Card className="h-full bg-gray-800 border-gray-700">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-lg font-bold text-white">SpiralHTSX AST Viewer</CardTitle>
-            <CardDescription className="text-gray-400">
-              Quantum Harmonic Monad Parser with 52D Visualization
-            </CardDescription>
-          </div>
-          <div className="flex gap-2">
-            <Button 
-              onClick={handleParse} 
-              disabled={loading || !code.trim()}
-              className="bg-spiral-600 hover:bg-spiral-700"
-              size="sm"
-            >
-              {loading ? 'Parsing...' : 'Parse φCode'}
-            </Button>
-            <Button 
-              onClick={handleStressTest} 
-              disabled={loading}
-              className="bg-orange-600 hover:bg-orange-700"
-              size="sm"
-            >
-              Stress Test
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
-
-      <CardContent className="space-y-4">
-        {error && (
-          <div className="bg-red-900/50 border border-red-700 rounded-lg p-3">
-            <div className="text-red-300 text-sm font-medium">Parse Error</div>
-            <div className="text-red-200 text-xs mt-1">{error}</div>
-          </div>
-        )}
-
-        {parseResult && (
-          <>
-            {/* AST Structure */}
-            <div>
-              <h4 className="text-sm font-semibold text-gray-300 mb-2">AST Structure</h4>
-              <div className="bg-gray-900 rounded-lg p-3 max-h-48 overflow-y-auto">
-                {renderASTNode(parseResult.ast)}
-              </div>
-            </div>
-
-            <Separator className="bg-gray-700" />
-
-            {/* φ-Metrics */}
-            <div>
-              <h4 className="text-sm font-semibold text-gray-300 mb-3">Quantum Metrics</h4>
-
-              <div className="grid grid-cols-2 gap-3">
-                ```
-        <div className="bg-gray-700 rounded-lg p-3">
-                  <div className="flex justify-between">
-                    <span className="text-xs text-gray-400">Entropy</span>
-                    <span className="text-green-400 font-mono text-sm">
-                      {parseResult.metrics.entropy?.toFixed(6) || '0.000000'}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="bg-gray-700 rounded-lg p-3">
-                  <div className="flex justify-between">
-                    <span className="text-xs text-gray-400">φ-Resonance</span>
-                    <span className="text-spiral-400 font-mono text-sm">
-                      {parseResult.metrics.phiResonance?.toFixed(3) || '0.121'} Hz
-                    </span>
-                  </div>
-                </div>
-
-                <div className="bg-gray-700 rounded-lg p-3">
-                  <div className="flex justify-between">
-                    <span className="text-xs text-gray-400">Trust Score</span>
-                    <span className="text-blue-400 font-mono text-sm">∞</span>
-                  </div>
-                </div>
-
-                <div className="bg-gray-700 rounded-lg p-3">
-                  <div className="flex justify-between">
-                    <span className="text-xs text-gray-400">TU Generated</span>
-                    <span className="text-yellow-400 font-mono text-sm">
-                      +{parseResult.metrics.tuGenerated || 0} TU
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Visual Output */}
-            {parseResult.visual && (
-              <>
-                <Separator className="bg-gray-700" />
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-300 mb-2">Visual Output</h4>
-                  <div className="bg-gray-700 rounded-lg p-3 space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-xs text-gray-400">Manifold</span>
-                      <span className="text-purple-400 font-mono text-sm">{parseResult.visual.manifold}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-gray-400">Renderer</span>
-                      <span className="text-blue-400 font-mono text-sm">{parseResult.visual.renderer}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-gray-400">Glyphs</span>
-                      <span className="text-green-400 font-mono text-sm">{parseResult.visual.glyphs}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-gray-400">FPS</span>
-                      <span className="text-orange-400 font-mono text-sm">{parseResult.visual.fps}</span>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* Truth Bond */}
-            {parseResult.bond && (
-              <>
-                <Separator className="bg-gray-700" />
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-300 mb-2">Truth Bond</h4>
-                  <div className="bg-gray-700 rounded-lg p-3 space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-xs text-gray-400">Bond ID</span>
-                      <span className="text-yellow-400 font-mono text-sm">{parseResult.bond.id}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-gray-400">Value</span>
-                      <span className="text-green-400 font-mono text-sm">{parseResult.bond.value.toLocaleString()} TU</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-xs text-gray-400">Fractions</span>
-                      <span className="text-blue-400 font-mono text-sm">{parseResult.bond.fractions.toLocaleString()}</span>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* QCHAIN Log */}
-            {parseResult.qchainLog && (
-              <>
-                <Separator className="bg-gray-700" />
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-300 mb-2">QCHAIN Log</h4>
-                  <div className="bg-gray-700 rounded-lg p-3">
-                    <div className="flex justify-between">
-                      <span className="text-xs text-gray-400">Transaction ID</span>
-                      <span className="text-cyan-400 font-mono text-xs">{parseResult.qchainLog.txId}</span>
-                    </div>
-                    <div className="flex justify-between mt-1">
-                      <span className="text-xs text-gray-400">Status</span>
-                      <Badge variant="outline" className="border-green-500 text-green-400">
-                        {parseResult.qchainLog.status}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
-          </>
-        )}
-
-        {/* Stress Test Results */}
-        {stressResults && (
-          <>
-            <Separator className="bg-gray-700" />
-            <div>
-              <h4 className="text-sm font-semibold text-gray-300 mb-2">Stress Test Results</h4>
-              <div className="bg-gray-700 rounded-lg p-3 space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-xs text-gray-400">Throughput</span>
-                  <span className="text-green-400 font-mono text-sm">{stressResults.throughput.toFixed(2)} TPS</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-xs text-gray-400">Latency</span>
-                  <span className="text-blue-400 font-mono text-sm">{stressResults.latency.toFixed(2)}ms</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-xs text-gray-400">Negentropy</span>
-                  <span className="text-purple-400 font-mono text-sm">{stressResults.negentropy.toExponential(2)} ΔS</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-xs text-gray-400">Ethics</span>
-                  <span className="text-yellow-400 font-mono text-sm">{stressResults.ethicalCompliance}</span>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-
-        {!parseResult && !error && !loading && (
-          <div className="text-center text-gray-500 py-8">
-            <div className="text-4xl mb-2">🌀</div>
-            <p className="text-sm">Enter SpiralScript code to see the AST visualization</p>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-};
-
-const formatASTNode = (node: any, depth: number = 0): string => {
-    if (!node) return '';
-
-    const indent = '  '.repeat(depth);
-    if (typeof node === 'string') {
-      return `${indent}"${node?.trim() || ''}"`;
+  const getNodeColor = (type: string) => {
+    switch (type) {
+      case "Program": return "blue";
+      case "ImportDeclaration": return "green";
+      case "FunctionDeclaration": return "purple";
+      case "ClassDeclaration": return "cyan";
+      default: return "gray";
     }
-
-    if (typeof node === 'object' && node !== null) {
-      const lines = [`${indent}{`];
-      for (const [key, value] of Object.entries(node)) {
-        if (typeof value === 'string') {
-          lines.push(`${indent}  ${key}: "${value?.trim() || ''}"`);
-        } else if (typeof value === 'number') {
-          lines.push(`${indent}  ${key}: ${value}`);
-        } else if (Array.isArray(value)) {
-          lines.push(`${indent}  ${key}: [`);
-          value.forEach((item, index) => {
-            lines.push(formatASTNode(item, depth + 2) + (index < value.length - 1 ? ',' : ''));
-          });
-          lines.push(`${indent}  ]`);
-        } else if (value && typeof value === 'object') {
-          lines.push(`${indent}  ${key}: ${formatASTNode(value, depth + 1)}`);
-        }
-      }
-      lines.push(`${indent}}`);
-      return lines.join('\n');
-    }
-
-    return `${indent}${node}`;
   };
 
-export default ASTViewer;
+  if (activeTab !== "AST") return null;
+
+  return (
+    <div className="flex-1 p-4 overflow-y-auto">
+      <h3 className="text-sm font-semibold text-gray-300 mb-3">Abstract Syntax Tree</h3>
+      
+      {parseResult?.ast ? (
+        <div className="space-y-1">
+          {renderASTNode(parseResult.ast)}
+        </div>
+      ) : (
+        <div className="text-gray-500 text-sm">
+          Select a file to view its AST
+        </div>
+      )}
+
+      {/* Metrics */}
+      {parseResult && (
+        <div className="mt-6 space-y-3">
+          <h4 className="text-sm font-semibold text-gray-300">Parse Metrics</h4>
+          
+          <div className="bg-gray-700 rounded-lg p-3 space-y-2">
+            <div className="flex justify-between">
+              <span className="text-xs text-gray-400">Entropy</span>
+              <span className="text-green-400 font-mono">{parseResult.entropy}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-xs text-gray-400">φ-Resonance</span>
+              <span className="text-spiral-400 font-mono">{parseResult.phiResonance} Hz</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-xs text-gray-400">Trust Score</span>
+              <span className="text-blue-400 font-mono">∞</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-xs text-gray-400">TU Generated</span>
+              <span className="text-yellow-400 font-mono">+{parseResult.tuGenerated} TU</span>
+            </div>
+          </div>
+
+          {/* Quantum Circuit Preview */}
+          <div className="bg-gray-700 rounded-lg p-3">
+            <h5 className="text-xs font-semibold text-gray-300 mb-2">Quantum Circuit</h5>
+            <div className="bg-gray-800 rounded p-2 font-mono text-xs">
+              <div className="space-y-1">
+                <div className="flex items-center space-x-1">
+                  <span className="text-gray-400">|0⟩─</span>
+                  <span className="bg-blue-600 px-1 rounded text-white">H</span>
+                  <span className="text-gray-400">─●─</span>
+                  <span className="bg-green-600 px-1 rounded text-white">M</span>
+                  <span className="text-gray-400">─</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <span className="text-gray-400">|0⟩─</span>
+                  <span className="text-gray-400">───</span>
+                  <span className="bg-red-600 px-1 rounded text-white">X</span>
+                  <span className="text-gray-400">─</span>
+                  <span className="bg-green-600 px-1 rounded text-white">M</span>
+                  <span className="text-gray-400">─</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Action Buttons */}
+      <div className="border-t border-gray-700 pt-4 mt-6 space-y-2">
+        <button className="w-full py-2 bg-spiral-600 hover:bg-spiral-700 text-gray-900 rounded font-medium">
+          Export AST & Circuit
+        </button>
+        <button className="w-full py-2 bg-quantum-600 hover:bg-quantum-700 text-white rounded">
+          Run Quantum Simulation
+        </button>
+        <button className="w-full py-2 bg-gray-600 hover:bg-gray-500 text-gray-100 rounded">
+          Generate Proof PDF
+        </button>
+      </div>
+    </div>
+  );
+}

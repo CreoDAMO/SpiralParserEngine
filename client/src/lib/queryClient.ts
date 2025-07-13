@@ -41,9 +41,6 @@ export const getQueryFn: <T>(options: {
     return await res.json();
   };
 
-// API base URL for development
-export const API_BASE_URL = '/api';
-
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
