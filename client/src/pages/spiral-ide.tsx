@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import FileExplorer from "@/components/spiral/file-explorer";
-import TrustWallet from "@/components/spiral/trust-wallet";
-import QuantumTools from "@/components/spiral/quantum-tools";
 import MonacoEditor from "@/components/spiral/monaco-editor";
 import ASTViewer from "@/components/spiral/ast-viewer";
 import TerminalConsole from "@/components/spiral/terminal-console";
+import TrustWallet from "@/components/spiral/trust-wallet";
+import QuantumTools from "@/components/spiral/quantum-tools";
 import EconomicAnalyzer from "@/components/spiral/economic-analyzer";
-import { MolecularAssemblyDashboard } from "@/components/spiral/molecular-assembly";
+import MolecularAssembly from "@/components/spiral/molecular-assembly";
+import RevenueDashboard from "@/components/spiral/revenue-dashboard";
 
 export default function SpiralIDE() {
   const [activeFile, setActiveFile] = useState<number | null>(null);
