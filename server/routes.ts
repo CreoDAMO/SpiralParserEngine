@@ -17,9 +17,12 @@ const limiter = rateLimit({
   max: 1000, // increased limit for development
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: true,
+  skip: (req) => {
+    // Skip rate limiting in development to avoid proxy issues
+    return process.env.NODE_ENV === 'development';
+  },
   keyGenerator: (req) => {
-    return req.ip || req.connection.remoteAddress || 'anonymous';
+    return req.ip || req.socket.remoteAddress || 'anonymous';
   }
 });
 
