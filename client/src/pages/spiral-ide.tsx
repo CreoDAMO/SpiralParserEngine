@@ -10,7 +10,9 @@ import QuantumTools from "@/components/spiral/quantum-tools";
 import EconomicAnalyzer from "@/components/spiral/economic-analyzer";
 import MolecularAssembly from "@/components/spiral/molecular-assembly";
 import RevenueDashboard from "@/components/spiral/revenue-dashboard";
-import { HybridBlockchainViewer } from '../components/spiral/hybrid-blockchain';
+import HybridBlockchainViewer from '@/components/spiral/hybrid-blockchain-viewer';
+import StressTestDashboard from '@/components/spiral/stress-test';
+import AIChatPanel from '@/components/spiral/ai-chat-panel';
 
 export default function SpiralIDE() {
   const [activeFile, setActiveFile] = useState<number | null>(null);
@@ -105,7 +107,7 @@ export default function SpiralIDE() {
         <aside className="w-96 bg-gray-800 border-l border-gray-700 flex flex-col">
           <div className="border-b border-gray-700 px-4 py-2">
             <div className="flex space-x-1">
-              {["AST", "Quantum", "TU Gen", "Economics", "HYBRID", "Output"].map((tab) => (
+              {["AST", "Quantum", "TU Gen", "Economics", "HYBRID", "AI Chat", "Stress Test", "Output"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -129,6 +131,10 @@ export default function SpiralIDE() {
               <RevenueDashboard />
               <HybridBlockchainViewer />
             </div>
+          ) : activeTab === "AI Chat" ? (
+            <AIChatPanel />
+          ) : activeTab === "Stress Test" ? (
+            <StressTestDashboard />
           ) : (
             <ASTViewer 
               activeTab={activeTab}
