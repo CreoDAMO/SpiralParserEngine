@@ -17,6 +17,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const files = await storage.getUserFiles(userId);
       res.json(files);
     } catch (error) {
+      console.error("Error fetching files:", error);
       res.status(500).json({ error: "Failed to fetch files" });
     }
   });
