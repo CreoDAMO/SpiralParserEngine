@@ -1,3 +1,4 @@
+import express from "express";
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
@@ -9,7 +10,21 @@ import {
   insertParseResultSchema 
 } from "@shared/schema";
 
+import rateLimit from "express-rate-limit";
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 1000, // increased limit for development
+  standardHeaders: true,
+  legacyHeaders: false,
+  trustProxy: true,
+  keyGenerator: (req) => {
+    return req.ip || req.connection.remoteAddress || 'anonymous';
+  }
+});
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  app.use(limiter);
   // File operations
   app.get("/api/files/:userId", async (req, res) => {
     try {
@@ -59,7 +74,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/parse", async (req, res) => {
     try {
       const { fileId, code } = req.body;
-      
+
       // SpiralScript parsing with ANTLR4 integration
       const ast = {
         type: "Program",
@@ -175,7 +190,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       const circuit = await storage.getCircuit(id);
-      
+
       if (!circuit) {
         return res.status(404).json({ error: "Circuit not found" });
       }
@@ -202,13 +217,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/generate-tu", async (req, res) => {
     try {
       const { userId, proofType, complexity, entropy } = req.body;
-      
+
       const phi = 1.618033988749;
       const baseAmount = complexity * phi * (1 - entropy);
       const phiResonance = entropy * phi * Math.cos(entropy * Math.PI);
-      
+
       let tuAmount = baseAmount;
-      
+
       // Apply multipliers based on proof type
       switch (proofType) {
         case "millennium_problem":
