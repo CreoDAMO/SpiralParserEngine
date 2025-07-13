@@ -3,6 +3,9 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+// Configure Express to trust Replit's proxy
+app.set('trust proxy', true);
+
 // Configure trust proxy for Replit environment
 if (process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1);
@@ -66,7 +69,7 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = 5000;
-  
+
   // Graceful shutdown handling
   process.on('SIGTERM', () => {
     log('SIGTERM received, shutting down gracefully');
