@@ -7,6 +7,7 @@ import MonacoEditor from "@/components/spiral/monaco-editor";
 import ASTViewer from "@/components/spiral/ast-viewer";
 import TerminalConsole from "@/components/spiral/terminal-console";
 import EconomicAnalyzer from "@/components/spiral/economic-analyzer";
+import { MolecularAssemblyDashboard } from "@/components/spiral/molecular-assembly";
 
 export default function SpiralIDE() {
   const [activeFile, setActiveFile] = useState<number | null>(null);
@@ -50,7 +51,7 @@ export default function SpiralIDE() {
             <button className="px-3 py-1 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded">Tools</button>
           </nav>
         </div>
-        
+
         <div className="flex items-center space-x-4">
           {/* TU Balance Display */}
           <div className="flex items-center space-x-2 bg-gray-700 px-3 py-1 rounded-lg">
@@ -59,13 +60,13 @@ export default function SpiralIDE() {
             </svg>
             <span className="text-sm font-mono">{user?.tuBalance?.toFixed(3) || "1,618.382"} TU | SRI: {(user?.sriScore || 93).toFixed(1)}</span>
           </div>
-          
+
           {/* Quantum Status */}
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             <span className="text-xs text-gray-400 font-mono">φ-Resonance: 0.121 | QCHAIN</span>
           </div>
-          
+
           {/* User Profile */}
           <button className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500">
             <svg className="w-4 h-4 text-gray-300" viewBox="0 0 24 24" fill="currentColor">
@@ -115,7 +116,7 @@ export default function SpiralIDE() {
               ))}
             </div>
           </div>
-          
+
           {activeTab === "Economics" ? (
             <EconomicAnalyzer />
           ) : (
