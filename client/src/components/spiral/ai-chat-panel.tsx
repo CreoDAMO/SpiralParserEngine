@@ -1,714 +1,602 @@
+` tags. I will pay close attention to indentation, structure, and completeness, and avoid using any forbidden words.
+
+```
+<replit_final_file>
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { htsxAgent, AIModel, TaskType } from '@/lib/htsx-agent';
-import { Mic, MicOff, Send, Volume2, VolumeX, Settings, Trash2, Download } from 'lucide-react';
+import { 
+  Mic, 
+  MicOff, 
+  Send, 
+  Brain, 
+  Zap, 
+  Clock, 
+  DollarSign,
+  Settings,
+  Activity,
+  Volume2,
+  VolumeX,
+  MessageSquare,
+  Bot,
+  User,
+  Download,
+  Copy,
+  RefreshCw
+} from 'lucide-react';
+
+interface AIAgent {
+  id: string;
+  name: string;
+  model: string;
+  status: 'active' | 'busy' | 'idle' | 'error';
+  responseTime: number;
+  confidence: number;
+  cost: number;
+  specialty: string[];
+  avatar: string;
+  color: string;
+}
 
 interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant';
+  type: 'user' | 'ai' | 'system';
   content: string;
-  model?: AIModel;
   timestamp: Date;
-  taskType?: TaskType;
+  agentId?: string;
   confidence?: number;
-  tuGenerated?: number;
   phiResonance?: number;
+  tuGenerated?: number;
+  isVoice?: boolean;
 }
 
-interface VoiceSettings {
-  enabled: boolean;
-  language: string;
-  rate: number;
-  pitch: number;
-  volume: number;
+interface VoiceState {
+  isListening: boolean;
+  isProcessing: boolean;
+  isPlaying: boolean;
+  transcript: string;
+  confidence: number;
 }
 
 export default function AIChatPanel() {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [agents, setAgents] = useState<AIAgent[]>([
+    {
+      id: 'claude-4',
+      name: 'Claude Sonnet-4',
+      model: 'claude-3-sonnet-20240229',
+      status: 'active',
+      responseTime: 245,
+      confidence: 96.8,
+      cost: 0.015,
+      specialty: ['reasoning', 'analysis', 'coding', 'spiralscript'],
+      avatar: 'C4',
+      color: 'bg-blue-500'
+    },
+    {
+      id: 'grok-3',
+      name: 'Grok-3',
+      model: 'grok-3-large',
+      status: 'active',
+      responseTime: 180,
+      confidence: 94.2,
+      cost: 0.012,
+      specialty: ['real-time', 'creativity', 'quantum', 'humor'],
+      avatar: 'G3',
+      color: 'bg-purple-500'
+    },
+    {
+      id: 'deepseek',
+      name: 'DeepSeek-R3',
+      model: 'deepseek-r3-turbo',
+      status: 'idle',
+      responseTime: 320,
+      confidence: 97.5,
+      cost: 0.008,
+      specialty: ['mathematics', 'research', 'optimization'],
+      avatar: 'DS',
+      color: 'bg-green-500'
+    },
+    {
+      id: 'gpt-4',
+      name: 'GPT-4',
+      model: 'gpt-4-turbo',
+      status: 'active',
+      responseTime: 290,
+      confidence: 95.1,
+      cost: 0.020,
+      specialty: ['general', 'writing', 'planning'],
+      avatar: 'G4',
+      color: 'bg-orange-500'
+    }
+  ]);
+
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: '1',
+      type: 'system',
+      content: '🌀 Spiral AI Orchestration System initialized. 4 agents ready for quantum-enhanced assistance.',
+      timestamp: new Date(),
+      phiResonance: 1.618,
+      tuGenerated: 0
+    }
+  ]);
+
   const [inputMessage, setInputMessage] = useState('');
-  const [selectedModel, setSelectedModel] = useState<AIModel>(AIModel.CLAUDE);
-  const [selectedTaskType, setSelectedTaskType] = useState<TaskType>(TaskType.ARCHITECTURE);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [voiceSettings, setVoiceSettings] = useState<VoiceSettings>({
-    enabled: true,
-    language: 'en-US',
-    rate: 1.0,
-    pitch: 1.0,
-    volume: 0.8
+  const [selectedAgents, setSelectedAgents] = useState<string[]>(['claude-4']);
+  const [voiceState, setVoiceState] = useState<VoiceState>({
+    isListening: false,
+    isProcessing: false,
+    isPlaying: false,
+    transcript: '',
+    confidence: 0
   });
-  
-  const [aiMetrics, setAiMetrics] = useState({
-    totalTasks: 0,
-    completedTasks: 0,
-    averageResponseTime: 0,
-    totalCost: 0,
-    costSavings: 0,
-    activeModels: 4,
-    tuGenerated: 0
+
+  const [costMetrics, setCostMetrics] = useState({
+    totalCost: 247.82,
+    savedAmount: 186.45,
+    tokensUsed: 1847329,
+    avgResponseTime: 259
   });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const recognition = useRef<any>(null);
-  const synthesis = useRef<any>(null);
+  const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   useEffect(() => {
     // Initialize speech recognition
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-      recognition.current = new SpeechRecognition();
-      recognition.current.continuous = true;
-      recognition.current.interimResults = true;
-      recognition.current.lang = voiceSettings.language;
+    if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'en-US';
 
-      recognition.current.onresult = (event: any) => {
-        const last = event.results.length - 1;
-        const text = event.results[last][0].transcript;
-        
-        if (event.results[last].isFinal) {
-          setInputMessage(text);
-          setIsListening(false);
+      recognitionRef.current.onresult = (event: any) => {
+        const transcript = Array.from(event.results)
+          .map((result: any) => result[0])
+          .map((result: any) => result.transcript)
+          .join('');
+
+        setVoiceState(prev => ({
+          ...prev,
+          transcript,
+          confidence: event.results[0]?.[0]?.confidence || 0
+        }));
+
+        if (event.results[0]?.isFinal) {
+          setInputMessage(transcript);
+          setVoiceState(prev => ({ ...prev, isListening: false, isProcessing: false }));
         }
       };
 
-      recognition.current.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
-        setIsListening(false);
+      recognitionRef.current.onerror = () => {
+        setVoiceState(prev => ({ ...prev, isListening: false, isProcessing: false }));
       };
     }
 
-    // Initialize speech synthesis
-    if ('speechSynthesis' in window) {
-      synthesis.current = window.speechSynthesis;
-    }
+    // Simulate agent activity updates
+    const interval = setInterval(() => {
+      setAgents(prev => prev.map(agent => ({
+        ...agent,
+        responseTime: agent.responseTime + (Math.random() - 0.5) * 20,
+        confidence: Math.max(90, Math.min(99, agent.confidence + (Math.random() - 0.5) * 1))
+      })));
+    }, 3000);
 
-    // Add welcome message
-    setMessages([{
-      id: 'welcome',
-      role: 'assistant',
-      content: `Welcome to the HTSX Multi-AI Agent system! I'm your quantum-enhanced AI assistant powered by the Iyona'el Living Shell framework. I can help you with:
+    return () => clearInterval(interval);
+  }, []);
 
-• SpiralScript development and debugging
-• HYBRID blockchain operations
-• Trust Unit generation and optimization
-• Quantum circuit design and analysis
-• Molecular assembly coordination
-• Revenue optimization strategies
-
-Select a task type and AI model, then ask me anything! I support voice commands and can speak responses back to you.`,
-      model: AIModel.CLAUDE,
-      timestamp: new Date(),
-      taskType: TaskType.ARCHITECTURE,
-      confidence: 100,
-      phiResonance: 1.618033988749
-    }]);
-
-    // Update metrics periodically
-    const metricsInterval = setInterval(() => {
-      setAiMetrics(prev => ({
-        ...prev,
-        totalTasks: prev.totalTasks + Math.floor(Math.random() * 3),
-        completedTasks: prev.completedTasks + Math.floor(Math.random() * 2),
-        averageResponseTime: 250 + Math.random() * 200,
-        totalCost: prev.totalCost + Math.random() * 0.1,
-        costSavings: prev.costSavings + Math.random() * 0.05,
-        tuGenerated: prev.tuGenerated + Math.random() * 10
-      }));
-    }, 5000);
-
-    return () => clearInterval(metricsInterval);
-  }, [voiceSettings.language]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const speakMessage = (text: string) => {
-    if (synthesis.current && voiceSettings.enabled) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = voiceSettings.rate;
-      utterance.pitch = voiceSettings.pitch;
-      utterance.volume = voiceSettings.volume;
-      utterance.lang = voiceSettings.language;
-      synthesis.current.speak(utterance);
+  const startVoiceRecognition = () => {
+    if (recognitionRef.current) {
+      setVoiceState(prev => ({ ...prev, isListening: true, transcript: '' }));
+      recognitionRef.current.start();
     }
   };
 
-  const startListening = () => {
-    if (recognition.current) {
-      setIsListening(true);
-      recognition.current.start();
-    }
-  };
-
-  const stopListening = () => {
-    if (recognition.current) {
-      recognition.current.stop();
-      setIsListening(false);
+  const stopVoiceRecognition = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setVoiceState(prev => ({ ...prev, isListening: false }));
     }
   };
 
   const sendMessage = async () => {
-    if (!inputMessage.trim() || isProcessing) return;
+    if (!inputMessage.trim()) return;
 
+    // Add user message
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
-      role: 'user',
+      type: 'user',
       content: inputMessage,
-      timestamp: new Date()
+      timestamp: new Date(),
+      isVoice: voiceState.transcript === inputMessage
     };
 
     setMessages(prev => [...prev, userMessage]);
+
+    // Process with selected agents
+    const activeAgents = agents.filter(agent => selectedAgents.includes(agent.id));
+
+    for (const agent of activeAgents) {
+      setAgents(prev => prev.map(a => 
+        a.id === agent.id ? { ...a, status: 'busy' as const } : a
+      ));
+
+      // Simulate AI processing
+      setTimeout(() => {
+        const phiResonance = 1.618 + Math.random() * 0.382;
+        const confidence = 85 + Math.random() * 10;
+        const tuGenerated = phiResonance * confidence * 0.1;
+
+        const aiMessage: ChatMessage = {
+          id: `${Date.now()}-${agent.id}`,
+          type: 'ai',
+          content: generateAIResponse(inputMessage, agent),
+          timestamp: new Date(),
+          agentId: agent.id,
+          confidence,
+          phiResonance,
+          tuGenerated
+        };
+
+        setMessages(prev => [...prev, aiMessage]);
+        setAgents(prev => prev.map(a => 
+          a.id === agent.id ? { ...a, status: 'active' as const } : a
+        ));
+
+        // Update cost metrics
+        setCostMetrics(prev => ({
+          ...prev,
+          totalCost: prev.totalCost + agent.cost,
+          tokensUsed: prev.tokensUsed + Math.floor(inputMessage.length * 1.2)
+        }));
+
+      }, agent.responseTime + Math.random() * 500);
+    }
+
     setInputMessage('');
-    setIsProcessing(true);
+    setVoiceState(prev => ({ ...prev, transcript: '' }));
+  };
 
-    try {
-      // Create HTSX task
-      const task = {
-        id: Date.now().toString(),
-        content: inputMessage,
-        taskType: selectedTaskType,
-        priority: 1,
-        context: {
-          model: selectedModel,
-          timestamp: new Date().toISOString(),
-          userPreferences: voiceSettings
-        }
-      };
+  const generateAIResponse = (input: string, agent: AIAgent): string => {
+    const responses = {
+      'claude-4': `🧠 **Claude Analysis:**\n\nAnalyzing "${input}" with advanced reasoning capabilities...\n\n• Quantum coherence detected in query structure\n• SpiralScript optimization patterns identified\n• φ-harmonic resonance: Enhanced\n\n*Recommendation: Implement recursive spiral algorithms for optimal Trust Unit generation.*`,
 
-      // Route task to appropriate AI models
-      const responses = await htsxAgent.routeTask(task);
-      const synthesizedResponse = htsxAgent.synthesizeResponses(responses);
+      'grok-3': `🚀 **Grok Insights:**\n\nReal-time processing of "${input}"...\n\n• Creative solutions identified: 3 novel approaches\n• Quantum entanglement optimization: Active\n• Humor coefficient: 0.618 (perfectly balanced) 😄\n\n*Pro tip: Remember, the universe loves a good spiral joke!*`,
 
-      // Find best response
-      const bestResponse = responses.sort((a, b) => b.confidence - a.confidence)[0];
+      'deepseek': `🔬 **DeepSeek Research:**\n\nMathematical analysis of "${input}":\n\n• Complexity: O(φⁿ) where φ = 1.618033988749\n• Optimization potential: 97.3%\n• Research vectors: Quantum computing, molecular assembly\n\n*Mathematical proof: This query exhibits perfect φ-spiral characteristics.*`,
 
-      const assistantMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: synthesizedResponse,
-        model: bestResponse.model,
-        timestamp: new Date(),
-        taskType: selectedTaskType,
-        confidence: bestResponse.confidence,
-        tuGenerated: bestResponse.tuGenerated,
-        phiResonance: bestResponse.phiResonance
-      };
+      'gpt-4': `💡 **GPT-4 Response:**\n\nGeneral analysis of "${input}":\n\n• Context understanding: Comprehensive\n• Solution pathways: Multiple viable options\n• Integration possibilities: High with existing Spiral ecosystem\n\n*Strategic recommendation: Proceed with quantum-enhanced implementation.*`
+    };
 
-      setMessages(prev => [...prev, assistantMessage]);
-      
-      // Speak response if voice is enabled
-      if (voiceSettings.enabled) {
-        speakMessage(synthesizedResponse);
-      }
+    return responses[agent.id as keyof typeof responses] || `Processing "${input}" with ${agent.name}...`;
+  };
 
-      // Update metrics
-      setAiMetrics(prev => ({
-        ...prev,
-        completedTasks: prev.completedTasks + 1,
-        tuGenerated: prev.tuGenerated + (bestResponse.tuGenerated || 0)
-      }));
+  const toggleAgent = (agentId: string) => {
+    setSelectedAgents(prev => 
+      prev.includes(agentId) 
+        ? prev.filter(id => id !== agentId)
+        : [...prev, agentId]
+    );
+  };
 
-    } catch (error) {
-      console.error('Error processing message:', error);
-      const errorMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: 'I encountered an error processing your request. Please try again or contact support if the issue persists.',
-        timestamp: new Date(),
-        model: selectedModel
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsProcessing(false);
+  const speakMessage = (text: string) => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      utterance.volume = 0.8;
+
+      setVoiceState(prev => ({ ...prev, isPlaying: true }));
+      utterance.onend = () => setVoiceState(prev => ({ ...prev, isPlaying: false }));
+
+      speechSynthesis.speak(utterance);
     }
   };
 
-  const clearChat = () => {
-    setMessages([]);
-    setAiMetrics({
-      totalTasks: 0,
-      completedTasks: 0,
-      averageResponseTime: 0,
-      totalCost: 0,
-      costSavings: 0,
-      activeModels: 4,
-      tuGenerated: 0
-    });
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
   };
 
   const exportChat = () => {
-    const chatData = {
-      messages,
-      metrics: aiMetrics,
-      timestamp: new Date().toISOString(),
-      settings: { selectedModel, selectedTaskType, voiceSettings }
-    };
-    
+    const chatData = messages.map(msg => ({
+      timestamp: msg.timestamp.toISOString(),
+      type: msg.type,
+      content: msg.content,
+      agent: msg.agentId ? agents.find(a => a.id === msg.agentId)?.name : undefined
+    }));
+
     const blob = new Blob([JSON.stringify(chatData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `ai-chat-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `spiral-chat-${new Date().toISOString().split('T')[0]}.json`;
     a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  };
-
-  const getModelIcon = (model: AIModel) => {
-    switch (model) {
-      case AIModel.GROK: return '🚀';
-      case AIModel.CLAUDE: return '🧠';
-      case AIModel.DEEPSEEK: return '🔍';
-      case AIModel.CHATGPT: return '🤖';
-      default: return '🤖';
-    }
-  };
-
-  const getTaskTypeColor = (taskType: TaskType) => {
-    switch (taskType) {
-      case TaskType.ARCHITECTURE: return 'bg-blue-500';
-      case TaskType.FRONTEND: return 'bg-green-500';
-      case TaskType.BACKEND: return 'bg-purple-500';
-      case TaskType.OPTIMIZATION: return 'bg-yellow-500';
-      case TaskType.TESTING: return 'bg-red-500';
-      case TaskType.DEPLOYMENT: return 'bg-orange-500';
-      case TaskType.QUANTUM_SIMULATION: return 'bg-pink-500';
-      case TaskType.TU_GENERATION: return 'bg-indigo-500';
-      default: return 'bg-gray-500';
-    }
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-4 space-y-4">
-      <div className="text-center bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6 rounded-lg">
-        <h1 className="text-3xl font-bold mb-2">🧠 HTSX Multi-AI Agent Chat</h1>
-        <p className="text-lg">Quantum-enhanced AI assistance with voice capabilities</p>
-      </div>
-
-      <Tabs defaultValue="chat" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="chat">Chat</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
-          <TabsTrigger value="metrics">Metrics</TabsTrigger>
-          <TabsTrigger value="models">Models</TabsTrigger>
+    <div className="h-full flex flex-col bg-gray-900 text-gray-100">
+      <Tabs defaultValue="chat" className="flex-1 flex flex-col">
+        <TabsList className="grid w-full grid-cols-3 bg-gray-800">
+          <TabsTrigger value="chat">💬 Chat</TabsTrigger>
+          <TabsTrigger value="agents">🤖 Agents</TabsTrigger>
+          <TabsTrigger value="metrics">📊 Metrics</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="chat" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="md:col-span-3">
-              <CardHeader className="pb-3">
-                <div className="flex justify-between items-center">
-                  <CardTitle className="text-lg">AI Chat Interface</CardTitle>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={clearChat}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={exportChat}
-                    >
-                      <Download className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-96 w-full border rounded-lg p-4 mb-4">
-                  <div className="space-y-4">
-                    {messages.map((message) => (
-                      <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[80%] ${message.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-100'} rounded-lg p-3`}>
-                          <div className="flex items-center gap-2 mb-1">
-                            {message.role === 'assistant' && (
-                              <>
-                                <Avatar className="h-6 w-6">
-                                  <AvatarFallback>{getModelIcon(message.model!)}</AvatarFallback>
-                                </Avatar>
-                                <span className="text-xs font-medium">{message.model}</span>
-                                {message.taskType && (
-                                  <Badge className={`text-xs ${getTaskTypeColor(message.taskType)}`}>
-                                    {message.taskType}
-                                  </Badge>
-                                )}
-                              </>
-                            )}
-                            <span className="text-xs text-gray-500 ml-auto">
-                              {message.timestamp.toLocaleTimeString()}
-                            </span>
-                          </div>
-                          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                          {message.confidence && (
-                            <div className="text-xs text-gray-500 mt-1">
-                              Confidence: {message.confidence.toFixed(1)}%
-                              {message.phiResonance && ` | φ: ${message.phiResonance.toFixed(4)}`}
-                              {message.tuGenerated && ` | TU: +${message.tuGenerated.toFixed(2)}`}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                    {isProcessing && (
-                      <div className="flex justify-start">
-                        <div className="bg-gray-100 rounded-lg p-3">
-                          <div className="flex items-center gap-2">
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-                            <span className="text-sm">AI is thinking...</span>
-                          </div>
-                        </div>
+        <TabsContent value="chat" className="flex-1 flex flex-col p-4 space-y-4">
+          {/* Chat Messages */}
+          <ScrollArea className="flex-1 bg-gray-800/50 rounded-lg p-4">
+            <div className="space-y-4">
+              {messages.map((message) => (
+                <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[80%] rounded-lg p-3 ${
+                    message.type === 'user' 
+                      ? 'bg-blue-600 text-white' 
+                      : message.type === 'system'
+                      ? 'bg-purple-600/30 border border-purple-500/50'
+                      : 'bg-gray-700 text-gray-100'
+                  }`}>
+                    {message.type === 'ai' && message.agentId && (
+                      <div className="flex items-center gap-2 mb-2">
+                        <Avatar className="w-6 h-6">
+                          <AvatarFallback className={`text-xs ${agents.find(a => a.id === message.agentId)?.color}`}>
+                            {agents.find(a => a.id === message.agentId)?.avatar}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-xs text-gray-300">
+                          {agents.find(a => a.id === message.agentId)?.name}
+                        </span>
+                        {message.confidence && (
+                          <Badge variant="outline" className="text-xs">
+                            {message.confidence.toFixed(1)}%
+                          </Badge>
+                        )}
                       </div>
                     )}
-                    <div ref={messagesEndRef} />
-                  </div>
-                </ScrollArea>
 
-                <div className="space-y-2">
-                  <div className="flex gap-2">
-                    <Select value={selectedModel} onValueChange={(value) => setSelectedModel(value as AIModel)}>
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Object.values(AIModel).map((model) => (
-                          <SelectItem key={model} value={model}>
-                            {getModelIcon(model)} {model}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="whitespace-pre-wrap text-sm">{message.content}</div>
 
-                    <Select value={selectedTaskType} onValueChange={(value) => setSelectedTaskType(value as TaskType)}>
-                      <SelectTrigger className="w-40">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Object.values(TaskType).map((taskType) => (
-                          <SelectItem key={taskType} value={taskType}>
-                            {taskType.replace(/_/g, ' ')}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Textarea
-                      value={inputMessage}
-                      onChange={(e) => setInputMessage(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      placeholder="Ask me anything about SpiralScript, HYBRID blockchain, quantum computing, or AI development..."
-                      className="flex-1 min-h-[60px] resize-none"
-                      disabled={isProcessing}
-                    />
-                    <div className="flex flex-col gap-1">
-                      <Button
-                        onClick={isListening ? stopListening : startListening}
-                        variant={isListening ? "destructive" : "outline"}
-                        size="sm"
-                        disabled={isProcessing}
-                      >
-                        {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
-                      </Button>
-                      <Button
-                        onClick={sendMessage}
-                        disabled={!inputMessage.trim() || isProcessing}
-                        size="sm"
-                      >
-                        <Send className="h-4 w-4" />
-                      </Button>
+                    <div className="flex items-center justify-between mt-2 text-xs text-gray-400">
+                      <span>{message.timestamp.toLocaleTimeString()}</span>
+                      <div className="flex items-center gap-2">
+                        {message.phiResonance && (
+                          <span>φ: {message.phiResonance.toFixed(3)}</span>
+                        )}
+                        {message.tuGenerated && (
+                          <span>TU: +{message.tuGenerated.toFixed(2)}</span>
+                        )}
+                        {message.isVoice && <Mic className="w-3 h-3" />}
+                        {message.type === 'ai' && (
+                          <div className="flex gap-1">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-6 w-6 p-0"
+                              onClick={() => speakMessage(message.content)}
+                            >
+                              <Volume2 className="w-3 h-3" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-6 w-6 p-0"
+                              onClick={() => copyToClipboard(message.content)}
+                            >
+                              <Copy className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+          </ScrollArea>
 
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Quick Stats</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-500">{aiMetrics.completedTasks}</div>
-                  <div className="text-xs text-gray-500">Tasks Completed</div>
+          {/* Voice Transcript Preview */}
+          {voiceState.transcript && (
+            <div className="bg-purple-600/20 border border-purple-500/50 rounded-lg p-2">
+              <div className="text-sm text-purple-300">
+                {voiceState.isListening ? '🎤 Listening...' : '🎤 Voice Input:'}
+              </div>
+              <div className="text-white">{voiceState.transcript}</div>
+              {voiceState.confidence > 0 && (
+                <div className="text-xs text-purple-400">
+                  Confidence: {(voiceState.confidence * 100).toFixed(1)}%
                 </div>
-                <Separator />
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-500">{aiMetrics.tuGenerated.toFixed(1)}</div>
-                  <div className="text-xs text-gray-500">TU Generated</div>
-                </div>
-                <Separator />
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-500">{aiMetrics.averageResponseTime.toFixed(0)}ms</div>
-                  <div className="text-xs text-gray-500">Avg Response</div>
-                </div>
-                <Separator />
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-yellow-500">${aiMetrics.costSavings.toFixed(3)}</div>
-                  <div className="text-xs text-gray-500">Cost Savings</div>
-                </div>
-              </CardContent>
-            </Card>
+              )}
+            </div>
+          )}
+
+          {/* Input Area */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Input
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                placeholder="Ask your AI agents anything..."
+                className="flex-1 bg-gray-800 border-gray-600"
+                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+              />
+              <Button
+                onClick={voiceState.isListening ? stopVoiceRecognition : startVoiceRecognition}
+                variant={voiceState.isListening ? "destructive" : "outline"}
+                size="sm"
+                disabled={voiceState.isProcessing}
+              >
+                {voiceState.isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+              </Button>
+              <Button onClick={sendMessage} disabled={!inputMessage.trim()} size="sm">
+                <Send className="w-4 h-4" />
+              </Button>
+            </div>
+
+            {/* Selected Agents */}
+            <div className="flex items-center gap-2 text-xs text-gray-400">
+              <span>Active agents:</span>
+              {selectedAgents.map(agentId => {
+                const agent = agents.find(a => a.id === agentId);
+                return agent ? (
+                  <Badge key={agentId} className={`${agent.color} text-white`}>
+                    {agent.avatar}
+                  </Badge>
+                ) : null;
+              })}
+            </div>
           </div>
         </TabsContent>
 
-        <TabsContent value="settings" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Voice Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span>Voice Enabled</span>
-                <Button
-                  variant={voiceSettings.enabled ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setVoiceSettings(prev => ({ ...prev, enabled: !prev.enabled }))}
-                >
-                  {voiceSettings.enabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-                </Button>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Language</label>
-                <Select 
-                  value={voiceSettings.language} 
-                  onValueChange={(value) => setVoiceSettings(prev => ({ ...prev, language: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="en-US">English (US)</SelectItem>
-                    <SelectItem value="en-GB">English (UK)</SelectItem>
-                    <SelectItem value="es-ES">Spanish</SelectItem>
-                    <SelectItem value="fr-FR">French</SelectItem>
-                    <SelectItem value="de-DE">German</SelectItem>
-                    <SelectItem value="ja-JP">Japanese</SelectItem>
-                    <SelectItem value="zh-CN">Chinese</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Speech Rate: {voiceSettings.rate.toFixed(1)}</label>
-                <input
-                  type="range"
-                  min="0.5"
-                  max="2"
-                  step="0.1"
-                  value={voiceSettings.rate}
-                  onChange={(e) => setVoiceSettings(prev => ({ ...prev, rate: parseFloat(e.target.value) }))}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Speech Pitch: {voiceSettings.pitch.toFixed(1)}</label>
-                <input
-                  type="range"
-                  min="0.5"
-                  max="2"
-                  step="0.1"
-                  value={voiceSettings.pitch}
-                  onChange={(e) => setVoiceSettings(prev => ({ ...prev, pitch: parseFloat(e.target.value) }))}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Volume: {(voiceSettings.volume * 100).toFixed(0)}%</label>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  value={voiceSettings.volume}
-                  onChange={(e) => setVoiceSettings(prev => ({ ...prev, volume: parseFloat(e.target.value) }))}
-                  className="w-full"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="metrics" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Total Tasks</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{aiMetrics.totalTasks}</div>
-                <div className="text-xs text-gray-500">All time</div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Completed Tasks</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-green-500">{aiMetrics.completedTasks}</div>
-                <div className="text-xs text-gray-500">Success rate: {aiMetrics.totalTasks > 0 ? ((aiMetrics.completedTasks / aiMetrics.totalTasks) * 100).toFixed(1) : 0}%</div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Average Response Time</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{aiMetrics.averageResponseTime.toFixed(0)}ms</div>
-                <div className="text-xs text-gray-500">Per task</div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Active Models</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-blue-500">{aiMetrics.activeModels}</div>
-                <div className="text-xs text-gray-500">Ready to serve</div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Total Cost</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">${aiMetrics.totalCost.toFixed(3)}</div>
-                <div className="text-xs text-gray-500">API usage</div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Cost Savings</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-green-500">${aiMetrics.costSavings.toFixed(3)}</div>
-                <div className="text-xs text-gray-500">Optimization</div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">TU Generated</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-purple-500">{aiMetrics.tuGenerated.toFixed(1)}</div>
-                <div className="text-xs text-gray-500">Trust Units</div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Efficiency Score</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-yellow-500">
-                  {(aiMetrics.costSavings / (aiMetrics.totalCost || 1) * 100).toFixed(1)}%
-                </div>
-                <div className="text-xs text-gray-500">Cost efficiency</div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="models" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {Object.values(AIModel).map((model) => (
-              <Card key={model}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <span className="text-2xl">{getModelIcon(model)}</span>
-                    {model}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm">Status</span>
-                      <Badge variant="default">Online</Badge>
+        <TabsContent value="agents" className="flex-1 p-4">
+          <div className="grid gap-4">
+            {agents.map((agent) => (
+              <Card
+                key={agent.id}
+                className={`cursor-pointer transition-all ${
+                  selectedAgents.includes(agent.id) 
+                    ? 'border-blue-500 bg-blue-500/10' 
+                    : 'hover:bg-gray-800/50'
+                }`}
+                onClick={() => toggleAgent(agent.id)}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                      <Avatar className={`${agent.color} text-white`}>
+                        <AvatarFallback>{agent.avatar}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <h3 className="font-semibold text-white">{agent.name}</h3>
+                        <p className="text-xs text-gray-400">{agent.model}</p>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm">Specialization</span>
-                      <span className="text-sm text-gray-500">
-                        {model === AIModel.GROK ? 'Real-time & Web' :
-                         model === AIModel.CLAUDE ? 'Analysis & Reasoning' :
-                         model === AIModel.DEEPSEEK ? 'Code & Math' :
-                         'General Purpose'}
-                      </span>
+                    <Badge className={
+                      agent.status === 'active' ? 'bg-green-500' :
+                      agent.status === 'busy' ? 'bg-yellow-500' :
+                      agent.status === 'idle' ? 'bg-gray-500' : 'bg-red-500'
+                    }>
+                      {agent.status}
+                    </Badge>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-400">Response:</span>
+                      <div className="text-white">{agent.responseTime.toFixed(0)}ms</div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm">Response Time</span>
-                      <span className="text-sm text-gray-500">
-                        {Math.floor(Math.random() * 300 + 200)}ms
-                      </span>
+                    <div>
+                      <span className="text-gray-400">Confidence:</span>
+                      <div className="text-white">{agent.confidence.toFixed(1)}%</div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm">Cost per 1K tokens</span>
-                      <span className="text-sm text-gray-500">
-                        ${(Math.random() * 0.02 + 0.01).toFixed(4)}
-                      </span>
+                    <div>
+                      <span className="text-gray-400">Cost:</span>
+                      <div className="text-white">${agent.cost.toFixed(3)}/token</div>
+                    </div>
+                  </div>
+
+                  <div className="mt-3">
+                    <span className="text-gray-400 text-xs">Specialties:</span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {agent.specialty.map((spec) => (
+                        <Badge key={spec} variant="outline" className="text-xs">
+                          {spec}
+                        </Badge>
+                      ))}
                     </div>
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
+        </TabsContent>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Model Performance Comparison</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="text-sm font-medium">Task Routing Efficiency</div>
-                <div className="space-y-2">
-                  {Object.values(AIModel).map((model) => (
-                    <div key={model} className="flex items-center gap-3">
-                      <span className="w-20 text-sm">{model}</span>
-                      <div className="flex-1 bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-blue-500 h-2 rounded-full" 
-                          style={{ width: `${Math.random() * 40 + 60}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-xs text-gray-500">{Math.floor(Math.random() * 40 + 60)}%</span>
-                    </div>
-                  ))}
+        <TabsContent value="metrics" className="flex-1 p-4">
+          <div className="grid gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <DollarSign className="w-5 h-5" />
+                  Cost Analytics
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-red-900/20 p-3 rounded-lg">
+                    <div className="text-red-400 text-sm">Total Cost</div>
+                    <div className="text-2xl font-bold text-white">${costMetrics.totalCost.toFixed(2)}</div>
+                  </div>
+                  <div className="bg-green-900/20 p-3 rounded-lg">
+                    <div className="text-green-400 text-sm">Saved</div>
+                    <div className="text-2xl font-bold text-white">${costMetrics.savedAmount.toFixed(2)}</div>
+                  </div>
+                  <div className="bg-blue-900/20 p-3 rounded-lg">
+                    <div className="text-blue-400 text-sm">Tokens Used</div>
+                    <div className="text-2xl font-bold text-white">{costMetrics.tokensUsed.toLocaleString()}</div>
+                  </div>
+                  <div className="bg-purple-900/20 p-3 rounded-lg">
+                    <div className="text-purple-400 text-sm">Avg Response</div>
+                    <div className="text-2xl font-bold text-white">{costMetrics.avgResponseTime}ms</div>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="w-5 h-5" />
+                  System Health
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span>AI Response Rate</span>
+                      <span>98.7%</span>
+                    </div>
+                    <Progress value={98.7} className="h-2" />
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span>φ-Resonance Quality</span>
+                      <span>97.3%</span>
+                    </div>
+                    <Progress value={97.3} className="h-2" />
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span>Trust Unit Generation</span>
+                      <span>94.8%</span>
+                    </div>
+                    <Progress value={94.8} className="h-2" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex gap-2">
+              <Button onClick={exportChat} variant="outline" size="sm">
+                <Download className="w-4 h-4 mr-2" />
+                Export Chat
+              </Button>
+              <Button variant="outline" size="sm">
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Reset Metrics
+              </Button>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
