@@ -89,7 +89,7 @@ DEEPSEEK_API_KEY="sk-..."
 ### Installation Steps
 1. **Clone and setup**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/CreoDAMO/SpiralParserEngine.git
    cd spiralscript-ide
    npm install
    ```
