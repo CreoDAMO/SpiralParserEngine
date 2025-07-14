@@ -450,8 +450,17 @@ export default function OmniverseVisualization() {
             <Alert className="mt-4">
               <Eye className="w-4 h-4" />
               <AlertDescription>
-                Running in local visualization mode. Install NVIDIA Omniverse and configure
-                connection for full 3D collaboration, RTX rendering, and USD export capabilities.
+                Running in local visualization mode. 
+                <br />
+                <strong>To enable full Omniverse integration:</strong>
+                <br />
+                1. Install <a href="https://developer.nvidia.com/omniverse" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">NVIDIA Omniverse</a>
+                <br />
+                2. Install Omniverse Kit SDK for Python integration
+                <br />
+                3. Start Nucleus Server on localhost:8211
+                <br />
+                4. Refresh to enable RTX ray-traced consciousness visualization
               </AlertDescription>
             </Alert>
           )}
