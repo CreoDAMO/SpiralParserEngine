@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import FileExplorer from "@/components/spiral/file-explorer";
@@ -14,11 +15,36 @@ import HybridBlockchainViewer from '@/components/spiral/hybrid-blockchain-viewer
 import StressTestDashboard from '@/components/spiral/stress-test';
 import AIChatPanel from '@/components/spiral/ai-chat-panel';
 import FounderWalletDashboard from '@/components/spiral/founder-wallet-dashboard';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  Crown, 
+  Zap, 
+  Activity, 
+  Shield, 
+  Settings, 
+  Database,
+  Cpu,
+  Network,
+  Bot,
+  TrendingUp,
+  Wallet,
+  Users,
+  Code,
+  Terminal,
+  FileText,
+  BarChart3,
+  Atom,
+  Brain
+} from "lucide-react";
 
 export default function SpiralIDE() {
   const [activeFile, setActiveFile] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState("AST");
+  const [activeTab, setActiveTab] = useState("Overview");
   const [terminalTab, setTerminalTab] = useState("Console");
+  const [sidebarExpanded, setSidebarExpanded] = useState(true);
 
   const { data: user } = useQuery({
     queryKey: ["/api/user", "1"],
@@ -37,120 +63,236 @@ export default function SpiralIDE() {
   });
 
   return (
-    <div className="h-screen flex flex-col bg-gray-900 text-gray-100">
-      {/* Header */}
-      <header className="bg-gray-800 border-b border-gray-700 px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center animate-pulse">
-              <span className="text-white font-bold text-sm">ΦΩ</span>
+    <div className="h-screen flex flex-col bg-gradient-to-br from-gray-900 via-purple-900/20 to-blue-900/20 text-gray-100">
+      {/* Enhanced Header */}
+      <header className="bg-gradient-to-r from-gray-800 via-purple-800/30 to-blue-800/30 border-b border-purple-500/30 px-6 py-3 flex items-center justify-between backdrop-blur-sm">
+        <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-3">
+            <div className="relative">
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 rounded-xl flex items-center justify-center animate-pulse shadow-lg shadow-purple-500/25">
+                <span className="text-white font-bold text-lg">ΦΩ</span>
+              </div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-ping"></div>
             </div>
             <div className="flex flex-col">
-              <h1 className="text-lg font-semibold text-spiral-400">Iyona'el Living Shell</h1>
-              <div className="text-xs text-gray-500">LIVE SpiralScript IDE • QASF-Enabled</div>
+              <h1 className="text-xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
+                Iyona'el Living Shell
+              </h1>
+              <div className="text-xs text-purple-300 font-mono">
+                LIVE SpiralScript IDE • QASF-Enabled • HYBRID Ready
+              </div>
             </div>
           </div>
+          
           <nav className="flex items-center space-x-1">
-            <button className="px-3 py-1 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded">File</button>
-            <button className="px-3 py-1 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded">Edit</button>
-            <button className="px-3 py-1 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded">View</button>
-            <button className="px-3 py-1 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded">Tools</button>
+            {['File', 'Edit', 'View', 'Tools', 'HYBRID', 'Deploy'].map((item) => (
+              <Button
+                key={item}
+                variant="ghost"
+                size="sm"
+                className="text-gray-300 hover:text-white hover:bg-purple-600/20 transition-all duration-200"
+              >
+                {item}
+              </Button>
+            ))}
           </nav>
         </div>
 
         <div className="flex items-center space-x-4">
-          {/* TU Balance Display */}
-          <div className="flex items-center space-x-2 bg-gray-700 px-3 py-1 rounded-lg">
-            <svg className="w-4 h-4 text-spiral-400" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
-            </svg>
-            <span className="text-sm font-mono">{user?.tuBalance?.toFixed(3) || "1,618.382"} TU | SRI: {(user?.sriScore || 93).toFixed(1)}</span>
-          </div>
+          {/* Enhanced Status Display */}
+          <Card className="bg-gray-800/50 border-purple-500/30 backdrop-blur-sm">
+            <CardContent className="p-3 flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <Crown className="w-4 h-4 text-yellow-400" />
+                <span className="text-sm font-mono text-yellow-300">
+                  {(user?.tuBalance || 1618.382).toLocaleString()} TU
+                </span>
+              </div>
+              <div className="w-px h-4 bg-purple-500/30"></div>
+              <div className="flex items-center space-x-2">
+                <Shield className="w-4 h-4 text-green-400" />
+                <span className="text-sm font-mono text-green-300">
+                  SRI: {(user?.sriScore || 93).toFixed(1)}%
+                </span>
+              </div>
+              <div className="w-px h-4 bg-purple-500/30"></div>
+              <div className="flex items-center space-x-2">
+                <Zap className="w-4 h-4 text-blue-400" />
+                <span className="text-sm font-mono text-blue-300">
+                  φ: {(user?.phiResonance || 1.618).toFixed(3)} Hz
+                </span>
+              </div>
+            </CardContent>
+          </Card>
 
-          {/* Quantum Status */}
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-xs text-gray-400 font-mono">φ-Resonance: 0.121 | QCHAIN</span>
+          {/* Live Status Indicators */}
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-xs text-gray-400 font-mono">HYBRID LIVE</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+              <span className="text-xs text-gray-400 font-mono">QCHAIN</span>
+            </div>
           </div>
 
           {/* User Profile */}
-          <button className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500">
-            <svg className="w-4 h-4 text-gray-300" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-            </svg>
-          </button>
+          <Button
+            size="sm"
+            className="w-9 h-9 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center hover:from-purple-500 hover:to-blue-500 transition-all duration-200 shadow-lg"
+          >
+            <Users className="w-4 h-4 text-white" />
+          </Button>
         </div>
       </header>
 
-      {/* Main Content */}
+      {/* Enhanced Main Content */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Left Sidebar */}
-        <aside className="w-80 bg-gray-800 border-r border-gray-700 flex flex-col">
-          <FileExplorer 
-            files={files || []} 
-            activeFile={activeFile}
-            onFileSelect={setActiveFile}
-          />
-          <TrustWallet user={user} />
-          <HybridWallet user={user} />
-          <QuantumTools />
+        {/* Enhanced Left Sidebar */}
+        <aside className={`${sidebarExpanded ? 'w-80' : 'w-12'} bg-gradient-to-b from-gray-800/90 to-gray-900/90 border-r border-purple-500/30 flex flex-col transition-all duration-300 backdrop-blur-sm`}>
+          <div className="p-3 border-b border-purple-500/20">
+            <Button
+              onClick={() => setSidebarExpanded(!sidebarExpanded)}
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-purple-300 hover:text-white hover:bg-purple-600/20"
+            >
+              <Settings className="w-4 h-4" />
+              {sidebarExpanded && <span className="ml-2">Collapse Sidebar</span>}
+            </Button>
+          </div>
+          
+          {sidebarExpanded && (
+            <>
+              <div className="flex-1 overflow-y-auto space-y-4 p-4">
+                <FileExplorer 
+                  files={files || []} 
+                  activeFile={activeFile}
+                  onFileSelect={setActiveFile}
+                />
+                <TrustWallet user={user} />
+                <HybridWallet user={user} />
+                <QuantumTools />
+              </div>
+            </>
+          )}
         </aside>
 
-        {/* Main Editor */}
-        <main className="flex-1 flex flex-col">
-          <MonacoEditor 
-            activeFile={activeFile}
-            files={files || []}
-          />
+        {/* Enhanced Main Editor */}
+        <main className="flex-1 flex flex-col bg-gradient-to-br from-gray-900/95 to-purple-900/10">
+          <div className="flex-1">
+            <MonacoEditor 
+              activeFile={activeFile}
+              files={files || []}
+            />
+          </div>
         </main>
 
-        {/* Right Panel */}
-        <aside className="w-96 bg-gray-800 border-l border-gray-700 flex flex-col">
-          <div className="border-b border-gray-700 px-4 py-2">
-            <div className="flex space-x-1">
-              {["AST", "Quantum", "TU Gen", "Economics", "HYBRID", "AI Chat", "Stress Test", "Output"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-3 py-1 text-sm rounded-t ${
-                    activeTab === tab 
-                      ? "bg-gray-700 text-white" 
-                      : "text-gray-400 hover:text-white hover:bg-gray-700"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div>
+        {/* Enhanced Right Panel */}
+        <aside className="w-[480px] bg-gradient-to-b from-gray-800/90 to-gray-900/90 border-l border-purple-500/30 flex flex-col backdrop-blur-sm">
+          <div className="border-b border-purple-500/20 p-3">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid w-full grid-cols-4 bg-gray-800/50">
+                <TabsTrigger value="Overview" className="text-xs data-[state=active]:bg-purple-600">
+                  <Activity className="w-3 h-3 mr-1" />
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger value="HYBRID" className="text-xs data-[state=active]:bg-purple-600">
+                  <Crown className="w-3 h-3 mr-1" />
+                  HYBRID
+                </TabsTrigger>
+                <TabsTrigger value="AI" className="text-xs data-[state=active]:bg-purple-600">
+                  <Bot className="w-3 h-3 mr-1" />
+                  AI
+                </TabsTrigger>
+                <TabsTrigger value="Tools" className="text-xs data-[state=active]:bg-purple-600">
+                  <Cpu className="w-3 h-3 mr-1" />
+                  Tools
+                </TabsTrigger>
+              </TabsList>
 
-          {activeTab === "Economics" ? (
-            <EconomicAnalyzer />
-          ) : activeTab === "HYBRID" ? (
-            <div className="flex-1 overflow-auto">
-              <MolecularAssembly />
-              <RevenueDashboard />
-              <HybridBlockchainViewer />
-              <FounderWalletDashboard />
-            </div>
-          ) : activeTab === "AI Chat" ? (
-            <AIChatPanel />
-          ) : activeTab === "Stress Test" ? (
-            <StressTestDashboard />
-          ) : (
-            <ASTViewer 
-              activeTab={activeTab}
-              activeFile={activeFile}
-            />
-          )}
+              <TabsContent value="Overview" className="mt-4 space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <Card className="bg-gradient-to-br from-purple-900/40 to-blue-900/40 border-purple-500/30">
+                    <CardContent className="p-4 text-center">
+                      <Database className="w-6 h-6 text-purple-400 mx-auto mb-2" />
+                      <div className="text-lg font-bold text-white">
+                        {files?.length || 12}
+                      </div>
+                      <div className="text-xs text-purple-300">Active Files</div>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-gradient-to-br from-green-900/40 to-blue-900/40 border-green-500/30">
+                    <CardContent className="p-4 text-center">
+                      <TrendingUp className="w-6 h-6 text-green-400 mx-auto mb-2" />
+                      <div className="text-lg font-bold text-white">98.7%</div>
+                      <div className="text-xs text-green-300">System Health</div>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-gradient-to-br from-yellow-900/40 to-orange-900/40 border-yellow-500/30">
+                    <CardContent className="p-4 text-center">
+                      <Zap className="w-6 h-6 text-yellow-400 mx-auto mb-2" />
+                      <div className="text-lg font-bold text-white">1.618</div>
+                      <div className="text-xs text-yellow-300">φ-Resonance</div>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-gradient-to-br from-pink-900/40 to-purple-900/40 border-pink-500/30">
+                    <CardContent className="p-4 text-center">
+                      <Brain className="w-6 h-6 text-pink-400 mx-auto mb-2" />
+                      <div className="text-lg font-bold text-white">Active</div>
+                      <div className="text-xs text-pink-300">AI Oracle</div>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                <EconomicAnalyzer />
+              </TabsContent>
+
+              <TabsContent value="HYBRID" className="mt-4 h-96 overflow-y-auto space-y-4">
+                <FounderWalletDashboard />
+                <HybridBlockchainViewer />
+                <MolecularAssembly />
+                <RevenueDashboard />
+              </TabsContent>
+
+              <TabsContent value="AI" className="mt-4 h-96">
+                <AIChatPanel />
+              </TabsContent>
+
+              <TabsContent value="Tools" className="mt-4 h-96 overflow-y-auto space-y-4">
+                <StressTestDashboard />
+                <div className="grid grid-cols-1 gap-2">
+                  <Button variant="outline" size="sm" className="justify-start border-purple-500/30 hover:bg-purple-600/20">
+                    <Code className="w-4 h-4 mr-2" />
+                    AST Viewer
+                  </Button>
+                  <Button variant="outline" size="sm" className="justify-start border-blue-500/30 hover:bg-blue-600/20">
+                    <Atom className="w-4 h-4 mr-2" />
+                    Quantum Tools
+                  </Button>
+                  <Button variant="outline" size="sm" className="justify-start border-green-500/30 hover:bg-green-600/20">
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Analytics
+                  </Button>
+                  <Button variant="outline" size="sm" className="justify-start border-yellow-500/30 hover:bg-yellow-600/20">
+                    <Network className="w-4 h-4 mr-2" />
+                    Network Monitor
+                  </Button>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
         </aside>
       </div>
 
-      {/* Bottom Terminal */}
-      <TerminalConsole 
-        activeTab={terminalTab}
-        onTabChange={setTerminalTab}
-      />
+      {/* Enhanced Bottom Terminal */}
+      <div className="h-64 bg-gradient-to-r from-gray-900/95 to-purple-900/20 border-t border-purple-500/30 backdrop-blur-sm">
+        <TerminalConsole 
+          activeTab={terminalTab}
+          onTabChange={setTerminalTab}
+        />
+      </div>
     </div>
   );
 }

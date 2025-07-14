@@ -11,7 +11,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { htsxAgent, AIModel, TaskType } from '@/lib/htsx-agent';
-import { Mic, MicOff, Send, Volume2, VolumeX, Settings, Trash2, Download } from 'lucide-react';
+import { Mic, MicOff, Send, Volume2, VolumeX, Settings, Trash2, Download, Bot } from 'lucide-react';
 
 interface ChatMessage {
   id: string;
@@ -47,7 +47,7 @@ export default function AIChatPanel() {
     pitch: 1.0,
     volume: 0.8
   });
-  
+
   const [aiMetrics, setAiMetrics] = useState({
     totalTasks: 0,
     completedTasks: 0,
@@ -79,7 +79,7 @@ export default function AIChatPanel() {
       recognition.current.onresult = (event: any) => {
         const last = event.results.length - 1;
         const text = event.results[last][0].transcript;
-        
+
         if (event.results[last].isFinal) {
           setInputMessage(text);
           setIsListening(false);
@@ -112,13 +112,13 @@ export default function AIChatPanel() {
     // Initialize speech synthesis with voice selection
     if ('speechSynthesis' in window) {
       synthesis.current = window.speechSynthesis;
-      
+
       // Load available voices
       const loadVoices = () => {
         const voices = synthesis.current.getVoices();
         console.log('Available voices:', voices.length);
       };
-      
+
       if (synthesis.current.getVoices().length > 0) {
         loadVoices();
       } else {
@@ -177,17 +177,17 @@ Select a task type and AI model, then ask me anything! I support voice commands 
     if (synthesis.current && voiceSettings.enabled) {
       // Cancel any ongoing speech
       synthesis.current.cancel();
-      
+
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = voiceSettings.rate;
       utterance.pitch = voiceSettings.pitch;
       utterance.volume = voiceSettings.volume;
       utterance.lang = voiceSettings.language;
-      
+
       // Set model-specific voice characteristics
       const voices = synthesis.current.getVoices();
       let selectedVoice = voices.find(voice => voice.lang === voiceSettings.language);
-      
+
       if (model && voices.length > 0) {
         switch (model) {
           case AIModel.GROK:
@@ -217,23 +217,23 @@ Select a task type and AI model, then ask me anything! I support voice commands 
             break;
         }
       }
-      
+
       if (selectedVoice) {
         utterance.voice = selectedVoice;
       }
-      
+
       utterance.onstart = () => {
         console.log(`Speaking response from ${model || 'AI'}`);
       };
-      
+
       utterance.onend = () => {
         console.log('Speech synthesis completed');
       };
-      
+
       utterance.onerror = (event) => {
         console.error('Speech synthesis error:', event.error);
       };
-      
+
       synthesis.current.speak(utterance);
     }
   };
@@ -300,7 +300,7 @@ Select a task type and AI model, then ask me anything! I support voice commands 
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-      
+
       // Speak response if voice is enabled with model-specific voice
       if (voiceSettings.enabled) {
         speakMessage(synthesizedResponse, bestResponse.model);
@@ -348,7 +348,7 @@ Select a task type and AI model, then ask me anything! I support voice commands 
       timestamp: new Date().toISOString(),
       settings: { selectedModel, selectedTaskType, voiceSettings }
     };
-    
+
     const blob = new Blob([JSON.stringify(chatData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -406,27 +406,23 @@ Select a task type and AI model, then ask me anything! I support voice commands 
 
         <TabsContent value="chat" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card className="md:col-span-3">
-              <CardHeader className="pb-3">
-                <div className="flex justify-between items-center">
-                  <CardTitle className="text-lg">AI Chat Interface</CardTitle>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={clearChat}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={exportChat}
-                    >
-                      <Download className="h-4 w-4" />
-                    </Button>
+            
+            <Card className="bg-gradient-to-br from-gray-900/90 to-blue-900/30 border border-blue-500/30 h-full flex flex-col shadow-xl backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-blue-800/20 to-purple-800/20 rounded-t-lg shrink-0">
+                <CardTitle className="text-white flex items-center space-x-3">
+                  <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg shadow-lg animate-pulse">
+                    <Bot className="w-4 h-4 text-white" />
                   </div>
-                </div>
+                  <div className="flex-1">
+                    <div className="text-base font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                      AI Assistant Panel
+                    </div>
+                    <div className="text-xs text-blue-300">GPT-4 • Claude • Gemini • Voice Enabled</div>
+                  </div>
+                  <Badge className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white border-0 shadow-lg">
+                    🤖 Multi-Model
+                  </Badge>
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <ScrollArea className="h-96 w-full border rounded-lg p-4 mb-4">
@@ -539,7 +535,25 @@ Select a task type and AI model, then ask me anything! I support voice commands 
 
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Voice & Chat Status</CardTitle>
+                <div className="flex justify-between items-center">
+                  <CardTitle className="text-lg">Voice & Chat Status</CardTitle>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={clearChat}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={exportChat}
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="text-center">

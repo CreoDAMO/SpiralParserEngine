@@ -169,42 +169,69 @@ export default function FounderWalletDashboard({ className }: FounderWalletDashb
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <Card className="bg-gradient-to-r from-purple-900 to-indigo-900 border-purple-700">
-        <CardHeader>
-          <CardTitle className="text-spiral-400 flex items-center space-x-2">
-            <Crown className="w-6 h-6" />
-            <span>HYBRID Founder Wallet</span>
-            <Badge variant="outline" className="ml-auto border-purple-400 text-purple-300">
-              Multi-Sig Governance
+      <Card className="bg-gradient-to-r from-purple-900/80 via-indigo-900/60 to-blue-900/80 border border-purple-500/40 shadow-2xl shadow-purple-500/20 backdrop-blur-sm">
+        <CardHeader className="bg-gradient-to-r from-purple-800/30 to-indigo-800/30 rounded-t-lg">
+          <CardTitle className="text-white flex items-center space-x-3">
+            <div className="p-2 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg shadow-lg">
+              <Crown className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex-1">
+              <div className="text-lg font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                HYBRID Founder Wallet
+              </div>
+              <div className="text-xs text-purple-300">Genesis Authority • Multi-Sig Governance</div>
+            </div>
+            <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 shadow-lg">
+              🛡️ Secured
             </Badge>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">
-                {formatAmount(walletState.hybridBalance)}
+            <Card className="bg-gradient-to-br from-blue-900/40 to-cyan-900/40 border-blue-500/30 p-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                  {formatAmount(walletState.hybridBalance)}
+                </div>
+                <div className="text-xs text-blue-300 font-medium">Available Balance</div>
+                <div className="w-full bg-blue-900/20 rounded-full h-1.5 mt-2">
+                  <div className="bg-gradient-to-r from-blue-500 to-cyan-500 h-1.5 rounded-full" style={{width: '85%'}}></div>
+                </div>
               </div>
-              <div className="text-sm text-purple-300">Available Balance</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-400">
-                {formatAmount(getTotalLocked())}
+            </Card>
+            <Card className="bg-gradient-to-br from-yellow-900/40 to-orange-900/40 border-yellow-500/30 p-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                  {formatAmount(getTotalLocked())}
+                </div>
+                <div className="text-xs text-yellow-300 font-medium">Locked (Vesting)</div>
+                <div className="w-full bg-yellow-900/20 rounded-full h-1.5 mt-2">
+                  <div className="bg-gradient-to-r from-yellow-500 to-orange-500 h-1.5 rounded-full" style={{width: '65%'}}></div>
+                </div>
               </div>
-              <div className="text-sm text-purple-300">Locked (Vesting)</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-400">
-                {formatAmount(getTotalReleasable())}
+            </Card>
+            <Card className="bg-gradient-to-br from-green-900/40 to-emerald-900/40 border-green-500/30 p-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+                  {formatAmount(getTotalReleasable())}
+                </div>
+                <div className="text-xs text-green-300 font-medium">Releasable</div>
+                <div className="w-full bg-green-900/20 rounded-full h-1.5 mt-2">
+                  <div className="bg-gradient-to-r from-green-500 to-emerald-500 h-1.5 rounded-full" style={{width: '25%'}}></div>
+                </div>
               </div>
-              <div className="text-sm text-purple-300">Releasable</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple-400">
-                {walletState.governanceVotingPower.toLocaleString()}
+            </Card>
+            <Card className="bg-gradient-to-br from-purple-900/40 to-pink-900/40 border-purple-500/30 p-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  {walletState.governanceVotingPower.toLocaleString()}
+                </div>
+                <div className="text-xs text-purple-300 font-medium">Voting Power</div>
+                <div className="w-full bg-purple-900/20 rounded-full h-1.5 mt-2">
+                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full" style={{width: '100%'}}></div>
+                </div>
               </div>
-              <div className="text-sm text-purple-300">Voting Power</div>
-            </div>
+            </Card>
           </div>
         </CardContent>
       </Card>

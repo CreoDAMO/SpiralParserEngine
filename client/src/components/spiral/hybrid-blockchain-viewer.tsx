@@ -36,10 +36,10 @@ export default function HybridBlockchainViewer() {
     const initializeBlockchain = async () => {
       try {
         setIsLoading(true);
-        
+
         // Initialize blockchain
         await hybridBlockchain.initializeBlockchain();
-        
+
         // Generate some sample blocks and transactions
         for (let i = 0; i < 10; i++) {
           const block = await hybridBlockchain.mineBlock([
@@ -59,10 +59,10 @@ export default function HybridBlockchainViewer() {
               }
             }
           ]);
-          
+
           setBlocks(prev => [block, ...prev]);
         }
-        
+
         // Generate validator nodes
         const validatorNodes: HybridNode[] = [];
         for (let i = 0; i < 50; i++) {
@@ -78,7 +78,7 @@ export default function HybridBlockchainViewer() {
           });
         }
         setNodes(validatorNodes);
-        
+
         // Update network stats
         setNetworkStats({
           totalBlocks: 10,
@@ -93,7 +93,7 @@ export default function HybridBlockchainViewer() {
           stakingRewards: 850000000,
           burnedTokens: 120000000
         });
-        
+
       } catch (error) {
         console.error('Failed to initialize blockchain:', error);
       } finally {
