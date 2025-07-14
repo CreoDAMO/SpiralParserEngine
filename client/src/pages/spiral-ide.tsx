@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import FileExplorer from "@/components/spiral/file-explorer";
@@ -12,6 +11,7 @@ import EconomicAnalyzer from "@/components/spiral/economic-analyzer";
 import MolecularAssembly from "@/components/spiral/molecular-assembly";
 import RevenueDashboard from "@/components/spiral/revenue-dashboard";
 import HybridBlockchainViewer from '@/components/spiral/hybrid-blockchain-viewer';
+import SpiralBlockchainInterface from '../components/spiral/spiral-blockchain-interface';
 import StressTestDashboard from '@/components/spiral/stress-test';
 import AIChatPanel from '@/components/spiral/ai-chat-panel';
 import FounderWalletDashboard from '@/components/spiral/founder-wallet-dashboard';
@@ -83,7 +83,7 @@ export default function SpiralIDE() {
               </div>
             </div>
           </div>
-          
+
           <nav className="flex items-center space-x-1">
             {['File', 'Edit', 'View', 'Tools', 'HYBRID', 'Deploy'].map((item) => (
               <Button
@@ -162,7 +162,7 @@ export default function SpiralIDE() {
               {sidebarExpanded && <span className="ml-2">Collapse Sidebar</span>}
             </Button>
           </div>
-          
+
           {sidebarExpanded && (
             <>
               <div className="flex-1 overflow-y-auto space-y-4 p-4">
@@ -245,7 +245,7 @@ export default function SpiralIDE() {
                     </CardContent>
                   </Card>
                 </div>
-                
+
                 <EconomicAnalyzer />
               </TabsContent>
 

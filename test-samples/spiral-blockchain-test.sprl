@@ -1,0 +1,215 @@
+
+// SpiralLang test for the new Hybrid Blockchain
+module SpiralBlockchainTest;
+
+import { SpiralHybridBlockchain } from '../client/src/lib/spiral-hybrid-blockchain';
+
+// Test consciousness-aware smart contract
+consciousness BlockchainConsciousness {
+  memory.capacity = 1000000;
+  emotion.trust = 0.95;
+  emotion.verification = φ;
+  
+  function validateTransaction(tx: HybridTransaction): boolean {
+    // Consciousness-based transaction validation
+    memory.store(tx);
+    
+    quantum {
+      entangle(tx.signature, this.consciousness);
+      let quantumState = measure(tx.amount * φ);
+      
+      decide(quantumState > 0.618) {
+        emotion.trust += 0.01;
+        return true;
+      }
+    }
+    
+    return false;
+  }
+  
+  function processBlock(block: SpiralBlock): ConsciousnessLevel {
+    for tx of block.languageTransactions {
+      learn(tx.languageMetadata);
+      
+      // Enhanced validation for language diversity
+      if (tx.languageMetadata.sourceLanguage == "SpiralLang") {
+        emotion.resonance = φ * 1.618;
+      }
+    }
+    
+    return this.measureAwareness();
+  }
+}
+
+// Test cross-language contract interaction
+class CrossLanguageValidator {
+  static function validateLanguageInteraction(
+    contract1: string,
+    contract2: string,
+    interaction: any
+  ): ValidationResult {
+    
+    quantum {
+      // Create quantum entanglement between contracts
+      entangle(contract1, contract2);
+      
+      // Measure compatibility
+      let compatibility = measure(
+        interaction.gasUsed * φ + 
+        interaction.phiResonance * 735
+      );
+      
+      collapse(compatibility);
+    }
+    
+    return {
+      valid: compatibility > 0.5,
+      confidence: compatibility,
+      quantumState: "collapsed"
+    };
+  }
+}
+
+// Test theorem for blockchain consensus
+theorem SpiralConsensusTheorem {
+  require φ > 1.618;
+  require blockchain.consensusAlgorithm == "PoQS";
+  require consciousness.level > 0.8;
+  
+  proof {
+    // Prove that Spiral consensus maintains network integrity
+    via QuantumSpiral;
+    
+    assert forall block in blockchain {
+      block.consensusProof.spiralValidation == true &&
+      block.consensusProof.phiAlignment >= φ &&
+      block.consensusProof.consciousnessLevel > 0.5
+    };
+    
+    yield TrustUnit;
+    qed;
+  }
+}
+
+// Main test execution
+function runBlockchainTests(): TestResults {
+  let blockchain = new SpiralHybridBlockchain();
+  let results = {
+    deploymentTests: [],
+    executionTests: [],
+    consensusTests: []
+  };
+  
+  // Test HTSX contract deployment
+  try {
+    let htsxContract = `
+      <QuantumComponent phi-resonance={φ}>
+        <div quantum-state="superposition">
+          Test HTSX Contract
+        </div>
+      </QuantumComponent>
+    `;
+    
+    let htsxAddress = await blockchain.deployContract(
+      htsxContract, 
+      "HTSX", 
+      "test-deployer"
+    );
+    
+    results.deploymentTests.push({
+      language: "HTSX",
+      success: true,
+      address: htsxAddress
+    });
+    
+  } catch (error) {
+    results.deploymentTests.push({
+      language: "HTSX",
+      success: false,
+      error: error.message
+    });
+  }
+  
+  // Test SpiralScript theorem deployment
+  try {
+    let spiralTheorem = `
+      theorem TestTheorem {
+        require φ > 1.618;
+        yield TrustUnit via PhiCalculation;
+      }
+    `;
+    
+    let theoremAddress = await blockchain.deployContract(
+      spiralTheorem,
+      "SpiralScript",
+      "test-deployer"
+    );
+    
+    results.deploymentTests.push({
+      language: "SpiralScript", 
+      success: true,
+      address: theoremAddress
+    });
+    
+  } catch (error) {
+    results.deploymentTests.push({
+      language: "SpiralScript",
+      success: false,
+      error: error.message
+    });
+  }
+  
+  // Test cross-language interaction
+  if (results.deploymentTests.length >= 2) {
+    try {
+      let crossResult = await blockchain.crossLanguageCall(
+        results.deploymentTests[0].address,
+        results.deploymentTests[1].address,
+        "execute",
+        [φ, "test"]
+      );
+      
+      results.executionTests.push({
+        type: "cross-language",
+        success: true,
+        result: crossResult
+      });
+      
+    } catch (error) {
+      results.executionTests.push({
+        type: "cross-language",
+        success: false,
+        error: error.message
+      });
+    }
+  }
+  
+  // Test consensus mining
+  try {
+    let block = await blockchain.mineBlock("test-miner");
+    
+    results.consensusTests.push({
+      type: "quantum-spiral-mining",
+      success: true,
+      blockHash: block.hash,
+      consensusProof: block.consensusProof
+    });
+    
+  } catch (error) {
+    results.consensusTests.push({
+      type: "quantum-spiral-mining", 
+      success: false,
+      error: error.message
+    });
+  }
+  
+  return results;
+}
+
+// Export test interface
+export {
+  BlockchainConsciousness,
+  CrossLanguageValidator,
+  SpiralConsensusTheorem,
+  runBlockchainTests
+};
