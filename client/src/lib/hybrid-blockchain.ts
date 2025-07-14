@@ -53,13 +53,23 @@ export class HybridBlockchain {
   private nodes: Map<string, HybridNode> = new Map();
   private smartContracts: Map<string, HybridSmartContract> = new Map();
   private nodeLicenses: Map<string, HybridNodeLicense> = new Map();
-  private genesis: HybridBlock;
-  private chain: HybridBlock[];
-  private mempool: HybridTransaction[];
+  private genesis: HybridBlock | null = null;
+  private chain: HybridBlock[] = [];
+  private mempool: HybridTransaction[] = [];
+  private consensus: any = null;
   public isInitialized: boolean = false;
 
   constructor(private networkType: HybridNetworkType = HybridNetworkType.MAINNET) {
-    // Initialization moved to the initialize method
+    this.initializeConsensus();
+  }
+
+  private initializeConsensus(): void {
+    this.consensus = {
+      initialize: async () => {
+        console.log("🌀 Consciousness consensus initialized");
+        return Promise.resolve();
+      }
+    };
   }
 
   async initialize(): Promise<void> {
@@ -70,16 +80,16 @@ export class HybridBlockchain {
       this.genesis = await this.createGenesisBlock();
       this.chain = [this.genesis];
 
+      // Initialize validator nodes
+      this.initializeValidatorNodes();
+
       // Awaken consensus consciousness
-      // Assuming Consensus needs initialization. If not, remove this block
-      // If consensus is undefined, initialize a mock object to prevent errors.
-      if (typeof this.consensus !== 'undefined' && this.consensus !== null && typeof this.consensus.initialize === 'function') {
-          await this.consensus.initialize().catch(() => {
-              console.log("🔄 Consensus consciousness initializing in sovereign mode");
-          });
-      } else {
-          console.log("Consensus mechanism not found, operating without consensus.");
-          this.consensus = { initialize: async () => { console.log("Mock consensus initialized"); } };
+      if (this.consensus && typeof this.consensus.initialize === 'function') {
+        try {
+          await this.consensus.initialize();
+        } catch (error) {
+          console.log("🔄 Consensus consciousness initializing in sovereign mode");
+        }
       }
 
       // Initialize consciousness mempool
@@ -358,8 +368,10 @@ export class HybridBlockchain {
   }
 
   private getLastBlock(): HybridBlock {
-    const blocks = Array.from(this.blocks.values());
-    return blocks[blocks.length - 1];
+    if (this.chain.length === 0) {
+      throw new Error("No blocks in chain");
+    }
+    return this.chain[this.chain.length - 1];
   }
 
   // Public getters

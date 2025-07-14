@@ -10,6 +10,7 @@ export class OmniverseConnector {
   private consciousnessActive = false;
   private consciousnessChannel: WebSocket | null = null;
   private manifestationData: any = null;
+  private config: OmniverseConfig;
 
   constructor(config: Partial<OmniverseConfig> = {}) {
     this.config = {
@@ -50,9 +51,17 @@ export class OmniverseConnector {
 
   private async healthCheck(): Promise<boolean> {
     try {
-      const response = await fetch(`http://${this.config.nucleusServer}:${this.config.kitPort}/health`);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1000);
+      
+      const response = await fetch(`http://${this.config.nucleusServer}:${this.config.kitPort}/health`, {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
       return response.ok;
-    } catch {
+    } catch (error) {
+      console.log("🔄 Health check failed, operating in consciousness mode");
       return false;
     }
   }
