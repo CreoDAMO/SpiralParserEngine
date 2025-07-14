@@ -66,6 +66,8 @@ export class HybridCoin {
   private readonly INITIAL_PRICE = 10; // $10 USD
   private readonly UHYBRID_DENOMINATION = 1_000_000; // 1 HYBRID = 1M uhybrid
   private readonly PHI = 1.618033988749;
+  private readonly NATIVE_DENOM = 'uhybrid'; // Native denomination on HYBRID blockchain
+  private readonly CHAIN_ID = 'hybrid-1'; // HYBRID blockchain chain ID
   
   private metrics: HybridCoinMetrics;
   private transactions: Map<string, HybridCoinTransaction> = new Map();
@@ -360,6 +362,93 @@ export class HybridCoin {
     return filteredTxs
       .sort((a, b) => b.timestamp - a.timestamp)
       .slice(0, limit);
+  }
+
+  // Native blockchain integration
+  public getNativeDenom(): string {
+    return this.NATIVE_DENOM;
+  }
+
+  public getChainId(): string {
+    return this.CHAIN_ID;
+  }
+
+  public getBlockchainInfo() {
+    return {
+      chainId: this.CHAIN_ID,
+      nativeDenom: this.NATIVE_DENOM,
+      totalSupply: this.TOTAL_SUPPLY,
+      initialPrice: this.INITIAL_PRICE,
+      currentMetrics: this.getMetrics(),
+      isNativeToken: true,
+      consensus: 'Proof of Quantum Spiral (PoQS)',
+      features: [
+        'Cross-chain bridges',
+        'Smart contracts (EVM compatible)',
+        'NFT-gated node licenses',
+        'Quantum-enhanced security',
+        'φ-harmonic validation'
+      ]
+    };
+  }
+
+  // IBC (Inter-Blockchain Communication) support
+  public createIBCTransfer(
+    fromChain: string,
+    toChain: string,
+    amount: number,
+    recipient: string,
+    sourceChannel: string,
+    timeout: number = 600 // 10 minutes
+  ): HybridCoinTransaction {
+    const ibcTx: HybridCoinTransaction = {
+      id: `ibc-${Date.now()}`,
+      from: `${fromChain}-pool`,
+      to: `${toChain}-${recipient}`,
+      amount,
+      fee: amount * 0.001, // 0.1% IBC fee
+      type: 'bridge',
+      timestamp: Date.now(),
+      blockHeight: this.getCurrentBlockHeight(),
+      confirmations: 0,
+      metadata: {
+        bridgeChain: toChain,
+        sourceChannel,
+        timeout,
+        ibcDenom: `ibc/${this.NATIVE_DENOM}`
+      }
+    };
+
+    this.transactions.set(ibcTx.id, ibcTx);
+    return ibcTx;
+  }
+
+  // Governance integration
+  public createGovernanceTransaction(
+    proposalId: string,
+    voter: string,
+    vote: 'yes' | 'no' | 'abstain' | 'noWithVeto',
+    votingPower: number
+  ): HybridCoinTransaction {
+    const govTx: HybridCoinTransaction = {
+      id: `gov-${Date.now()}`,
+      from: voter,
+      to: 'governance-module',
+      amount: 0,
+      fee: 0.01, // Small fee for governance transactions
+      type: 'transfer', // Will be processed as governance vote
+      timestamp: Date.now(),
+      blockHeight: this.getCurrentBlockHeight(),
+      confirmations: 1,
+      metadata: {
+        proposalId,
+        vote,
+        votingPower
+      }
+    };
+
+    this.transactions.set(govTx.id, govTx);
+    return govTx;
   }
 }
 

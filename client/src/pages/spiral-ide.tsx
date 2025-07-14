@@ -13,6 +13,7 @@ import RevenueDashboard from "@/components/spiral/revenue-dashboard";
 import HybridBlockchainViewer from '@/components/spiral/hybrid-blockchain-viewer';
 import StressTestDashboard from '@/components/spiral/stress-test';
 import AIChatPanel from '@/components/spiral/ai-chat-panel';
+import FounderWalletDashboard from '@/components/spiral/founder-wallet-dashboard';
 
 export default function SpiralIDE() {
   const [activeFile, setActiveFile] = useState<number | null>(null);
@@ -130,6 +131,7 @@ export default function SpiralIDE() {
               <MolecularAssembly />
               <RevenueDashboard />
               <HybridBlockchainViewer />
+              <FounderWalletDashboard />
             </div>
           ) : activeTab === "AI Chat" ? (
             <AIChatPanel />
