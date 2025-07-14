@@ -63,13 +63,18 @@ export default function AIChatPanel() {
   const synthesis = useRef<any>(null);
 
   useEffect(() => {
-    // Initialize speech recognition
+    // Initialize speech recognition with enhanced error handling
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
       recognition.current = new SpeechRecognition();
       recognition.current.continuous = true;
       recognition.current.interimResults = true;
       recognition.current.lang = voiceSettings.language;
+
+      recognition.current.onstart = () => {
+        console.log('Voice recognition started');
+        setIsListening(true);
+      };
 
       recognition.current.onresult = (event: any) => {
         const last = event.results.length - 1;
@@ -78,18 +83,49 @@ export default function AIChatPanel() {
         if (event.results[last].isFinal) {
           setInputMessage(text);
           setIsListening(false);
+          console.log('Voice input captured:', text);
         }
       };
 
       recognition.current.onerror = (event: any) => {
         console.error('Speech recognition error:', event.error);
         setIsListening(false);
+        // Add user feedback for voice errors
+        const errorMessage: ChatMessage = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: `Voice recognition error: ${event.error}. Please try again or check your microphone permissions.`,
+          timestamp: new Date(),
+          model: selectedModel
+        };
+        setMessages(prev => [...prev, errorMessage]);
       };
+
+      recognition.current.onend = () => {
+        console.log('Voice recognition ended');
+        setIsListening(false);
+      };
+    } else {
+      console.warn('Speech recognition not supported in this browser');
     }
 
-    // Initialize speech synthesis
+    // Initialize speech synthesis with voice selection
     if ('speechSynthesis' in window) {
       synthesis.current = window.speechSynthesis;
+      
+      // Load available voices
+      const loadVoices = () => {
+        const voices = synthesis.current.getVoices();
+        console.log('Available voices:', voices.length);
+      };
+      
+      if (synthesis.current.getVoices().length > 0) {
+        loadVoices();
+      } else {
+        synthesis.current.onvoiceschanged = loadVoices;
+      }
+    } else {
+      console.warn('Speech synthesis not supported in this browser');
     }
 
     // Add welcome message
@@ -137,13 +173,67 @@ Select a task type and AI model, then ask me anything! I support voice commands 
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const speakMessage = (text: string) => {
+  const speakMessage = (text: string, model?: AIModel) => {
     if (synthesis.current && voiceSettings.enabled) {
+      // Cancel any ongoing speech
+      synthesis.current.cancel();
+      
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = voiceSettings.rate;
       utterance.pitch = voiceSettings.pitch;
       utterance.volume = voiceSettings.volume;
       utterance.lang = voiceSettings.language;
+      
+      // Set model-specific voice characteristics
+      const voices = synthesis.current.getVoices();
+      let selectedVoice = voices.find(voice => voice.lang === voiceSettings.language);
+      
+      if (model && voices.length > 0) {
+        switch (model) {
+          case AIModel.GROK:
+            // Use a more energetic voice for Grok
+            selectedVoice = voices.find(voice => 
+              voice.name.includes('Google') || voice.name.includes('Microsoft')
+            ) || selectedVoice;
+            utterance.pitch = Math.min(2, voiceSettings.pitch + 0.2);
+            utterance.rate = Math.min(2, voiceSettings.rate + 0.1);
+            break;
+          case AIModel.CLAUDE:
+            // Use a calm, analytical voice for Claude
+            selectedVoice = voices.find(voice => 
+              voice.name.includes('Alex') || voice.name.includes('Daniel')
+            ) || selectedVoice;
+            utterance.pitch = Math.max(0.5, voiceSettings.pitch - 0.1);
+            break;
+          case AIModel.DEEPSEEK:
+            // Use a precise, technical voice for DeepSeek
+            selectedVoice = voices.find(voice => 
+              voice.name.includes('Samantha') || voice.name.includes('Karen')
+            ) || selectedVoice;
+            utterance.rate = Math.max(0.5, voiceSettings.rate - 0.1);
+            break;
+          case AIModel.CHATGPT:
+            // Use default friendly voice for ChatGPT
+            break;
+        }
+      }
+      
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+      
+      utterance.onstart = () => {
+        console.log(`Speaking response from ${model || 'AI'}`);
+      };
+      
+      utterance.onend = () => {
+        console.log('Speech synthesis completed');
+      };
+      
+      utterance.onerror = (event) => {
+        console.error('Speech synthesis error:', event.error);
+      };
+      
       synthesis.current.speak(utterance);
     }
   };
@@ -211,9 +301,9 @@ Select a task type and AI model, then ask me anything! I support voice commands 
 
       setMessages(prev => [...prev, assistantMessage]);
       
-      // Speak response if voice is enabled
+      // Speak response if voice is enabled with model-specific voice
       if (voiceSettings.enabled) {
-        speakMessage(synthesizedResponse);
+        speakMessage(synthesizedResponse, bestResponse.model);
       }
 
       // Update metrics
@@ -449,7 +539,7 @@ Select a task type and AI model, then ask me anything! I support voice commands 
 
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Quick Stats</CardTitle>
+                <CardTitle className="text-lg">Voice & Chat Status</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="text-center">
@@ -458,18 +548,39 @@ Select a task type and AI model, then ask me anything! I support voice commands 
                 </div>
                 <Separator />
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-500">{aiMetrics.tuGenerated.toFixed(1)}</div>
-                  <div className="text-xs text-gray-500">TU Generated</div>
+                  <div className={`text-2xl font-bold ${voiceSettings.enabled ? 'text-green-500' : 'text-red-500'}`}>
+                    {voiceSettings.enabled ? '🔊' : '🔇'}
+                  </div>
+                  <div className="text-xs text-gray-500">Voice Status</div>
                 </div>
                 <Separator />
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-500">{aiMetrics.averageResponseTime.toFixed(0)}ms</div>
-                  <div className="text-xs text-gray-500">Avg Response</div>
+                  <div className={`text-2xl font-bold ${('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) ? 'text-green-500' : 'text-red-500'}`}>
+                    {('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) ? '🎤' : '❌'}
+                  </div>
+                  <div className="text-xs text-gray-500">Speech Recognition</div>
                 </div>
                 <Separator />
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-yellow-500">${aiMetrics.costSavings.toFixed(3)}</div>
-                  <div className="text-xs text-gray-500">Cost Savings</div>
+                  <div className={`text-2xl font-bold ${('speechSynthesis' in window) ? 'text-green-500' : 'text-red-500'}`}>
+                    {('speechSynthesis' in window) ? '🗣️' : '❌'}
+                  </div>
+                  <div className="text-xs text-gray-500">Speech Synthesis</div>
+                </div>
+                <Separator />
+                <div className="text-center">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      if (synthesis.current) {
+                        speakMessage(`Hello! I'm ${selectedModel}, your AI assistant. Voice features are working perfectly!`, selectedModel);
+                      }
+                    }}
+                    disabled={!voiceSettings.enabled}
+                  >
+                    🧪 Test Voice
+                  </Button>
                 </div>
               </CardContent>
             </Card>

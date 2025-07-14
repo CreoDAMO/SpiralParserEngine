@@ -197,11 +197,38 @@ export default function ComprehensiveAIOrchestrator() {
 
   const startVoiceInput = () => {
     setIsListening(true);
-    // Simulate voice input
-    setTimeout(() => {
-      setQuery('Analyze the quantum resonance patterns in our SpiralScript codebase');
-      setIsListening(false);
-    }, 2000);
+    
+    // Check if speech recognition is available
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setQuery(transcript);
+        setIsListening(false);
+      };
+
+      recognition.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognition.start();
+    } else {
+      // Fallback simulation for browsers without speech recognition
+      setTimeout(() => {
+        setQuery('Analyze the quantum resonance patterns in our SpiralScript codebase');
+        setIsListening(false);
+      }, 2000);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -257,9 +284,9 @@ export default function ComprehensiveAIOrchestrator() {
             </div>
             
             <div className="p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg">
-              <div className="text-sm text-gray-600">Total Cost</div>
+              <div className="text-sm text-gray-600">Voice Status</div>
               <div className="text-2xl font-bold text-yellow-600">
-                ${totalCost.toFixed(2)}
+                {('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) ? '🎤✓' : '🎤❌'}
               </div>
             </div>
           </div>
