@@ -61,6 +61,7 @@ import { RevenueDashboard } from '@/components/spiral/revenue-dashboard';
 import { StressTest } from '@/components/spiral/stress-test';
 import { FounderWalletDashboard } from '@/components/spiral/founder-wallet-dashboard';
 import { SpiralBlockchainInterface } from '@/components/spiral/spiral-blockchain-interface';
+import OmniverseVisualization from '@/components/spiral/omniverse-visualization';
 
 // System status data - Real-time operational metrics
 const systemStatus = {
@@ -291,7 +292,7 @@ return (
         {/* Main IDE */}
         <div className="flex-1 flex flex-col">
           <Tabs defaultValue="overview" className="flex-1 flex flex-col">
-            <TabsList className="grid w-full grid-cols-9 bg-black/40 border-b border-purple-800/30">
+            <TabsList className="grid w-full grid-cols-10 bg-black/40 border-b border-purple-800/30">
               <TabsTrigger value="overview" className="flex items-center gap-2">
                 <Activity className="h-4 w-4" />
                 Overview
@@ -315,6 +316,10 @@ return (
               <TabsTrigger value="molecular" className="flex items-center gap-2">
                 <Layers3 className="h-4 w-4" />
                 Molecular
+              </TabsTrigger>
+              <TabsTrigger value="omniverse" className="flex items-center gap-2">
+                <Globe className="h-4 w-4" />
+                Omniverse
               </TabsTrigger>
               <TabsTrigger value="revenue" className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4" />
@@ -609,6 +614,9 @@ return (
             </TabsContent>
             <TabsContent value="molecular" className="flex-1">
               <MolecularAssembly />
+            </TabsContent>
+            <TabsContent value="omniverse" className="flex-1">
+              <OmniverseVisualization />
             </TabsContent>
             <TabsContent value="revenue" className="flex-1">
               <RevenueDashboard />
