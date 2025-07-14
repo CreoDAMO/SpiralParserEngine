@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "NODE_ENV=development tsx server/index.ts",
     "generate:languages": "tsx scripts/generate-languages.ts",
+    "compile:grammar": "tsx scripts/compile-grammar.ts",
     "test:parser": "tsx -e \"import('./client/src/lib/spiral-parser').then(m => console.log('Parser loaded:', !!m.spiralParser))\"",
+    "test:antlr": "tsx -e \"import('./client/src/generated/SpiralScriptIntegration').then(m => console.log('ANTLR4 Parser loaded:', !!m.compiledParser)).catch(e => console.log('ANTLR4 not compiled yet, run npm run compile:grammar'))\"",
     "validate:languages": "tsx scripts/generate-languages.ts && echo 'Language validation complete'",
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "start": "NODE_ENV=production node dist/index.js",
