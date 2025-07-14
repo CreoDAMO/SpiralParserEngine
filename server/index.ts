@@ -66,7 +66,7 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = 5000;
-  
+
   // Graceful shutdown handling
   process.on('SIGTERM', () => {
     log('SIGTERM received, shutting down gracefully');
