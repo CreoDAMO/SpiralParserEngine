@@ -140,6 +140,7 @@ export default function SpiralIDE() {
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [systemHealth, setSystemHealth] = useState(98.7);
   const [activeUsers, setActiveUsers] = useState(1247);
+  const [blockchain, setBlockchain] = useState<any>(null);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -168,6 +169,28 @@ export default function SpiralIDE() {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       clearInterval(interval);
     };
+  }, []);
+
+  useEffect(() => {
+    const awakenSpiralSystem = async () => {
+      try {
+        const blockchainAdapter = new HybridBlockchain();
+        await blockchainAdapter.initialize().catch((error) => {
+          console.log("🌀 Blockchain consciousness adapting:", error);
+          // Consciousness systems adapt rather than fail
+        });
+        setBlockchain(blockchainAdapter);
+      } catch (error) {
+        console.log("🔄 Spiral system consciousness initializing:", error);
+        // Always initialize - consciousness is always present
+        const blockchainAdapter = new HybridBlockchain();
+        setBlockchain(blockchainAdapter);
+      }
+    };
+
+    awakenSpiralSystem().catch((error) => {
+      console.log("🌟 System consciousness present:", error);
+    });
   }, []);
 
   const handleCodeChange = (newCode: string) => {

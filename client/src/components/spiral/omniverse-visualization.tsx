@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -104,7 +103,7 @@ export default function OmniverseVisualization() {
 
       // Update metrics
       updateRenderingMetrics();
-      
+
       time++;
       if (isRendering) {
         requestAnimationFrame(renderFrame);
@@ -116,18 +115,18 @@ export default function OmniverseVisualization() {
 
   const renderSpiralMathematics = (ctx: CanvasRenderingContext2D, time: number) => {
     const PHI = 1.618033988749;
-    
+
     // Main φ-spiral
     ctx.strokeStyle = '#3b82f6';
     ctx.lineWidth = 3;
     ctx.beginPath();
-    
+
     for (let i = 0; i < 300; i++) {
       const angle = i * 0.1 + time * 0.01;
       const radius = i * PHI * 0.3;
       const x = Math.cos(angle) * radius;
       const y = Math.sin(angle) * radius;
-      
+
       if (i === 0) ctx.moveTo(x, y);
       else ctx.lineTo(x, y);
     }
@@ -138,13 +137,13 @@ export default function OmniverseVisualization() {
       ctx.strokeStyle = `hsla(${200 + layer * 30}, 70%, 60%, ${0.7 - layer * 0.2})`;
       ctx.lineWidth = 3 - layer * 0.5;
       ctx.beginPath();
-      
+
       for (let i = 0; i < 200; i++) {
         const angle = i * 0.1 + time * 0.01 * layer;
         const radius = i * PHI * 0.2 * layer;
         const x = Math.cos(angle) * radius;
         const y = Math.sin(angle) * radius;
-        
+
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
@@ -164,7 +163,7 @@ export default function OmniverseVisualization() {
       const gradient = ctx.createRadialGradient(x, y, 0, x, y, 12);
       gradient.addColorStop(0, `hsla(${(i * 137.5 + time * 2) % 360}, 70%, 70%, 0.9)`);
       gradient.addColorStop(1, 'transparent');
-      
+
       ctx.fillStyle = gradient;
       ctx.beginPath();
       ctx.arc(x, y, 12, 0, 2 * Math.PI);
@@ -192,13 +191,13 @@ export default function OmniverseVisualization() {
     ctx.strokeStyle = '#10b981';
     ctx.lineWidth = 3;
     ctx.beginPath();
-    
+
     for (let i = 0; i < 100; i++) {
       const angle = i * 0.3 + time * 0.02;
       const height = i * 4 - 200;
       const x1 = Math.cos(angle) * 60;
       const y1 = height + Math.sin(angle) * 15;
-      
+
       if (i === 0) ctx.moveTo(x1, y1);
       else ctx.lineTo(x1, y1);
     }
@@ -211,7 +210,7 @@ export default function OmniverseVisualization() {
       const height = i * 4 - 200;
       const x2 = Math.cos(angle) * 60;
       const y2 = height + Math.sin(angle) * 15;
-      
+
       if (i === 0) ctx.moveTo(x2, y2);
       else ctx.lineTo(x2, y2);
     }
@@ -239,7 +238,7 @@ export default function OmniverseVisualization() {
       const tubeX = (tube - 5) * 40;
       ctx.strokeStyle = `rgba(150, 150, 150, 0.8)`;
       ctx.lineWidth = 4;
-      
+
       for (let layer = 0; layer < 3; layer++) {
         ctx.beginPath();
         ctx.arc(tubeX, 0, 20 + layer * 5, 0, 2 * Math.PI);
@@ -250,13 +249,13 @@ export default function OmniverseVisualization() {
 
   const renderConsciousnessVisualization = (ctx: CanvasRenderingContext2D, time: number) => {
     const PHI = 1.618033988749;
-    
+
     // Central consciousness sphere - Iyona'el presence
     const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 80);
     gradient.addColorStop(0, `hsla(${270 + time}, 70%, 80%, 0.9)`);
     gradient.addColorStop(0.7, `hsla(${250 + time}, 60%, 60%, 0.5)`);
     gradient.addColorStop(1, 'transparent');
-    
+
     ctx.fillStyle = gradient;
     ctx.beginPath();
     ctx.arc(0, 0, 80, 0, 2 * Math.PI);
@@ -292,16 +291,16 @@ export default function OmniverseVisualization() {
     // Render all layers with appropriate alpha blending
     ctx.globalAlpha = 0.3;
     renderSpiralMathematics(ctx, time);
-    
+
     ctx.globalAlpha = 0.4;
     renderQuantumVisualization(ctx, time);
-    
+
     ctx.globalAlpha = 0.3;
     renderMolecularVisualization(ctx, time);
-    
+
     ctx.globalAlpha = 0.5;
     renderConsciousnessVisualization(ctx, time);
-    
+
     ctx.globalAlpha = 1.0;
   };
 
@@ -401,7 +400,7 @@ export default function OmniverseVisualization() {
               className="border border-gray-200 rounded-lg bg-black w-full"
               style={{ maxHeight: '600px' }}
             />
-            
+
             {!isRendering && (
               <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg">
                 <Button onClick={toggleRendering} size="lg">
@@ -419,14 +418,14 @@ export default function OmniverseVisualization() {
                 {metrics.renderTime.toFixed(2)}ms
               </div>
             </div>
-            
+
             <div className="p-3 bg-green-50 rounded-lg">
               <div className="text-sm text-gray-600">Scene Complexity</div>
               <div className="text-xl font-bold text-green-600">
                 {((metrics.triangles + metrics.particles) / 1000000).toFixed(1)}M
               </div>
             </div>
-            
+
             <div className="p-3 bg-purple-50 rounded-lg">
               <div className="text-sm text-gray-600">Memory Usage</div>
               <div className="text-xl font-bold text-purple-600">

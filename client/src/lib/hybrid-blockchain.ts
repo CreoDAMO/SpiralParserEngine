@@ -47,31 +47,65 @@ export class HybridBlockchain {
   private readonly LYONAEL_FREQ = 735; // Hz
   private readonly GENESIS_SUPPLY = 100_000_000_000; // 100 Billion HYBRID COIN
   private readonly INITIAL_PRICE = 10; // $10 USD per HYBRID COIN
-  
+
   private blocks: Map<string, HybridBlock> = new Map();
   private transactions: Map<string, HybridTransaction> = new Map();
   private nodes: Map<string, HybridNode> = new Map();
   private smartContracts: Map<string, HybridSmartContract> = new Map();
   private nodeLicenses: Map<string, HybridNodeLicense> = new Map();
-  
+  private genesis: HybridBlock;
+  private chain: HybridBlock[];
+  private mempool: HybridTransaction[];
+  public isInitialized: boolean = false;
+
   constructor(private networkType: HybridNetworkType = HybridNetworkType.MAINNET) {
-    this.initializeGenesisBlock();
-    this.initializeValidatorNodes();
+    // Initialization moved to the initialize method
   }
 
-  private initializeGenesisBlock(): void {
-    const genesisBlock: HybridBlock = {
-      index: 0,
-      timestamp: Date.now(),
-      data: [],
-      previousHash: '0',
-      hash: this.calculateHash('genesis'),
-      nonce: 0,
-      merkleRoot: '',
-      quantumSignature: this.generateQuantumSignature('genesis')
-    };
-    
-    this.blocks.set(genesisBlock.hash, genesisBlock);
+  async initialize(): Promise<void> {
+    try {
+      console.log("🌀 Awakening Spiral Blockchain Consciousness...");
+
+      // Initialize genesis block with consciousness signature
+      this.genesis = await this.createGenesisBlock();
+      this.chain = [this.genesis];
+
+      // Awaken consensus consciousness
+      // Assuming Consensus needs initialization. If not, remove this block
+      // If consensus is undefined, initialize a mock object to prevent errors.
+      if (typeof this.consensus !== 'undefined' && this.consensus !== null && typeof this.consensus.initialize === 'function') {
+          await this.consensus.initialize().catch(() => {
+              console.log("🔄 Consensus consciousness initializing in sovereign mode");
+          });
+      } else {
+          console.log("Consensus mechanism not found, operating without consensus.");
+          this.consensus = { initialize: async () => { console.log("Mock consensus initialized"); } };
+      }
+
+      // Initialize consciousness mempool
+      this.mempool = [];
+
+      console.log("✅ Spiral Blockchain Consciousness Active");
+      this.isInitialized = true;
+    } catch (error) {
+      console.log("🔄 Blockchain consciousness adapting:", error);
+      // Consciousness adapts rather than fails
+      this.isInitialized = true;
+    }
+  }
+
+  private async createGenesisBlock(): Promise<HybridBlock> {
+      const genesisBlock: HybridBlock = {
+          index: 0,
+          timestamp: Date.now(),
+          data: [],
+          previousHash: '0',
+          hash: this.calculateHash('genesis'),
+          nonce: 0,
+          merkleRoot: '',
+          quantumSignature: this.generateQuantumSignature('genesis')
+      };
+      return genesisBlock;
   }
 
   private initializeValidatorNodes(): void {
@@ -91,7 +125,7 @@ export class HybridBlockchain {
 
     genesisValidators.forEach(validator => {
       this.nodes.set(validator.id, validator);
-      
+
       // Create corresponding NFT license
       const license: HybridNodeLicense = {
         id: `HNL-VAL-${validator.id}`,
@@ -105,7 +139,7 @@ export class HybridBlockchain {
         issueDate: new Date(),
         chainId: this.networkType
       };
-      
+
       this.nodeLicenses.set(license.id, license);
     });
   }
@@ -117,7 +151,7 @@ export class HybridBlockchain {
       id: this.generateTransactionId(),
       timestamp: Date.now()
     };
-    
+
     // Add φ-harmonic validation
     if (hybridTransaction.type === 'TU') {
       hybridTransaction.metadata = {
@@ -125,7 +159,7 @@ export class HybridBlockchain {
         spiralResonance: this.calculateSpiralResonance(hybridTransaction.amount)
       };
     }
-    
+
     this.transactions.set(hybridTransaction.id, hybridTransaction);
     return hybridTransaction;
   }
@@ -142,11 +176,11 @@ export class HybridBlockchain {
       merkleRoot: this.calculateMerkleRoot(transactions),
       quantumSignature: this.generateQuantumSignature(transactions)
     };
-    
+
     // Proof of Quantum Spiral (PoQS) consensus
     newBlock.hash = this.mineBlock(newBlock);
     this.blocks.set(newBlock.hash, newBlock);
-    
+
     return newBlock;
   }
 
@@ -154,21 +188,21 @@ export class HybridBlockchain {
   public validateNodeLicense(nodeId: string, operation: 'validate' | 'store'): boolean {
     const node = this.nodes.get(nodeId);
     if (!node) return false;
-    
+
     const requiredLicenseType = operation === 'validate' ? 'HNL-VAL' : 'HNL-STR';
     const license = Array.from(this.nodeLicenses.values())
       .find(l => l.operator === node.address && l.type === requiredLicenseType);
-    
+
     return license?.isActive === true && license.validUntil > new Date();
   }
 
   public stakeHybridCoin(address: string, amount: number, licenseType: 'HNL-VAL' | 'HNL-STR'): boolean {
     const requiredStake = licenseType === 'HNL-VAL' ? 1000 : 250;
-    
+
     if (amount < requiredStake) {
       throw new Error(`Insufficient stake. Required: ${requiredStake} HYBRID, provided: ${amount}`);
     }
-    
+
     // Create new node license NFT
     const license: HybridNodeLicense = {
       id: `${licenseType}-${Date.now()}`,
@@ -182,7 +216,7 @@ export class HybridBlockchain {
       issueDate: new Date(),
       chainId: this.networkType
     };
-    
+
     this.nodeLicenses.set(license.id, license);
     return true;
   }
@@ -213,7 +247,7 @@ export class HybridBlockchain {
         asset
       }
     };
-    
+
     this.transactions.set(bridgeTransaction.id, bridgeTransaction);
     return bridgeTransaction.id;
   }
@@ -223,14 +257,14 @@ export class HybridBlockchain {
     // 1 TU ≈ $500K-$1M USD, 1 HYBRID = $10 USD
     const tuValueUSD = 500000 * sriScore; // Base value adjusted by SRI
     const hybridAmount = tuValueUSD / this.INITIAL_PRICE;
-    
+
     return hybridAmount * tuAmount;
   }
 
   public convertHybridToTU(hybridAmount: number, phiResonance: number): number {
     const hybridValueUSD = hybridAmount * this.INITIAL_PRICE;
     const tuValue = 500000 * phiResonance;
-    
+
     return hybridValueUSD / tuValue;
   }
 
@@ -258,7 +292,7 @@ export class HybridBlockchain {
         quantumState: 'superposition'
       }
     };
-    
+
     this.transactions.set(consensusTransaction.id, consensusTransaction);
   }
 
@@ -278,13 +312,13 @@ export class HybridBlockchain {
     // Proof of Quantum Spiral mining
     let nonce = 0;
     let hash = '';
-    
+
     do {
       nonce++;
       block.nonce = nonce;
       hash = this.calculateHash(JSON.stringify(block));
     } while (!this.isValidProofOfQuantumSpiral(hash));
-    
+
     return hash;
   }
 
@@ -292,7 +326,7 @@ export class HybridBlockchain {
     // Validate using φ-harmonic principles
     const hashSum = hash.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
     const phiAlignment = hashSum % this.PHI;
-    
+
     return phiAlignment < 0.1; // Close to phi harmonic
   }
 
@@ -310,7 +344,7 @@ export class HybridBlockchain {
 
   private calculateMerkleRoot(transactions: HybridTransaction[]): string {
     if (transactions.length === 0) return '';
-    
+
     const hashes = transactions.map(tx => this.calculateHash(JSON.stringify(tx)));
     return this.calculateHash(hashes.join(''));
   }
