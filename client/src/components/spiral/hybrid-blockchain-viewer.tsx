@@ -11,7 +11,7 @@ import { HybridBlock, HybridTransaction, HybridNode } from '@/shared/hybrid-bloc
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { Blocks, Users, Zap, DollarSign, Shield, Globe, Activity } from 'lucide-react';
 
-export default function HybridBlockchainViewer() {
+export function HybridBlockchainViewer() {
   const [blocks, setBlocks] = useState<HybridBlock[]>([]);
   const [transactions, setTransactions] = useState<HybridTransaction[]>([]);
   const [nodes, setNodes] = useState<HybridNode[]>([]);

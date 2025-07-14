@@ -7,7 +7,7 @@ interface TrustWalletProps {
   user: User | undefined;
 }
 
-export default function TrustWallet({ user }: TrustWalletProps) {
+export function TrustWallet({ user }: TrustWalletProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 

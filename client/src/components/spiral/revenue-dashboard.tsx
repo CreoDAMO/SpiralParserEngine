@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -449,3 +448,5 @@ export default function RevenueDashboard() {
     </div>
   );
 }
+
+export default RevenueDashboard;

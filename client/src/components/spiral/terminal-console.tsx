@@ -47,18 +47,18 @@ export default function TerminalConsole({ activeTab, onTabChange }: TerminalCons
         addLog("info", "  tu generate - Generate Trust Units");
         addLog("info", "  clear - Clear terminal");
         break;
-        
+
       case "clear":
         setLogs([]);
         break;
-        
+
       case "tu generate":
         addLog("info", "Generating Trust Units...");
         setTimeout(() => {
           addLog("success", "✓ Generated 888.618 TU from φ-harmonic resonance");
         }, 1000);
         break;
-        
+
       case "quantum simulate":
         addLog("info", "Initializing quantum circuit simulation...");
         setTimeout(() => {
@@ -66,11 +66,11 @@ export default function TerminalConsole({ activeTab, onTabChange }: TerminalCons
           addLog("info", "Measurement results: |01⟩ (probability: 0.707)");
         }, 1500);
         break;
-        
+
       default:
         addLog("error", `Unknown command: ${cmd}`);
     }
-    
+
     setCommand("");
   };
 
@@ -120,7 +120,7 @@ export default function TerminalConsole({ activeTab, onTabChange }: TerminalCons
                 {log.message}
               </div>
             ))}
-            
+
             {/* Command Input */}
             <div className="flex items-center space-x-2 mt-2">
               <span className="text-spiral-400">spiral@quantum:~$</span>

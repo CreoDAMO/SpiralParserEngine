@@ -8,7 +8,7 @@ interface MonacoEditorProps {
   files: SpiralFile[];
 }
 
-export default function MonacoEditor({ activeFile, files }: MonacoEditorProps) {
+export function MonacoEditor({ activeFile, files }: MonacoEditorProps) {
   const [openTabs, setOpenTabs] = useState<number[]>([]);
   const [currentTab, setCurrentTab] = useState<number | null>(null);
   const [editorContent, setEditorContent] = useState<string>("");

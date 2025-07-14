@@ -9,7 +9,7 @@ interface FileExplorerProps {
   onFileSelect: (fileId: number) => void;
 }
 
-export default function FileExplorer({ files, activeFile, onFileSelect }: FileExplorerProps) {
+export function FileExplorer({ files, activeFile, onFileSelect }: FileExplorerProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [newFileName, setNewFileName] = useState("");
   const queryClient = useQueryClient();

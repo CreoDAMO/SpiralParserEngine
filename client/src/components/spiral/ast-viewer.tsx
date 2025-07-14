@@ -6,7 +6,7 @@ interface ASTViewerProps {
   activeFile: number | null;
 }
 
-export default function ASTViewer({ activeTab, activeFile }: ASTViewerProps) {
+export function ASTViewer({ activeTab, activeFile }: ASTViewerProps) {
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(["Program"]));
 
   const { data: parseResult } = useQuery({
