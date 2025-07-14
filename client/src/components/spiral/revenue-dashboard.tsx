@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +8,7 @@ import { RevenueOptimizer, RevenueStreamType } from '@/lib/revenue-optimizer';
 import { AIRateLimitOptimizer, AIProviderType } from '@/lib/ai-rate-optimizer';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
-export default function RevenueDashboard() {
+export function RevenueDashboard() {
   const [revenueOptimizer] = useState(() => new RevenueOptimizer());
   const [aiOptimizer] = useState(() => new AIRateLimitOptimizer());
   const [totalRevenue, setTotalRevenue] = useState(0);
@@ -448,5 +449,3 @@ export default function RevenueDashboard() {
     </div>
   );
 }
-
-export default RevenueDashboard;

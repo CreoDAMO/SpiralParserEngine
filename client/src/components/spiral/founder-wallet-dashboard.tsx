@@ -1,3 +1,4 @@
+
 // Founder Wallet Dashboard - Management interface for HYBRID blockchain governance
 
 import React, { useState, useEffect } from 'react';
@@ -20,7 +21,7 @@ interface FounderWalletDashboardProps {
   className?: string;
 }
 
-const FounderWalletDashboard: React.FC<FounderWalletDashboardProps> = ({ className }) => {
+export function FounderWalletDashboard({ className }: FounderWalletDashboardProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -642,5 +643,3 @@ const FounderWalletDashboard: React.FC<FounderWalletDashboardProps> = ({ classNa
     </div>
   );
 }
-
-export default FounderWalletDashboard;

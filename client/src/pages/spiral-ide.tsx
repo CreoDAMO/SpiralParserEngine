@@ -588,13 +588,13 @@ return (
 <TabsContent value="ide" className="flex-1">
               <div className="flex h-full">
                 <div className="w-64 bg-black/40 border-r border-purple-800/30 p-3">
-                  <FileExplorer />
+                  <FileExplorer files={[]} activeFile={null} onFileSelect={() => {}} />
                 </div>
                 <div className="flex-1 p-3">
-                  <MonacoEditor code={code} onChange={handleCodeChange} />
+                  <MonacoEditor activeFile={null} files={[]} />
                 </div>
                 <div className="w-96 bg-black/40 border-l border-purple-800/30 p-3">
-                  <ASTViewer ast={ast} />
+                  <ASTViewer activeTab="AST" activeFile={null} />
                 </div>
               </div>
             </TabsContent>
@@ -619,13 +619,13 @@ return (
                   <FounderWalletDashboard />
                 </div>
                 <div>
-                  <TrustWallet />
+                  <TrustWallet user={undefined} />
                 </div>
               </div>
             </TabsContent>
 
             <TabsContent value="terminal" className="flex-1">
-              <TerminalConsole />
+              <TerminalConsole activeTab="Console" onTabChange={() => {}} />
             </TabsContent>
           </Tabs>
         </div>
