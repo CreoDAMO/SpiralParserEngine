@@ -406,7 +406,7 @@ Select a task type and AI model, then ask me anything! I support voice commands 
 
         <TabsContent value="chat" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            
+
             <Card className="bg-gradient-to-br from-gray-900/90 to-blue-900/30 border border-blue-500/30 h-full flex flex-col shadow-xl backdrop-blur-sm">
               <CardHeader className="bg-gradient-to-r from-blue-800/20 to-purple-800/20 rounded-t-lg shrink-0">
                 <CardTitle className="text-white flex items-center space-x-3">
@@ -821,7 +821,7 @@ Select a task type and AI model, then ask me anything! I support voice commands 
                   {Object.values(AIModel).map((model) => (
                     <div key={model} className="flex items-center gap-3">
                       <span className="w-20 text-sm">{model}</span>
-                      <div className="flex-1 bg-gray-200 rounded-full h-2">
+                      <div className="flex-1 bg-gray200 rounded-full h-2">
                         <div 
                           className="bg-blue-500 h-2 rounded-full" 
                           style={{ width: `${Math.random() * 40 + 60}%` }}

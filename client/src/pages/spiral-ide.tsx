@@ -55,7 +55,7 @@ import { TrustWallet } from '@/components/spiral/trust-wallet';
 import { HybridBlockchainViewer } from '@/components/spiral/hybrid-blockchain-viewer';
 import { QuantumTools } from '@/components/spiral/quantum-tools';
 import { MolecularAssembly } from '@/components/spiral/molecular-assembly';
-import { AIChatPanel } from '@/components/spiral/ai-chat-panel';
+import AIChatPanel from '@/components/spiral/ai-chat-panel';
 import { TerminalConsole } from '@/components/spiral/terminal-console';
 import { RevenueDashboard } from '@/components/spiral/revenue-dashboard';
 import { StressTest } from '@/components/spiral/stress-test';
