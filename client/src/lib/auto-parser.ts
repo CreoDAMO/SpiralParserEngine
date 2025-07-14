@@ -1,5 +1,5 @@
-
 import { spiralParser, githubIntegration, type ParseMetrics } from './spiral-parser';
+import { unifiedSpiralParser } from '../generated/UnifiedSpiralParser';
 
 export interface AutoParseResult {
   success: boolean;
@@ -13,8 +13,27 @@ export class AutoParser {
   private readonly PHI = 1.618033988749;
 
   async parseFile(filename: string, content: string): Promise<AutoParseResult> {
+    try {
+      // Try to use compiled ANTLR4 parser first
+      const result = await unifiedSpiralParser.parseFile(filename, content);
+
+      if (result.success) {
+        return {
+          success: true,
+          language: result.language,
+          metrics: result.metrics,
+          errors: [],
+          generatedFiles: await this.generateArtifacts(filename, result),
+          // compiler: 'antlr4-compiled' // Removed 'compiler' for consistency with the interface
+        };
+      }
+    } catch (error) {
+      console.warn('ANTLR4 parser failed, falling back to legacy parser:', error.message);
+    }
+
+    // Fallback to legacy parser
     const language = githubIntegration.detectLanguage(filename);
-    
+
     if (!language) {
       return {
         success: false,
@@ -82,7 +101,7 @@ export class AutoParser {
     // Log aggregate metrics
     const totalTU = results.reduce((sum, r) => sum + r.metrics.tuGenerated, 0);
     const avgEntropy = results.reduce((sum, r) => sum + r.metrics.entropy, 0) / results.length;
-    
+
     console.log(`📊 Batch Parse Complete: ${results.length} files, ${totalTU} TU generated, ${avgEntropy.toFixed(3)} avg entropy`);
 
     return results;

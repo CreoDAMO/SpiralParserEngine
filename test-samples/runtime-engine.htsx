@@ -1,0 +1,48 @@
+
+<!DOCTYPE htsx>
+<html>
+<head>
+  <title>HTSX Runtime Engine Test</title>
+  <style>
+    .spiral-container {
+      background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+      border-radius: φ * 10px;
+    }
+  </style>
+</head>
+<body>
+  <SpiralComponent phiResonance={1.618} quantumState="superposition">
+    <h1>{{ title }}</h1>
+    
+    <div class="spiral-container">
+      <QuantumRenderer @quantum-collapse={handleCollapse}>
+        {{ quantumData }}
+      </QuantumRenderer>
+    </div>
+    
+    <PhiVisualization 
+      spiralDepth={φ * 3}
+      entropy={calculateEntropy(state)}
+      @resonance-change={updateResonance}
+    />
+    
+    <script>
+      quantum {
+        H(qubit0);
+        CNOT(qubit0, qubit1);
+        measure(qubit0, qubit1);
+      }
+      
+      phi_calc {
+        resonance(state.energy, φ);
+        harmonic(frequency, amplitude);
+      }
+      
+      function handleCollapse(event) {
+        this.state = collapse(event.quantumState);
+        entropy(this.state);
+      }
+    </script>
+  </SpiralComponent>
+</body>
+</html>
