@@ -1,0 +1,52 @@
+Skip to content
+Navigation Menu
+Copilot
+
+Copilot navigation
+
+Copilot Chat
+Job failure resolution for missing files
+You said: Please find a solution for this failing
+Please find a solution for this failing job. Use the logs, job definition, and any referenced files where the failure occurred. Keep your response focused on the solution and include code suggestions when appropriate.
+1 reference
+Copilot said: The job failed during the "Validate generated
+The job failed during the "Validate generated files" step because either language-configuration.json or the syntaxes directory does not exist after running the generation script. Both are required for the tests to pass, as validated by these shell commands:
+
+bash
+test -f language-configuration.json
+test -d syntaxes
+Both files could not be retrieved from the repo, confirming at least one is missing.
+
+Solution:
+
+Check the output and logic of scripts/generate-languages.ts. Make sure that:
+It creates language-configuration.json at the repo root.
+It creates a syntaxes directory (with content) at the expected location.
+If the script only generates these files conditionally or puts them in the wrong path, update its output paths.
+If the script does not generate these files at all, add code to do so.
+Example code suggestion for scripts/generate-languages.ts:
+
+ts
+import { writeFileSync, mkdirSync, existsSync } from 'fs';
+import path from 'path';
+
+// Ensure syntaxes directory exists
+const syntaxesDir = path.resolve(__dirname, '../syntaxes');
+if (!existsSync(syntaxesDir)) {
+  mkdirSync(syntaxesDir);
+  // Optionally, generate language definition files inside syntaxesDir
+}
+
+// Generate language-configuration.json at repo root
+const langConfigPath = path.resolve(__dirname, '../language-configuration.json');
+writeFileSync(langConfigPath, JSON.stringify({
+  // ...your language configuration here
+}, null, 2));
+Summary:
+Update scripts/generate-languages.ts to ensure both language-configuration.json and the syntaxes directory are created at the repo root. Commit and push these changes—this will resolve the failing validation step.
+
+If you need help with the generation script code, please share its contents.
+
+How can I help you?
+
+Job failure resolution for missing files · GitHub Copilot
