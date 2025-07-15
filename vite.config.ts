@@ -1,37 +1,56 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import path from "path";
-import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import { resolve } from 'path';
 
 export default defineConfig({
   plugins: [
     react(),
-    runtimeErrorOverlay(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
-          ),
-        ]
-      : []),
+    tailwindcss(), // Use the new Tailwind CSS v4 Vite plugin
   ],
   resolve: {
     alias: {
-      "@": path.resolve(import.meta.dirname, "client", "src"),
-      "@shared": path.resolve(import.meta.dirname, "shared"),
-      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
+      '@': resolve(__dirname, './client/src'),
+      '~': resolve(__dirname, './'),
     },
   },
-  root: path.resolve(import.meta.dirname, "client"),
+  root: './client',
+  publicDir: './public',
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    outDir: '../dist/client',
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          ui: ['@radix-ui/react-dialog', '@radix-ui/react-tabs', '@radix-ui/react-button'],
+          editor: ['@monaco-editor/react'],
+          three: ['three'],
+          chart: ['recharts'],
+          query: ['@tanstack/react-query']
+        }
+      }
+    },
+    sourcemap: process.env.NODE_ENV === 'development',
+    minify: 'esbuild',
+    target: 'esnext'
   },
   server: {
-    fs: {
-      strict: true,
-      deny: ["**/.*"],
-    },
+    port: 3000,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false
+      },
+      '/socket.io': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        ws: true
+      }
+    }
   },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'three', '@monaco-editor/react']
+  }
 });

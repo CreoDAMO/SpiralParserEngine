@@ -1,100 +1,76 @@
-import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import express from 'express';
+import cors from 'cors';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { initializeStorage } from './storage.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-// Configure trust proxy for Replit environment
-app.set('trust proxy', 1);
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: false, limit: '50mb' }));
-
-app.use((req, res, next) => {
-  const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
-
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
-
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
-
-      log(logLine);
-    }
-  });
-
-  next();
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
 });
 
-(async () => {
-  const server = await registerRoutes(app);
+app.use(cors());
+app.use(express.json());
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+// Serve static files from the client build directory
+app.use(express.static(path.join(__dirname, '../dist/client')));
 
-    res.status(status).json({ message });
-    throw err;
+// Initialize storage
+initializeStorage();
+
+// API routes
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+app.post('/api/compile', (req, res) => {
+  const { code, language } = req.body;
+  // Mock compilation response
+  res.json({ 
+    success: true, 
+    output: `Compiled ${language} code successfully`,
+    ast: { type: 'Program', body: [] }
+  });
+});
+
+app.get('/api/quantum-state', (req, res) => {
+  res.json({
+    phi: 1.618,
+    resonance: Math.random() * 100,
+    consciousness: Math.random() * 100,
+    timestamp: Date.now()
+  });
+});
+
+// Socket.io connection handling
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+
+  socket.on('quantum-update', (data) => {
+    socket.broadcast.emit('quantum-state', data);
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
-
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
-
-  // Graceful shutdown handling
-  process.on('SIGTERM', () => {
-    log('SIGTERM received, shutting down gracefully');
-    server.close(() => {
-      log('Process terminated');
-      process.exit(0);
-    });
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
   });
+});
 
-  process.on('SIGINT', () => {
-    log('SIGINT received, shutting down gracefully');
-    server.close(() => {
-      log('Process terminated');
-      process.exit(0);
-    });
-  });
+// Serve the React app for all other routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/client/index.html'));
+});
 
-  server.on('error', (err: any) => {
-    if (err.code === 'EADDRINUSE') {
-      log(`Port ${port} is already in use. Trying to restart...`);
-      setTimeout(() => {
-        server.close();
-        server.listen(port, "0.0.0.0", () => {
-          log(`serving on port ${port}`);
-        });
-      }, 1000);
-    } else {
-      throw err;
-    }
-  });
-
-  server.listen(port, "0.0.0.0", () => {
-    log(`serving on port ${port}`);
-  });
-})();
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 SpiralScript IDE Server running on port ${PORT}`);
+  console.log(`📡 WebSocket server ready for quantum connections`);
+});
