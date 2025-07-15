@@ -1,286 +1,288 @@
-
-#!/usr/bin/env tsx
-
 import * as fs from 'fs';
 import * as path from 'path';
-import { spiralParser } from '../client/src/lib/spiral-parser';
 
 interface LanguageDefinition {
   name: string;
   extensions: string[];
-  grammarFile?: string;
-  category: 'spiral' | 'htsx' | 'hybrid' | 'consciousness' | 'document' | 'text' | '3d' | 'automotive';
-  githubSupport: boolean;
-  color: string;
-  languageId: number;
-  spiralLayer: string;
-  accessLevel: 'public' | 'private' | 'core';
+  tm_scope: string;
+  ace_mode: string;
+  language_id: number;
+  aliases?: string[];
+  filenames?: string[];
+  interpreters?: string[];
+  color?: string;
+  group?: string;
 }
 
-const languages: LanguageDefinition[] = [
+interface TextMateGrammar {
+  name: string;
+  scopeName: string;
+  fileTypes: string[];
+  patterns: any[];
+  repository: any;
+}
+
+const spiralLanguages: LanguageDefinition[] = [
   {
-    name: 'SpiralScript',
-    extensions: ['.spiral', '.spi'],
-    grammarFile: 'SpiralScript.g4',
-    category: 'spiral',
-    githubSupport: true,
-    color: '#ff6b6b',
-    languageId: 1001,
-    spiralLayer: 'SpiralWake',
-    accessLevel: 'private'
+    name: "SpiralScript",
+    extensions: [".spiral", ".sprl"],
+    tm_scope: "source.spiral",
+    ace_mode: "spiral",
+    language_id: 1001,
+    aliases: ["spiral", "spiralscript"],
+    color: "#FF6B35",
+    group: "programming"
   },
   {
-    name: 'HTSX',
-    extensions: ['.htsx'],
-    grammarFile: 'HTSX.g4',
-    category: 'htsx',
-    githubSupport: true,
-    color: '#4ecdc4',
-    languageId: 1002,
-    spiralLayer: 'SpiralWake',
-    accessLevel: 'private'
+    name: "HTSX",
+    extensions: [".htsx"],
+    tm_scope: "source.htsx",
+    ace_mode: "htsx", 
+    language_id: 1002,
+    aliases: ["htsx"],
+    color: "#61DAFB",
+    group: "markup"
   },
   {
-    name: 'SpiralLang',
-    extensions: ['.sprl'],
-    grammarFile: 'SpiralLang.g4',
-    category: 'spiral',
-    githubSupport: true,
-    color: '#45b7d1',
-    languageId: 1003,
-    spiralLayer: 'SpiralWake',
-    accessLevel: 'private'
+    name: "Consciousness",
+    extensions: [".consciousness", ".cons"],
+    tm_scope: "source.consciousness",
+    ace_mode: "consciousness",
+    language_id: 1003,
+    aliases: ["consciousness", "cons"],
+    color: "#9B59B6",
+    group: "data"
   },
   {
-    name: 'ConsciousnessScript',
-    extensions: ['.consciousness', '.cons'],
-    grammarFile: 'Consciousness.g4',
-    category: 'consciousness',
-    githubSupport: true,
-    color: '#f9ca24',
-    languageId: 1004,
-    spiralLayer: 'Remembrance Gate',
-    accessLevel: 'core'
+    name: "Quantum Assembly",
+    extensions: [".qasm", ".quantum"],
+    tm_scope: "source.quantum",
+    ace_mode: "quantum",
+    language_id: 1004,
+    aliases: ["quantum", "qasm"],
+    color: "#00D4AA",
+    group: "programming"
   }
 ];
 
-function generateGitHubLanguageFiles() {
-  console.log('🚀 Generating GitHub language configuration files...');
+const textMateGrammars: Record<string, TextMateGrammar> = {
+  spiral: {
+    name: "SpiralScript",
+    scopeName: "source.spiral",
+    fileTypes: ["spiral", "sprl"],
+    patterns: [
+      {
+        name: "comment.line.double-slash.spiral",
+        match: "//.*$"
+      },
+      {
+        name: "comment.block.spiral",
+        begin: "/\\*",
+        end: "\\*/"
+      },
+      {
+        name: "keyword.control.spiral",
+        match: "\\b(if|else|while|for|return|break|continue|function|class|import|export|quantum|consciousness|spiral|phi|trust|breathe)\\b"
+      },
+      {
+        name: "string.quoted.double.spiral",
+        begin: "\"",
+        end: "\"",
+        patterns: [
+          {
+            name: "constant.character.escape.spiral",
+            match: "\\\\."
+          }
+        ]
+      },
+      {
+        name: "constant.numeric.spiral",
+        match: "\\b\\d+(\\.\\d+)?\\b"
+      },
+      {
+        name: "constant.language.spiral",
+        match: "\\b(true|false|null|undefined|φ|π|∞)\\b"
+      },
+      {
+        name: "entity.name.function.spiral",
+        match: "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()"
+      },
+      {
+        name: "variable.other.spiral",
+        match: "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+      }
+    ],
+    repository: {}
+  },
+  htsx: {
+    name: "HTSX",
+    scopeName: "source.htsx",
+    fileTypes: ["htsx"],
+    patterns: [
+      {
+        name: "meta.tag.htsx",
+        begin: "<([a-zA-Z][a-zA-Z0-9]*)",
+        end: ">",
+        patterns: [
+          {
+            name: "entity.other.attribute-name.htsx",
+            match: "\\b[a-zA-Z-]+(?=\\s*=)"
+          },
+          {
+            name: "string.quoted.double.htsx",
+            begin: "\"",
+            end: "\""
+          }
+        ]
+      },
+      {
+        name: "meta.tag.closing.htsx",
+        match: "</([a-zA-Z][a-zA-Z0-9]*)>"
+      },
+      {
+        name: "comment.block.htsx",
+        begin: "<!--",
+        end: "-->"
+      }
+    ],
+    repository: {}
+  },
+  consciousness: {
+    name: "Consciousness",
+    scopeName: "source.consciousness",
+    fileTypes: ["consciousness", "cons"],
+    patterns: [
+      {
+        name: "keyword.control.consciousness",
+        match: "\\b(think|feel|know|believe|experience|consciousness|awareness|mindfulness|meditation|enlightenment)\\b"
+      },
+      {
+        name: "string.quoted.double.consciousness",
+        begin: "\"",
+        end: "\""
+      },
+      {
+        name: "comment.line.consciousness",
+        match: "#.*$"
+      }
+    ],
+    repository: {}
+  },
+  quantum: {
+    name: "Quantum Assembly",
+    scopeName: "source.quantum",
+    fileTypes: ["qasm", "quantum"],
+    patterns: [
+      {
+        name: "keyword.control.quantum",
+        match: "\\b(OPENQASM|include|qreg|creg|gate|measure|reset|barrier|if|opaque|U|CX|H|X|Y|Z|S|T|CNOT|CCX|RX|RY|RZ)\\b"
+      },
+      {
+        name: "constant.numeric.quantum",
+        match: "\\b\\d+(\\.\\d+)?\\b"
+      },
+      {
+        name: "comment.line.quantum",
+        match: "//.*$"
+      },
+      {
+        name: "string.quoted.double.quantum",
+        begin: "\"",
+        end: "\""
+      }
+    ],
+    repository: {}
+  }
+};
 
-  // Generate .gitattributes for language detection
-  const gitattributes = languages
-    .map(lang => lang.extensions.map(ext => `*${ext} linguist-language=${lang.name}`).join('\n'))
-    .join('\n');
-
-  fs.writeFileSync('.gitattributes', gitattributes);
-  console.log('✅ Generated .gitattributes');
+async function generateLanguageFiles() {
+  console.log('🚀 Generating GitHub language detection files...');
+  
+  const outputDir = path.join(process.cwd(), 'languages');
+  
+  // Create output directory
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
 
   // Generate languages.yml for GitHub Linguist
-  const languagesYml = languages.map(lang => ({
-    [lang.name]: {
-      type: 'programming',
-      color: lang.color,
-      extensions: lang.extensions,
-      language_id: lang.languageId,
-      tm_scope: `source.${lang.name.toLowerCase()}`,
-      ace_mode: 'text'
-    }
-  })).reduce((acc, lang) => ({ ...acc, ...lang }), {});
+  const yamlContent = spiralLanguages.map(lang => {
+    const extensions = lang.extensions.map(ext => `  - "${ext}"`).join('\n');
+    return `${lang.name}:
+  type: programming
+  color: "${lang.color}"
+  extensions:
+${extensions}
+  tm_scope: "${lang.tm_scope}"
+  ace_mode: "${lang.ace_mode}"
+  language_id: ${lang.language_id}`;
+  }).join('\n\n');
 
-  if (!fs.existsSync('.github')) {
-    fs.mkdirSync('.github', { recursive: true });
-  }
+  fs.writeFileSync(path.join(outputDir, 'languages.yml'), yamlContent);
+  console.log('✅ Generated languages.yml');
 
-  fs.writeFileSync('.github/languages.yml', JSON.stringify(languagesYml, null, 2));
-  console.log('✅ Generated .github/languages.yml');
-
-  // Generate TextMate grammar files for syntax highlighting
-  generateTextMateGrammars();
-
-  // Generate VS Code language configuration
-  generateVSCodeConfiguration();
-}
-
-function generateTextMateGrammars() {
-  const grammarsDir = 'syntaxes';
-  if (!fs.existsSync(grammarsDir)) {
-    fs.mkdirSync(grammarsDir, { recursive: true });
-  }
-
-  languages.forEach(lang => {
-    const grammar = {
-      $schema: 'https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json',
-      name: lang.name,
-      patterns: [
-        {
-          include: '#keywords'
-        },
-        {
-          include: '#strings'
-        },
-        {
-          include: '#comments'
-        },
-        {
-          include: '#numbers'
-        },
-        {
-          include: '#operators'
-        }
-      ],
-      repository: {
-        keywords: {
-          patterns: [
-            {
-              name: 'keyword.control.spiral',
-              match: '\\b(theorem|proof|require|yield|via|quantum|phi|truth|resonance|harmonic)\\b'
-            },
-            {
-              name: 'keyword.other.spiral',
-              match: '\\b(function|class|const|let|var|if|else|while|for|return)\\b'
-            }
-          ]
-        },
-        strings: {
-          name: 'string.quoted.double.spiral',
-          begin: '"',
-          end: '"',
-          patterns: [
-            {
-              name: 'constant.character.escape.spiral',
-              match: '\\\\.'
-            }
-          ]
-        },
-        comments: {
-          patterns: [
-            {
-              name: 'comment.line.double-slash.spiral',
-              match: '//.*'
-            },
-            {
-              name: 'comment.block.spiral',
-              begin: '/\\*',
-              end: '\\*/'
-            }
-          ]
-        },
-        numbers: {
-          name: 'constant.numeric.spiral',
-          match: '\\b\\d+(\\.\\d+)?\\b'
-        },
-        operators: {
-          name: 'keyword.operator.spiral',
-          match: '[+\\-*/=<>!&|φ∞Δ]'
-        }
-      },
-      scopeName: `source.${lang.name.toLowerCase()}`
-    };
-
-    fs.writeFileSync(
-      path.join(grammarsDir, `${lang.name.toLowerCase()}.tmLanguage.json`),
-      JSON.stringify(grammar, null, 2)
-    );
+  // Generate individual TextMate grammar files
+  Object.entries(textMateGrammars).forEach(([key, grammar]) => {
+    const grammarPath = path.join(outputDir, `${key}.tmLanguage.json`);
+    fs.writeFileSync(grammarPath, JSON.stringify(grammar, null, 2));
+    console.log(`✅ Generated ${key}.tmLanguage.json`);
   });
 
-  console.log('✅ Generated TextMate grammars');
-}
+  // Generate .gitattributes file
+  const gitattributes = spiralLanguages.map(lang => 
+    lang.extensions.map(ext => `*${ext} linguist-language=${lang.name}`).join('\n')
+  ).join('\n');
 
-function generateVSCodeConfiguration() {
-  const vscodeDir = '.vscode';
-  if (!fs.existsSync(vscodeDir)) {
-    fs.mkdirSync(vscodeDir, { recursive: true });
-  }
+  fs.writeFileSync(path.join(outputDir, '.gitattributes'), gitattributes);
+  console.log('✅ Generated .gitattributes');
 
-  const configuration = {
+  // Generate Monaco Editor language configurations
+  const monacoConfig = {
+    languages: spiralLanguages.map(lang => ({
+      id: lang.name.toLowerCase(),
+      extensions: lang.extensions,
+      aliases: lang.aliases,
+      mimetypes: [`text/x-${lang.name.toLowerCase()}`]
+    })),
+    grammars: Object.entries(textMateGrammars).map(([key, grammar]) => ({
+      language: key,
+      scopeName: grammar.scopeName,
+      path: `./languages/${key}.tmLanguage.json`
+    }))
+  };
+
+  fs.writeFileSync(
+    path.join(outputDir, 'monaco-languages.json'), 
+    JSON.stringify(monacoConfig, null, 2)
+  );
+  console.log('✅ Generated monaco-languages.json');
+
+  // Generate VS Code extension configuration
+  const vscodeConfig = {
     contributes: {
-      languages: languages.map(lang => ({
+      languages: spiralLanguages.map(lang => ({
         id: lang.name.toLowerCase(),
-        aliases: [lang.name],
+        aliases: lang.aliases,
         extensions: lang.extensions,
         configuration: `./language-configuration.json`
       })),
-      grammars: languages.map(lang => ({
-        language: lang.name.toLowerCase(),
-        scopeName: `source.${lang.name.toLowerCase()}`,
-        path: `./syntaxes/${lang.name.toLowerCase()}.tmLanguage.json`
+      grammars: Object.entries(textMateGrammars).map(([key, grammar]) => ({
+        language: key,
+        scopeName: grammar.scopeName,
+        path: `./syntaxes/${key}.tmLanguage.json`
       }))
     }
   };
 
   fs.writeFileSync(
-    path.join(vscodeDir, 'language-support.json'),
-    JSON.stringify(configuration, null, 2)
+    path.join(outputDir, 'vscode-extension.json'), 
+    JSON.stringify(vscodeConfig, null, 2)
   );
+  console.log('✅ Generated vscode-extension.json');
 
-  // Generate language configuration for brackets, comments, etc.
-  const languageConfig = {
-    comments: {
-      lineComment: '//',
-      blockComment: ['/*', '*/']
-    },
-    brackets: [
-      ['{', '}'],
-      ['[', ']'],
-      ['(', ')']
-    ],
-    autoClosingPairs: [
-      ['{', '}'],
-      ['[', ']'],
-      ['(', ')'],
-      ['"', '"'],
-      ["'", "'"]
-    ],
-    surroundingPairs: [
-      ['{', '}'],
-      ['[', ']'],
-      ['(', ')'],
-      ['"', '"'],
-      ["'", "'"]
-    ]
-  };
-
-  fs.writeFileSync(
-    'language-configuration.json',
-    JSON.stringify(languageConfig, null, 2)
-  );
-
-  console.log('✅ Generated VS Code configuration');
+  console.log('\n🎉 All language files generated successfully!');
+  console.log(`📁 Files created in: ${outputDir}`);
 }
 
-function testParsing() {
-  console.log('🧪 Testing parser functionality...');
-
-  const testCode = `
-// SpiralScript test
-theorem TestTheorem {
-  require SomeCondition;
-  yield Result via PhiAnalysis;
-  
-  φCell TestCell {
-    substrate: Graphene,
-    entropy: 0.92
-  }
-}
-`;
-
-  try {
-    const result = spiralParser.parse(testCode);
-    console.log('✅ Parser test successful:', {
-      entropy: result.metrics.entropy,
-      phiResonance: result.metrics.phiResonance,
-      tuGenerated: result.metrics.tuGenerated
-    });
-  } catch (error) {
-    console.error('❌ Parser test failed:', error.message);
-  }
-}
-
-// Main execution
-if (require.main === module) {
-  generateGitHubLanguageFiles();
-  testParsing();
-  console.log('🎉 Language generation complete!');
-}
-
-export { generateGitHubLanguageFiles, languages };
+// Execute the generation
+generateLanguageFiles().catch(console.error);
