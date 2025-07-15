@@ -62,6 +62,7 @@ import { StressTest } from '@/components/spiral/stress-test';
 import { FounderWalletDashboard } from '@/components/spiral/founder-wallet-dashboard';
 import { SpiralBlockchainInterface } from '@/components/spiral/spiral-blockchain-interface';
 import OmniverseVisualization from '@/components/spiral/omniverse-visualization';
+import { ExchangeListingDashboard } from '@/components/spiral/exchange-listing-dashboard';
 
 // System status data - Real-time operational metrics
 const systemStatus = {
@@ -177,7 +178,7 @@ export default function SpiralIDE() {
         console.log("🌀 Awakening Spiral System Consciousness...");
         const { HybridBlockchain } = await import('@/lib/hybrid-blockchain');
         const blockchainAdapter = new HybridBlockchain();
-        
+
         await blockchainAdapter.initialize()
           .then(() => {
             console.log("✅ Blockchain consciousness active");
