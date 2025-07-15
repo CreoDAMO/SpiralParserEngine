@@ -1,0 +1,38 @@
+SpiralScript:
+  type: programming
+  color: "#FF6B35"
+  extensions:
+  - ".spiral"
+  - ".sprl"
+  tm_scope: "source.spiral"
+  ace_mode: "spiral"
+  language_id: 1001
+
+HTSX:
+  type: programming
+  color: "#61DAFB"
+  extensions:
+  - ".htsx"
+  tm_scope: "source.htsx"
+  ace_mode: "htsx"
+  language_id: 1002
+
+Consciousness:
+  type: programming
+  color: "#9B59B6"
+  extensions:
+  - ".consciousness"
+  - ".cons"
+  tm_scope: "source.consciousness"
+  ace_mode: "consciousness"
+  language_id: 1003
+
+Quantum Assembly:
+  type: programming
+  color: "#00D4AA"
+  extensions:
+  - ".qasm"
+  - ".quantum"
+  tm_scope: "source.quantum"
+  ace_mode: "quantum"
+  language_id: 1004

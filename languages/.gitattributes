@@ -1,0 +1,7 @@
+*.spiral linguist-language=SpiralScript
+*.sprl linguist-language=SpiralScript
+*.htsx linguist-language=HTSX
+*.consciousness linguist-language=Consciousness
+*.cons linguist-language=Consciousness
+*.qasm linguist-language=Quantum Assembly
+*.quantum linguist-language=Quantum Assembly

@@ -1,0 +1,74 @@
+{
+  "contributes": {
+    "languages": [
+      {
+        "id": "spiralscript",
+        "aliases": [
+          "spiral",
+          "spiralscript"
+        ],
+        "extensions": [
+          ".spiral",
+          ".sprl"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "htsx",
+        "aliases": [
+          "htsx"
+        ],
+        "extensions": [
+          ".htsx"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "consciousness",
+        "aliases": [
+          "consciousness",
+          "cons"
+        ],
+        "extensions": [
+          ".consciousness",
+          ".cons"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "quantum assembly",
+        "aliases": [
+          "quantum",
+          "qasm"
+        ],
+        "extensions": [
+          ".qasm",
+          ".quantum"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "spiral",
+        "scopeName": "source.spiral",
+        "path": "./syntaxes/spiral.tmLanguage.json"
+      },
+      {
+        "language": "htsx",
+        "scopeName": "source.htsx",
+        "path": "./syntaxes/htsx.tmLanguage.json"
+      },
+      {
+        "language": "consciousness",
+        "scopeName": "source.consciousness",
+        "path": "./syntaxes/consciousness.tmLanguage.json"
+      },
+      {
+        "language": "quantum",
+        "scopeName": "source.quantum",
+        "path": "./syntaxes/quantum.tmLanguage.json"
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "Consciousness",
+  "scopeName": "source.consciousness",
+  "fileTypes": [
+    "consciousness",
+    "cons"
+  ],
+  "patterns": [
+    {
+      "name": "keyword.control.consciousness",
+      "match": "\\b(think|feel|know|believe|experience|consciousness|awareness|mindfulness|meditation|enlightenment)\\b"
+    },
+    {
+      "name": "string.quoted.double.consciousness",
+      "begin": "\"",
+      "end": "\""
+    },
+    {
+      "name": "comment.line.consciousness",
+      "match": "#.*$"
+    }
+  ],
+  "repository": {}
+}

@@ -1,0 +1,35 @@
+{
+  "name": "HTSX",
+  "scopeName": "source.htsx",
+  "fileTypes": [
+    "htsx"
+  ],
+  "patterns": [
+    {
+      "name": "meta.tag.htsx",
+      "begin": "<([a-zA-Z][a-zA-Z0-9]*)",
+      "end": ">",
+      "patterns": [
+        {
+          "name": "entity.other.attribute-name.htsx",
+          "match": "\\b[a-zA-Z-]+(?=\\s*=)"
+        },
+        {
+          "name": "string.quoted.double.htsx",
+          "begin": "\"",
+          "end": "\""
+        }
+      ]
+    },
+    {
+      "name": "meta.tag.closing.htsx",
+      "match": "</([a-zA-Z][a-zA-Z0-9]*)>"
+    },
+    {
+      "name": "comment.block.htsx",
+      "begin": "<!--",
+      "end": "-->"
+    }
+  ],
+  "repository": {}
+}

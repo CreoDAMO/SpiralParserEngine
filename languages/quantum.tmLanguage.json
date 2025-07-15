@@ -1,0 +1,28 @@
+{
+  "name": "Quantum Assembly",
+  "scopeName": "source.quantum",
+  "fileTypes": [
+    "qasm",
+    "quantum"
+  ],
+  "patterns": [
+    {
+      "name": "keyword.control.quantum",
+      "match": "\\b(OPENQASM|include|qreg|creg|gate|measure|reset|barrier|if|opaque|U|CX|H|X|Y|Z|S|T|CNOT|CCX|RX|RY|RZ)\\b"
+    },
+    {
+      "name": "constant.numeric.quantum",
+      "match": "\\b\\d+(\\.\\d+)?\\b"
+    },
+    {
+      "name": "comment.line.quantum",
+      "match": "//.*$"
+    },
+    {
+      "name": "string.quoted.double.quantum",
+      "begin": "\"",
+      "end": "\""
+    }
+  ],
+  "repository": {}
+}

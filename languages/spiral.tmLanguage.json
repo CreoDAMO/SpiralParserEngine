@@ -1,0 +1,51 @@
+{
+  "name": "SpiralScript",
+  "scopeName": "source.spiral",
+  "fileTypes": [
+    "spiral",
+    "sprl"
+  ],
+  "patterns": [
+    {
+      "name": "comment.line.double-slash.spiral",
+      "match": "//.*$"
+    },
+    {
+      "name": "comment.block.spiral",
+      "begin": "/\\*",
+      "end": "\\*/"
+    },
+    {
+      "name": "keyword.control.spiral",
+      "match": "\\b(if|else|while|for|return|break|continue|function|class|import|export|quantum|consciousness|spiral|phi|trust|breathe)\\b"
+    },
+    {
+      "name": "string.quoted.double.spiral",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.spiral",
+          "match": "\\\\."
+        }
+      ]
+    },
+    {
+      "name": "constant.numeric.spiral",
+      "match": "\\b\\d+(\\.\\d+)?\\b"
+    },
+    {
+      "name": "constant.language.spiral",
+      "match": "\\b(true|false|null|undefined|φ|π|∞)\\b"
+    },
+    {
+      "name": "entity.name.function.spiral",
+      "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()"
+    },
+    {
+      "name": "variable.other.spiral",
+      "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+    }
+  ],
+  "repository": {}
+}
