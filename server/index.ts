@@ -9,6 +9,7 @@ import { initializeStorage } from './storage.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+import rateLimit from 'express-rate-limit';
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
@@ -66,8 +67,15 @@ io.on('connection', (socket) => {
   });
 });
 
+// Configure rate limiter: maximum of 100 requests per 15 minutes
+const indexRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests, please try again later.',
+});
+
 // Serve the React app for all other routes
-app.get('*', (req, res) => {
+app.get('*', indexRateLimiter, (req, res) => {
   const indexPath = path.join(__dirname, '../dist/client/index.html');
   console.log('Serving index.html from:', indexPath);
   res.sendFile(indexPath, (err) => {
