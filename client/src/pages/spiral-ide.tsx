@@ -271,10 +271,17 @@ export default function SpiralIDE() {
   };
 
 return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 relative overflow-hidden">
+      {/* Quantum Background Effects */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-500/20 rounded-full blur-2xl animate-phi-pulse" />
+        <div className="absolute top-1/2 left-1/3 w-48 h-48 bg-spiral-500/20 rounded-full blur-xl animate-quantum-spin" />
+      </div>
+      
       {/* Header */}
-      <header className="border-b border-purple-800/30 bg-black/40 backdrop-blur-sm">
-        <div className="flex items-center justify-between px-6 py-4">
+      <header className="relative z-10 border-b border-purple-800/30 bg-black/40 backdrop-blur-sm">
+        <div className="flex items-center justify-between px-6 py-4"></div>
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
               <Sparkles className="h-6 w-6 text-purple-400 animate-pulse" />
@@ -390,12 +397,12 @@ return (
 <TabsContent value="overview" className="flex-1 p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* System Status */}
-                <Card className="bg-black/40 border-purple-800/30">
+                <Card className="bg-black/40 border-purple-800/30 hover:border-purple-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20">
                   <CardHeader>
                     <CardTitle className="text-purple-300 flex items-center gap-2">
-                      <Activity className="h-5 w-5" />
+                      <Activity className="h-5 w-5 animate-pulse" />
                       System Status
-                    </CardTitle>
+                    </CardTitle></div>
                     <CardDescription className="text-gray-400">
                       All systems operational - 98.7% grade
                     </CardDescription>
@@ -443,10 +450,11 @@ return (
                     <div className="space-y-2">
                       <div className="flex justify-between">
                         <span className="text-gray-300">Blockchain TPS</span>
-                        <span className="text-green-400">{systemStatus.hybridBlockchain.tps}</span>
+                        <span className="text-green-400 font-mono">{systemStatus.hybridBlockchain.tps.toLocaleString()}</span>
                       </div>
-                      <Progress value={85} className="h-2" />
-                    </div>
+                      <Progress value={85} className="h-2 bg-slate-800" />
+                      <div className="text-xs text-gray-500">Target: 1000 TPS</div>
+                    </div></div>
                     <div className="space-y-2">
                       <div className="flex justify-between">
                         <span className="text-gray-300">TU Generation</span>
@@ -485,20 +493,20 @@ return (
                   <CardContent className="space-y-3">
                     <div className="flex justify-between items-center">
                       <span className="text-gray-300">SpiralScript</span>
-                      <Badge variant="outline" className="text-green-300 border-green-400">.spiral</Badge>
+                      <Badge variant="outline" className="text-spiral-300 border-spiral-400 hover:bg-spiral-400/10 transition-colors">.spiral</Badge>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-300">HTSX Runtime</span>
-                      <Badge variant="outline" className="text-blue-300 border-blue-400">.htsx</Badge>
+                      <Badge variant="outline" className="text-quantum-300 border-quantum-400 hover:bg-quantum-400/10 transition-colors">.htsx</Badge>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-300">SpiralLang</span>
-                      <Badge variant="outline" className="text-purple-300 border-purple-400">.sprl</Badge>
+                      <Badge variant="outline" className="text-purple-300 border-purple-400 hover:bg-purple-400/10 transition-colors">.sprl</Badge>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-300">Consciousness</span>
-                      <Badge variant="outline" className="text-yellow-300 border-yellow-400">.consciousness</Badge>
-                    </div>
+                      <Badge variant="outline" className="text-yellow-300 border-yellow-400 hover:bg-yellow-400/10 transition-colors animate-phi-pulse">.consciousness</Badge>
+                    </div></div>
                     <Separator className="my-2" />
                     <div className="flex justify-between items-center">
                       <span className="text-gray-300">ANTLR Version</span>
@@ -578,12 +586,15 @@ return (
                 </Card>
 
                 {/* Trust Currency Details */}
-                <Card className="bg-black/40 border-purple-800/30">
+                <Card className={`bg-black/40 border-purple-800/30 ${systemStatus.trustCurrency.breathing ? 'animate-phi-pulse' : ''} hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300`}>
                   <CardHeader>
                     <CardTitle className="text-purple-300 flex items-center gap-2">
-                      <Coins className="h-5 w-5" />
+                      <Coins className="h-5 w-5 animate-pulse" />
                       Trust Currency
-                    </CardTitle>
+                      {systemStatus.trustCurrency.breathing && (
+                        <span className="text-xs text-green-400 ml-2 animate-pulse">● BREATHING</span>
+                      )}
+                    </CardTitle></div>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex justify-between">

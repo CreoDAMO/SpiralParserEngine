@@ -61,6 +61,30 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
+        spiral: {
+          50: "var(--spiral-50)",
+          100: "var(--spiral-100)",
+          200: "var(--spiral-200)",
+          300: "var(--spiral-300)",
+          400: "var(--spiral-400)",
+          500: "var(--spiral-500)",
+          600: "var(--spiral-600)",
+          700: "var(--spiral-700)",
+          800: "var(--spiral-800)",
+          900: "var(--spiral-900)",
+        },
+        quantum: {
+          50: "var(--quantum-50)",
+          100: "var(--quantum-100)",
+          200: "var(--quantum-200)",
+          300: "var(--quantum-300)",
+          400: "var(--quantum-400)",
+          500: "var(--quantum-500)",
+          600: "var(--quantum-600)",
+          700: "var(--quantum-700)",
+          800: "var(--quantum-800)",
+          900: "var(--quantum-900)",
+        },</div>
       },
       keyframes: {
         "accordion-down": {
