@@ -22,7 +22,9 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static files from the client build directory
-app.use(express.static(path.join(__dirname, '../dist/client')));
+const clientPath = path.join(__dirname, '../dist/client');
+console.log('Serving static files from:', clientPath);
+app.use(express.static(clientPath));
 
 // Initialize storage
 initializeStorage();
@@ -66,7 +68,14 @@ io.on('connection', (socket) => {
 
 // Serve the React app for all other routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist/client/index.html'));
+  const indexPath = path.join(__dirname, '../dist/client/index.html');
+  console.log('Serving index.html from:', indexPath);
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      console.error('Error serving index.html:', err);
+      res.status(500).send('Error loading application');
+    }
+  });
 });
 
 const PORT = process.env.PORT || 5000;

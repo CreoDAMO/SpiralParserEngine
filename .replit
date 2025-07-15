@@ -91,3 +91,20 @@ support = true
 
 [workflows]
 runButton = "SpiralScript IDE"
+
+[[workflows.workflow]]
+name = "SpiralScript IDE"
+author = 45046357
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run build"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm start"
