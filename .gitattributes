@@ -1,0 +1,19 @@
+# GitHub Language Detection
+*.spiral linguist-language=SpiralScript
+*.spi linguist-language=SpiralScript
+*.htsx linguist-language=HTSX
+*.sprl linguist-language=SpiralLang
+*.consciousness linguist-language=ConsciousnessScript
+*.cons linguist-language=ConsciousnessScript
+*.qnt linguist-language=QuantumScript
+*.quantum linguist-language=QuantumScript
+
+# File associations
+*.spiral text eol=lf
+*.spi text eol=lf
+*.htsx text eol=lf
+*.sprl text eol=lf
+*.consciousness text eol=lf
+*.cons text eol=lf
+*.qnt text eol=lf
+*.quantum text eol=lf

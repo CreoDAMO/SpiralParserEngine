@@ -1,0 +1,53 @@
+{
+  "name": "QuantumScript",
+  "scopeName": "source.quantumscript",
+  "fileTypes": [
+    "quantum",
+    "qnt"
+  ],
+  "patterns": [
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#comments"
+    },
+    {
+      "match": "\\b(qubit|entangle|superposition|measurement|gate|circuit|algorithm|teleport|oracle)\\b",
+      "name": "keyword.other.quantum"
+    }
+  ],
+  "repository": {
+    "keywords": {
+      "match": "\\b(if|else|while|for|function|return|class|interface|type|let|const|var|import|export|from|as|namespace|module|declare|extends|implements|public|private|protected|static|abstract|readonly|async|await|yield|try|catch|finally|throw|new|this|super|null|undefined|true|false|void|number|string|boolean|any|never|unknown|object)\\b",
+      "name": "keyword.control"
+    },
+    "strings": {
+      "name": "string.quoted.double",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    }
+  }
+}
