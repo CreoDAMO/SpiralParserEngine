@@ -1,43 +1,38 @@
-# GitHub Linguist Configuration
 SpiralScript:
   type: programming
+  color: "#FF6B35"
   extensions:
-    - ".spiral"
-    - ".spi"
-  tm_scope: source.spiralscript
-  ace_mode: text
-  color: "#ff6b6b"
+  - ".spiral"
+  - ".sprl"
+  tm_scope: "source.spiral"
+  ace_mode: "spiral"
+  language_id: 1001
 
 HTSX:
   type: programming
+  color: "#61DAFB"
   extensions:
-    - ".htsx"
-  tm_scope: source.htsx
-  ace_mode: typescript
-  color: "#4ecdc4"
+  - ".htsx"
+  tm_scope: "source.htsx"
+  ace_mode: "htsx"
+  language_id: 1002
 
-SpiralLang:
+Consciousness:
   type: programming
+  color: "#9B59B6"
   extensions:
-    - ".sprl"
-  tm_scope: source.spirallang
-  ace_mode: text
-  color: "#45b7d1"
+  - ".consciousness"
+  - ".cons"
+  tm_scope: "source.consciousness"
+  ace_mode: "consciousness"
+  language_id: 1003
 
-ConsciousnessScript:
+Quantum Assembly:
   type: programming
+  color: "#00D4AA"
   extensions:
-    - ".consciousness"
-    - ".cons"
-  tm_scope: source.consciousness
-  ace_mode: text
-  color: "#96ceb4"
-
-QuantumScript:
-  type: programming
-  extensions:
-    - ".quantum"
-    - ".qnt"
-  tm_scope: source.quantum
-  ace_mode: text
-  color: "#ffeaa7"
+  - ".qasm"
+  - ".quantum"
+  tm_scope: "source.quantum"
+  ace_mode: "quantum"
+  language_id: 1004
