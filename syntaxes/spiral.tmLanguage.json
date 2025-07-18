@@ -1,53 +1,51 @@
 {
   "name": "SpiralScript",
-  "scopeName": "source.spiralscript",
+  "scopeName": "source.spiral",
   "fileTypes": [
     "spiral",
-    "spi"
+    "sprl"
   ],
   "patterns": [
     {
-      "include": "#keywords"
+      "name": "comment.line.double-slash.spiral",
+      "match": "//.*$"
     },
     {
-      "include": "#strings"
+      "name": "comment.block.spiral",
+      "begin": "/\\*",
+      "end": "\\*/"
     },
     {
-      "include": "#comments"
+      "name": "keyword.control.spiral",
+      "match": "\\b(if|else|while|for|return|break|continue|function|class|import|export|quantum|consciousness|spiral|phi|trust|breathe)\\b"
     },
     {
-      "match": "\\b(quantum|consciousness|φ|∆|∞|proof|theorem|lemma|axiom|verify|assert|trust|hybrid|molecular|assembly)\\b",
-      "name": "keyword.other.spiral"
-    }
-  ],
-  "repository": {
-    "keywords": {
-      "match": "\\b(if|else|while|for|function|return|class|interface|type|let|const|var|import|export|from|as|namespace|module|declare|extends|implements|public|private|protected|static|abstract|readonly|async|await|yield|try|catch|finally|throw|new|this|super|null|undefined|true|false|void|number|string|boolean|any|never|unknown|object)\\b",
-      "name": "keyword.control"
-    },
-    "strings": {
-      "name": "string.quoted.double",
+      "name": "string.quoted.double.spiral",
       "begin": "\"",
       "end": "\"",
       "patterns": [
         {
-          "name": "constant.character.escape",
+          "name": "constant.character.escape.spiral",
           "match": "\\\\."
         }
       ]
     },
-    "comments": {
-      "patterns": [
-        {
-          "name": "comment.line.double-slash",
-          "match": "//.*$"
-        },
-        {
-          "name": "comment.block",
-          "begin": "/\\*",
-          "end": "\\*/"
-        }
-      ]
+    {
+      "name": "constant.numeric.spiral",
+      "match": "\\b\\d+(\\.\\d+)?\\b"
+    },
+    {
+      "name": "constant.language.spiral",
+      "match": "\\b(true|false|null|undefined|φ|π|∞)\\b"
+    },
+    {
+      "name": "entity.name.function.spiral",
+      "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()"
+    },
+    {
+      "name": "variable.other.spiral",
+      "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
     }
-  }
+  ],
+  "repository": {}
 }

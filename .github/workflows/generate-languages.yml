@@ -36,18 +36,24 @@ jobs:
         echo "🚀 Generating language support files..."
         npx tsx scripts/generate-languages.ts
         
+    - name: Validate generated files
+      run: |
+        echo "🧪 Validating generated files..."
+        npx tsx scripts/test-generated-files.ts
+        
     - name: Verify generated files
       run: |
         echo "✅ Verifying generated files..."
         ls -la languages/
-        echo "📊 File contents:"
-        head -20 languages/languages.yml
+        ls -la syntaxes/
+        echo "📊 Deployment manifest:"
+        cat languages/deployment-manifest.json
         
     - name: Commit generated files
       if: github.event_name == 'push'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add languages/
-        git diff --staged --quiet || git commit -m "Auto-generate language files"
+        git add languages/ syntaxes/ language-configuration.json
+        git diff --staged --quiet || git commit -m "Auto-generate language files and deploy syntax support"
         git push

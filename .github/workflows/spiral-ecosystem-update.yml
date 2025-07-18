@@ -97,6 +97,11 @@ jobs:
         echo "🚀 Generating language support files..."
         npx tsx scripts/generate-languages.ts
     
+    - name: Validate generated files
+      run: |
+        echo "🧪 Testing generated language files..."
+        npx tsx scripts/test-generated-files.ts
+    
     - name: Validate parser functionality
       run: |
         echo "🧪 Testing parsers..."
@@ -127,7 +132,9 @@ jobs:
     - name: Check generated files
       run: |
         echo "📋 Checking generated files..."
-        ls -la .gitattributes .github/languages.yml language-configuration.json syntaxes/ 2>/dev/null || echo "Some files missing but continuing..."
+        ls -la .gitattributes language-configuration.json syntaxes/ 2>/dev/null || echo "Some files missing but continuing..."
+        echo "📊 Deployment structure:"
+        cat languages/deployment-manifest.json 2>/dev/null || echo "Deployment manifest not found"
 
   update-documentation:
     runs-on: ubuntu-latest

@@ -280,8 +280,96 @@ ${extensions}
   );
   console.log('✅ Generated vscode-extension.json');
 
+  // Generate standalone language-configuration.json for VS Code integration
+  const languageConfiguration = {
+    comments: {
+      lineComment: "//",
+      blockComment: ["/*", "*/"]
+    },
+    brackets: [
+      ["{", "}"],
+      ["[", "]"],
+      ["(", ")"],
+      ["<", ">"]
+    ],
+    autoClosingPairs: [
+      { open: "{", close: "}" },
+      { open: "[", close: "]" },
+      { open: "(", close: ")" },
+      { open: "\"", close: "\"" },
+      { open: "'", close: "'" },
+      { open: "<", close: ">" }
+    ],
+    surroundingPairs: [
+      ["{", "}"],
+      ["[", "]"],
+      ["(", ")"],
+      ["\"", "\""],
+      ["'", "'"],
+      ["<", ">"]
+    ],
+    wordPattern: "\\b[a-zA-Z_φπ∞][a-zA-Z0-9_φπ∞]*\\b",
+    indentationRules: {
+      increaseIndentPattern: "^.*\\{[^}\"']*$",
+      decreaseIndentPattern: "^\\s*\\}.*$"
+    }
+  };
+
+  fs.writeFileSync(
+    path.join(outputDir, 'language-configuration.json'),
+    JSON.stringify(languageConfiguration, null, 2)
+  );
+  console.log('✅ Generated language-configuration.json');
+
+  // Deploy syntax files to the syntaxes directory
+  const syntaxesDir = path.join(process.cwd(), 'syntaxes');
+  if (!fs.existsSync(syntaxesDir)) {
+    fs.mkdirSync(syntaxesDir, { recursive: true });
+  }
+
+  Object.entries(textMateGrammars).forEach(([key, grammar]) => {
+    const sourcePath = path.join(outputDir, `${key}.tmLanguage.json`);
+    const destPath = path.join(syntaxesDir, `${key}.tmLanguage.json`);
+    fs.copyFileSync(sourcePath, destPath);
+    console.log(`✅ Deployed ${key}.tmLanguage.json to syntaxes/`);
+  });
+
+  // Copy language-configuration.json to root directory
+  const rootConfigPath = path.join(process.cwd(), 'language-configuration.json');
+  fs.copyFileSync(
+    path.join(outputDir, 'language-configuration.json'),
+    rootConfigPath
+  );
+  console.log('✅ Deployed language-configuration.json to root');
+
+  // Generate deployment manifest
+  const deploymentManifest = {
+    generated: new Date().toISOString(),
+    languages: spiralLanguages.length,
+    files: {
+      grammars: Object.keys(textMateGrammars).map(key => `${key}.tmLanguage.json`),
+      configuration: 'language-configuration.json',
+      linguist: 'languages.yml',
+      gitattributes: '.gitattributes',
+      monaco: 'monaco-languages.json',
+      vscode: 'vscode-extension.json'
+    },
+    deployment: {
+      syntaxes: Object.keys(textMateGrammars).map(key => `syntaxes/${key}.tmLanguage.json`),
+      root: ['language-configuration.json']
+    }
+  };
+
+  fs.writeFileSync(
+    path.join(outputDir, 'deployment-manifest.json'),
+    JSON.stringify(deploymentManifest, null, 2)
+  );
+  console.log('✅ Generated deployment-manifest.json');
+
   console.log('\n🎉 All language files generated successfully!');
   console.log(`📁 Files created in: ${outputDir}`);
+  console.log(`📁 Files deployed to: syntaxes/ and root`);
+  console.log(`📊 Languages supported: ${spiralLanguages.length}`);
 }
 
 // Execute the generation

@@ -1,53 +1,24 @@
 {
-  "name": "ConsciousnessScript",
-  "scopeName": "source.consciousnessscript",
+  "name": "Consciousness",
+  "scopeName": "source.consciousness",
   "fileTypes": [
     "consciousness",
     "cons"
   ],
   "patterns": [
     {
-      "include": "#keywords"
+      "name": "keyword.control.consciousness",
+      "match": "\\b(think|feel|know|believe|experience|consciousness|awareness|mindfulness|meditation|enlightenment)\\b"
     },
     {
-      "include": "#strings"
+      "name": "string.quoted.double.consciousness",
+      "begin": "\"",
+      "end": "\""
     },
     {
-      "include": "#comments"
-    },
-    {
-      "match": "\\b(aware|conscious|neural|memory|perception|cognition|thought|emotion|learning|adaptation)\\b",
-      "name": "keyword.other.consciousness"
+      "name": "comment.line.consciousness",
+      "match": "#.*$"
     }
   ],
-  "repository": {
-    "keywords": {
-      "match": "\\b(if|else|while|for|function|return|class|interface|type|let|const|var|import|export|from|as|namespace|module|declare|extends|implements|public|private|protected|static|abstract|readonly|async|await|yield|try|catch|finally|throw|new|this|super|null|undefined|true|false|void|number|string|boolean|any|never|unknown|object)\\b",
-      "name": "keyword.control"
-    },
-    "strings": {
-      "name": "string.quoted.double",
-      "begin": "\"",
-      "end": "\"",
-      "patterns": [
-        {
-          "name": "constant.character.escape",
-          "match": "\\\\."
-        }
-      ]
-    },
-    "comments": {
-      "patterns": [
-        {
-          "name": "comment.line.double-slash",
-          "match": "//.*$"
-        },
-        {
-          "name": "comment.block",
-          "begin": "/\\*",
-          "end": "\\*/"
-        }
-      ]
-    }
-  }
+  "repository": {}
 }
