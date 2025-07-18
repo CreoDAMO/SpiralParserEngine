@@ -304,7 +304,8 @@ jobs:
           
           [skip ci]"
           
-          git push
+          git pull origin main --rebase
+          git push || git push --force
           echo "✅ Changes committed and pushed"
         fi
 

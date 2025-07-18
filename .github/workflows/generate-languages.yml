@@ -56,4 +56,5 @@ jobs:
         git config --local user.name "GitHub Action"
         git add languages/ syntaxes/ language-configuration.json
         git diff --staged --quiet || git commit -m "Auto-generate language files and deploy syntax support"
-        git push
+        git pull origin main --rebase
+        git push || git push --force
