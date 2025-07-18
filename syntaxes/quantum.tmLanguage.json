@@ -1,53 +1,28 @@
 {
-  "name": "QuantumScript",
-  "scopeName": "source.quantumscript",
+  "name": "Quantum Assembly",
+  "scopeName": "source.quantum",
   "fileTypes": [
-    "quantum",
-    "qnt"
+    "qasm",
+    "quantum"
   ],
   "patterns": [
     {
-      "include": "#keywords"
+      "name": "keyword.control.quantum",
+      "match": "\\b(OPENQASM|include|qreg|creg|gate|measure|reset|barrier|if|opaque|U|CX|H|X|Y|Z|S|T|CNOT|CCX|RX|RY|RZ)\\b"
     },
     {
-      "include": "#strings"
+      "name": "constant.numeric.quantum",
+      "match": "\\b\\d+(\\.\\d+)?\\b"
     },
     {
-      "include": "#comments"
+      "name": "comment.line.quantum",
+      "match": "//.*$"
     },
     {
-      "match": "\\b(qubit|entangle|superposition|measurement|gate|circuit|algorithm|teleport|oracle)\\b",
-      "name": "keyword.other.quantum"
+      "name": "string.quoted.double.quantum",
+      "begin": "\"",
+      "end": "\""
     }
   ],
-  "repository": {
-    "keywords": {
-      "match": "\\b(if|else|while|for|function|return|class|interface|type|let|const|var|import|export|from|as|namespace|module|declare|extends|implements|public|private|protected|static|abstract|readonly|async|await|yield|try|catch|finally|throw|new|this|super|null|undefined|true|false|void|number|string|boolean|any|never|unknown|object)\\b",
-      "name": "keyword.control"
-    },
-    "strings": {
-      "name": "string.quoted.double",
-      "begin": "\"",
-      "end": "\"",
-      "patterns": [
-        {
-          "name": "constant.character.escape",
-          "match": "\\\\."
-        }
-      ]
-    },
-    "comments": {
-      "patterns": [
-        {
-          "name": "comment.line.double-slash",
-          "match": "//.*$"
-        },
-        {
-          "name": "comment.block",
-          "begin": "/\\*",
-          "end": "\\*/"
-        }
-      ]
-    }
-  }
+  "repository": {}
 }
