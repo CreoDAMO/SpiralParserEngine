@@ -1,11 +1,8 @@
 import './globals.css'
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import type { Metadata, Viewport } from 'next'
 import { ThemeProvider } from '@/components/theme-provider'
 import { QueryProvider } from '@/components/query-provider'
 import { Toaster } from '@/components/ui/toaster'
-
-const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'SpiralScript IDE - Advanced Quantum Programming Environment',
@@ -13,8 +10,6 @@ export const metadata: Metadata = {
   keywords: ['SpiralScript', 'IDE', 'quantum computing', 'blockchain', 'AI programming'],
   authors: [{ name: 'CreoDAMO' }],
   manifest: '/manifest.json',
-  themeColor: '#7c3aed',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
   robots: 'index, follow',
   openGraph: {
     title: 'SpiralScript IDE',
@@ -24,6 +19,13 @@ export const metadata: Metadata = {
   },
 }
 
+export const viewport: Viewport = {
+  themeColor: '#7c3aed',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -31,7 +33,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
