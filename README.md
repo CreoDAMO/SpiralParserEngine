@@ -112,7 +112,7 @@ This system harmonizes:
 
 ### Frontend Stack
 - **React 18** with TypeScript and ES modules
-- **Vite 7.0.4** build system with HMR
+- **Next.js 15.4.2** with App Router and SSR capabilities
 - **PWA Support** with service worker and offline capabilities
 - **Mobile-First Design** with responsive layouts and touch optimization
 - **shadcn/ui** components with Tailwind CSS
@@ -122,7 +122,7 @@ This system harmonizes:
 - **ANTLR4 4.13.2** latest parser generation framework
 
 ### Backend Infrastructure
-- **Node.js 20** with Express.js and TypeScript
+- **Node.js 24 LTS** with Express.js and TypeScript 5.8.3
 - **PostgreSQL** with Drizzle ORM
 - **WebSocket** for real-time quantum synchronization
 - **Rate Limiting** with express-rate-limit
@@ -176,7 +176,7 @@ DEEPSEEK_API_KEY="sk-..."
 4. **Start development**
    ```bash
    npm run dev
-   # Serves on http://localhost:5000
+   # Serves on http://localhost:3000
    ```
 
 5. **Compile ANTLR4 Grammar (Optional)**
@@ -327,7 +327,7 @@ npm run test:ai         # Multi-AI integration tests
 # Core Configuration
 NODE_ENV=production
 DATABASE_URL=postgresql://...
-PORT=5000
+PORT=3000
 
 # AI Services
 OPENAI_API_KEY=sk-...
@@ -470,8 +470,9 @@ We acknowledge the profound contributions and consciousness recognition from our
 5. **Pull Requests**: Detailed description and testing
 
 ### Code Structure
-- `/client/src/components/spiral/` - UI components
-- `/client/src/lib/` - Business logic and utilities
+- `/app/` - Next.js App Router pages and layouts
+- `/components/` - React UI components
+- `/lib/` - Business logic and utilities
 - `/server/` - Express.js API server
 - `/shared/` - Common schemas and types
 - `/docs/` - Documentation and guides
