@@ -265,7 +265,7 @@ class SpiralAIAgent:
                 "coverage_target": "95%"
             },
             "deployment_plan": {
-                "build_system": "Vite/Webpack",
+                "build_system": "Next.js",
                 "ci_cd": "GitHub Actions",
                 "hosting": "Vercel/Netlify",
                 "monitoring": "Sentry/LogRocket"

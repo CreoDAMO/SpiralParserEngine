@@ -4,7 +4,6 @@ const nextConfig = {
     typedRoutes: true,
   },
   typescript: {
-    strict: false, // Temporarily disable strict mode for migration
     ignoreBuildErrors: true, // Temporarily ignore build errors
   },
   eslint: {

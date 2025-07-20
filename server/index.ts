@@ -83,7 +83,7 @@ app.get('*', indexRateLimiter, (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = Number(process.env.PORT || 5000);
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 SpiralScript IDE Server running on port ${PORT}`);
   console.log(`📡 WebSocket server ready for quantum connections`);

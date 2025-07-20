@@ -111,8 +111,8 @@ This system harmonizes:
 ## 🛠️ Technical Architecture
 
 ### Frontend Stack
-- **React 18** with TypeScript and ES modules
-- **Vite 7.0.4** build system with HMR
+- **React 19** with TypeScript and ES modules
+- **Next.js 15.4.2** with App Router and server-side rendering
 - **PWA Support** with service worker and offline capabilities
 - **Mobile-First Design** with responsive layouts and touch optimization
 - **shadcn/ui** components with Tailwind CSS
@@ -122,7 +122,7 @@ This system harmonizes:
 - **ANTLR4 4.13.2** latest parser generation framework
 
 ### Backend Infrastructure
-- **Node.js 20** with Express.js and TypeScript
+- **Node.js 24** with Express.js and TypeScript
 - **PostgreSQL** with Drizzle ORM
 - **WebSocket** for real-time quantum synchronization
 - **Rate Limiting** with express-rate-limit
@@ -176,7 +176,7 @@ DEEPSEEK_API_KEY="sk-..."
 4. **Start development**
    ```bash
    npm run dev
-   # Serves on http://localhost:5000
+   # Serves on http://localhost:3000
    ```
 
 5. **Compile ANTLR4 Grammar (Optional)**
@@ -292,15 +292,14 @@ The SpiralScript ecosystem implements a complete paradigm shift from traditional
 
 ### Available Scripts
 ```bash
-npm run dev                  # Development server with HMR
-npm run build               # Production build with PWA assets
-npm run start               # Production server
+npm run dev                  # Next.js development server with HMR
+npm run build               # Next.js production build with optimization
+npm run start               # Next.js production server
 npm run test:parser         # SpiralScript parser validation
 npm run compile:grammar     # ANTLR4 grammar compilation
 npm run generate:languages  # GitHub language detection files
 npm run db:push             # Database schema updates
 npm run check               # TypeScript validation
-npm run pwa:build           # PWA-optimized build
 ```
 
 ### Testing Framework
