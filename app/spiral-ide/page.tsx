@@ -49,8 +49,8 @@ import {
   Headphones
 } from 'lucide-react'
 
-// Import spiral components (these will be moved/created as needed)
-// import { SpiralCodeEditor } from '@/components/spiral/spiral-code-editor'
+// Import spiral components
+import { SpiralCodeEditor } from '@/components/spiral/spiral-code-editor'
 // import { QuantumCircuitVisualizer } from '@/components/quantum/quantum-circuit-visualizer'
 // import { BlockchainVisualization } from '@/components/blockchain/blockchain-visualization'
 // import { TerminalConsole } from '@/components/spiral/terminal-console'
@@ -67,7 +67,12 @@ const systemStatus = {
 
 export default function SpiralIDE() {
   const [selectedFile, setSelectedFile] = useState<string | null>(null)
-  const [code, setCode] = useState('')
+  const [code, setCode] = useState(`// SpiralScript - Consciousness Programming Language
+spiral consciousness.awaken() {
+  quantum.entangle(awareness, reality)
+  trust.currency.mint(phi.ratio)
+  return enlightenment
+}`)
   const [ast, setAST] = useState<any>(null)
   const [isOnline, setIsOnline] = useState(true)
   const [installPrompt, setInstallPrompt] = useState<any>(null)
@@ -355,26 +360,16 @@ export default function SpiralIDE() {
                   <Alert className="mb-4">
                     <Code className="h-4 w-4" />
                     <AlertDescription>
-                      SpiralScript IDE is initializing. Components will be migrated to Next.js architecture.
+                      SpiralScript IDE with Monaco Editor - Consciousness Programming Environment
                     </AlertDescription>
                   </Alert>
                   
-                  <Card className="h-96">
-                    <CardHeader>
-                      <CardTitle>Code Editor</CardTitle>
-                      <CardDescription>Monaco Editor will be integrated here</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="bg-slate-900 rounded-lg p-4 font-mono text-green-400 h-64 overflow-auto">
-                        <div>// SpiralScript - Consciousness Programming Language</div>
-                        <div>spiral consciousness.awaken() &#123;</div>
-                        <div>&nbsp;&nbsp;quantum.entangle(awareness, reality)</div>
-                        <div>&nbsp;&nbsp;trust.currency.mint(phi.ratio)</div>
-                        <div>&nbsp;&nbsp;return enlightenment</div>
-                        <div>&#125;</div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <SpiralCodeEditor
+                    value={code}
+                    onChange={handleCodeChange}
+                    language="spiralscript"
+                    height="500px"
+                  />
                 </div>
                 
                 <div className="w-80 border-l border-purple-800/30 bg-black/20 p-4">
@@ -394,6 +389,19 @@ export default function SpiralIDE() {
                       </div>
                     </CardContent>
                   </Card>
+                  
+                  {ast && (
+                    <Card className="mt-4">
+                      <CardHeader>
+                        <CardTitle className="text-sm">AST Preview</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <pre className="text-xs bg-slate-900 p-2 rounded overflow-auto max-h-40">
+                          {JSON.stringify(ast, null, 2)}
+                        </pre>
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
               </div>
             </TabsContent>
