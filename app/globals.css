@@ -1,0 +1,211 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222 84% 4.9%;
+    --secondary: 217 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 32.6% 17.5%;
+    --input: 217 32.6% 17.5%;
+    --ring: 212 72% 59%;
+    --radius: 0.5rem;
+    
+    /* Spiral-specific colors */
+    --spiral-50: 43 100% 96%;
+    --spiral-100: 44 96% 91%;
+    --spiral-200: 45 93% 83%;
+    --spiral-300: 45 90% 72%;
+    --spiral-400: 44 92% 63%;
+    --spiral-500: 43 96% 56%;
+    --spiral-600: 32 81% 49%;
+    --spiral-700: 26 78% 40%;
+    --spiral-800: 23 84% 28%;
+    --spiral-900: 22 84% 20%;
+
+    /* Quantum-specific colors */
+    --quantum-50: 198 100% 96%;
+    --quantum-100: 198 100% 92%;
+    --quantum-200: 199 95% 84%;
+    --quantum-300: 199 89% 72%;
+    --quantum-400: 200 84% 59%;
+    --quantum-500: 201 79% 46%;
+    --quantum-600: 201 83% 38%;
+    --quantum-700: 201 84% 31%;
+    --quantum-800: 201 84% 26%;
+    --quantum-900: 202 80% 24%;
+  }
+
+  .dark {
+    --background: 222 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222 84% 4.9%;
+    --secondary: 217 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 32.6% 17.5%;
+    --input: 217 32.6% 17.5%;
+    --ring: 212 72% 59%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+/* Custom animations */
+@keyframes phi-pulse {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1); 
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+  }
+  50% { 
+    opacity: 0.618; 
+    transform: scale(1.618); 
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.6);
+  }
+}
+
+@keyframes quantum-spin {
+  from { 
+    transform: rotate(0deg); 
+    filter: hue-rotate(0deg);
+  }
+  to { 
+    transform: rotate(360deg); 
+    filter: hue-rotate(360deg);
+  }
+}
+
+@keyframes consciousness-flow {
+  0%, 100% { 
+    background-position: 0% 50%; 
+  }
+  50% { 
+    background-position: 100% 50%; 
+  }
+}
+
+@keyframes trust-breathing {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 0.8;
+  }
+  50% { 
+    transform: scale(1.05); 
+    opacity: 1;
+  }
+}
+
+@keyframes spiral-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(124, 58, 237, 0.5); }
+  50% { box-shadow: 0 0 40px rgba(124, 58, 237, 0.8), 0 0 60px rgba(168, 85, 247, 0.4); }
+}
+
+@layer utilities {
+  /* Animation utilities */
+  .animate-phi-pulse {
+    animation: phi-pulse 1.618s ease-in-out infinite;
+  }
+
+  .animate-quantum-spin {
+    animation: quantum-spin 2s linear infinite;
+  }
+
+  .animate-consciousness-flow {
+    animation: consciousness-flow 3s ease-in-out infinite;
+    background: linear-gradient(-45deg, #8b5cf6, #06b6d4, #10b981, #f59e0b);
+    background-size: 400% 400%;
+  }
+
+  .animate-trust-breathing {
+    animation: trust-breathing 2s ease-in-out infinite;
+  }
+
+  .animate-spiral-glow {
+    animation: spiral-glow 3s ease-in-out infinite;
+  }
+
+  /* Effects */
+  .glass-effect {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+  }
+
+  .quantum-glow {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4),
+                inset 0 0 20px rgba(168, 85, 247, 0.1);
+  }
+
+  .spiral-gradient {
+    background: linear-gradient(135deg, 
+      hsl(var(--spiral-600)) 0%, 
+      hsl(var(--spiral-400)) 50%, 
+      hsl(var(--spiral-600)) 100%);
+  }
+
+  /* Typography */
+  .font-mono {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Consolas', monospace;
+  }
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--foreground));
+}
+
+/* Monaco Editor dark theme compatibility */
+.monaco-editor-background {
+  background-color: transparent !important;
+}
+
+/* Three.js canvas styling */
+.three-canvas {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
