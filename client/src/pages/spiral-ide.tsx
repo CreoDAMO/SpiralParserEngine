@@ -270,7 +270,7 @@ export default function SpiralIDE() {
     );
   };
 
-return (
+  return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 relative overflow-hidden">
       {/* Quantum Background Effects */}
       <div className="absolute inset-0 opacity-20">

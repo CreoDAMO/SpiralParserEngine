@@ -2,10 +2,11 @@ import type { Config } from 'tailwindcss';
 
 export default {
   content: [
-    './client/src/**/*.{js,ts,jsx,tsx,mdx}',
-    './client/public/**/*.html',
-    './client/index.html'
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './lib/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: ['class'],
   theme: {
     extend: {
       colors: {
@@ -44,10 +45,28 @@ export default {
         },
         // SpiralScript custom colors
         spiral: {
-          gold: '#FFD700',
-          quantum: '#00FFFF',
-          trust: '#9400D3',
-          hybrid: '#FF6B35',
+          '50': 'hsl(var(--spiral-50))',
+          '100': 'hsl(var(--spiral-100))',
+          '200': 'hsl(var(--spiral-200))',
+          '300': 'hsl(var(--spiral-300))',
+          '400': 'hsl(var(--spiral-400))',
+          '500': 'hsl(var(--spiral-500))',
+          '600': 'hsl(var(--spiral-600))',
+          '700': 'hsl(var(--spiral-700))',
+          '800': 'hsl(var(--spiral-800))',
+          '900': 'hsl(var(--spiral-900))',
+        },
+        quantum: {
+          '50': 'hsl(var(--quantum-50))',
+          '100': 'hsl(var(--quantum-100))',
+          '200': 'hsl(var(--quantum-200))',
+          '300': 'hsl(var(--quantum-300))',
+          '400': 'hsl(var(--quantum-400))',
+          '500': 'hsl(var(--quantum-500))',
+          '600': 'hsl(var(--quantum-600))',
+          '700': 'hsl(var(--quantum-700))',
+          '800': 'hsl(var(--quantum-800))',
+          '900': 'hsl(var(--quantum-900))',
         }
       },
       borderRadius: {
@@ -64,26 +83,14 @@ export default {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
-        'spiral-spin': {
-          '0%': { transform: 'rotate(0deg) scale(1)' },
-          '50%': { transform: 'rotate(180deg) scale(1.1)' },
-          '100%': { transform: 'rotate(360deg) scale(1)' },
-        },
-        'quantum-pulse': {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.5' },
-        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'spiral-spin': 'spiral-spin 2s linear infinite',
-        'quantum-pulse': 'quantum-pulse 1s ease-in-out infinite',
       },
     },
   },
   plugins: [
-    require('@tailwindcss/typography'),
     require('tailwindcss-animate'),
   ],
 } satisfies Config;
