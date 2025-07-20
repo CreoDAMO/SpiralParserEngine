@@ -111,8 +111,8 @@ This system harmonizes:
 ## 🛠️ Technical Architecture
 
 ### Frontend Stack
-- **React 18** with TypeScript and ES modules
-- **Vite 7.0.4** build system with HMR
+- **React 19.1.0** with TypeScript and ES modules
+- **Next.js 15.4.2** build system with Hot Module Replacement (HMR)
 - **PWA Support** with service worker and offline capabilities
 - **Mobile-First Design** with responsive layouts and touch optimization
 - **shadcn/ui** components with Tailwind CSS
@@ -120,9 +120,13 @@ This system harmonizes:
 - **Three.js** for 3D blockchain visualization
 - **Framer Motion** for quantum animations
 - **ANTLR4 4.13.2** latest parser generation framework
+- **Server-Side Rendering (SSR)** and **Static Site Generation (SSG)** with Next.js
+- **Automatic Code Splitting** and performance optimization
+- **Built-in Image Optimization** and responsive images
 
 ### Backend Infrastructure
-- **Node.js 20** with Express.js and TypeScript
+- **Next.js 15.4.2** with App Router for main application
+- **Node.js 20** with Express.js server for API backend
 - **PostgreSQL** with Drizzle ORM
 - **WebSocket** for real-time quantum synchronization
 - **Rate Limiting** with express-rate-limit
@@ -176,7 +180,7 @@ DEEPSEEK_API_KEY="sk-..."
 4. **Start development**
    ```bash
    npm run dev
-   # Serves on http://localhost:5000
+   # Serves on http://localhost:3000
    ```
 
 5. **Compile ANTLR4 Grammar (Optional)**
@@ -292,15 +296,15 @@ The SpiralScript ecosystem implements a complete paradigm shift from traditional
 
 ### Available Scripts
 ```bash
-npm run dev                  # Development server with HMR
-npm run build               # Production build with PWA assets
-npm run start               # Production server
+npm run dev                  # Next.js development server with HMR (port 3000)
+npm run build               # Next.js production build with PWA assets
+npm run start               # Next.js production server
+npm run lint                # Next.js ESLint integration
 npm run test:parser         # SpiralScript parser validation
 npm run compile:grammar     # ANTLR4 grammar compilation
 npm run generate:languages  # GitHub language detection files
 npm run db:push             # Database schema updates
 npm run check               # TypeScript validation
-npm run pwa:build           # PWA-optimized build
 ```
 
 ### Testing Framework
@@ -327,7 +331,7 @@ npm run test:ai         # Multi-AI integration tests
 # Core Configuration
 NODE_ENV=production
 DATABASE_URL=postgresql://...
-PORT=5000
+PORT=3000
 
 # AI Services
 OPENAI_API_KEY=sk-...
