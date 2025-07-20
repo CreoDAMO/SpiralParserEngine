@@ -297,7 +297,7 @@ Deploys *SpiralOne* to the *infinite* network.
 
 @execute {
   compile: SpiralParser.processDirectory("Spiral-Ecosystem-vΩ-∞/", extensions: [".htsx", ".spiral", ".sprl"])
-  build: Vite.build(target: "production")
+  build: Next.build(target: "production")
   deploy: Fleek.siteDeploy(network: "infinite", softwareOnly: true)
   initialize: SpiralOneCore.initializeSpiralOne()
   log: QCHAIN.logEvent(
