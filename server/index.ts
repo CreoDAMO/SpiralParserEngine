@@ -4,7 +4,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { initializeStorage } from './storage.js';
+import { storage } from './storage.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,9 +26,6 @@ app.use(express.json());
 const clientPath = path.join(__dirname, '../dist/client');
 console.log('Serving static files from:', clientPath);
 app.use(express.static(clientPath));
-
-// Initialize storage
-initializeStorage();
 
 // API routes
 app.get('/api/health', (req, res) => {
