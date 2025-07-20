@@ -125,8 +125,9 @@ This system harmonizes:
 - **Built-in Image Optimization** and responsive images
 
 ### Backend Infrastructure
-- **Next.js 15.4.2** with App Router for main application
-- **Node.js 20** with Express.js server for API backend
+- **Next.js 15.4.2** with App Router for main application (port 3000)
+- **Express.js Backend Server** for API endpoints (port 5000)
+- **Node.js 20** with TypeScript support
 - **PostgreSQL** with Drizzle ORM
 - **WebSocket** for real-time quantum synchronization
 - **Rate Limiting** with express-rate-limit
@@ -179,8 +180,13 @@ DEEPSEEK_API_KEY="sk-..."
 
 4. **Start development**
    ```bash
+   # Start Next.js frontend server
    npm run dev
    # Serves on http://localhost:3000
+   
+   # Start Express.js backend server (in separate terminal)
+   npm run server:dev
+   # API available on http://localhost:5000/api
    ```
 
 5. **Compile ANTLR4 Grammar (Optional)**
@@ -296,10 +302,18 @@ The SpiralScript ecosystem implements a complete paradigm shift from traditional
 
 ### Available Scripts
 ```bash
-npm run dev                  # Next.js development server with HMR (port 3000)
+# Next.js Frontend (port 3000)
+npm run dev                  # Next.js development server with HMR
 npm run build               # Next.js production build with PWA assets
 npm run start               # Next.js production server
 npm run lint                # Next.js ESLint integration
+
+# Express.js Backend Server (port 5000)
+npm run server:dev          # Express.js development server
+npm run server:build        # Express.js production build
+npm run server:start        # Express.js production server
+
+# Development Tools
 npm run test:parser         # SpiralScript parser validation
 npm run compile:grammar     # ANTLR4 grammar compilation
 npm run generate:languages  # GitHub language detection files
