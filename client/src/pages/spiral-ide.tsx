@@ -281,7 +281,7 @@ return (
       
       {/* Header */}
       <header className="relative z-10 border-b border-purple-800/30 bg-black/40 backdrop-blur-sm">
-        <div className="flex items-center justify-between px-6 py-4"></div>
+        <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
               <Sparkles className="h-6 w-6 text-purple-400 animate-pulse" />
