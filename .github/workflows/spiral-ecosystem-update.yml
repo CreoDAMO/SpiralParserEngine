@@ -87,6 +87,10 @@ jobs:
           curl -o antlr-4.13.2-complete.jar https://www.antlr.org/download/antlr-4.13.2-complete.jar
         fi
     
+    - name: Remove shebang from compile-grammar.ts for build
+      run: |
+        sed -i '/^#!/d' scripts/compile-grammar.ts
+    
     - name: Compile grammars
       run: |
         echo "🔧 Compiling Spiral grammars..."
@@ -272,6 +276,10 @@ jobs:
     
     - name: Install dependencies
       run: npm ci
+    
+    - name: Remove shebang from compile-grammar.ts for build
+      run: |
+        sed -i '/^#!/d' scripts/compile-grammar.ts
     
     - name: Re-generate all files
       run: |
