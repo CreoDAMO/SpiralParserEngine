@@ -344,7 +344,7 @@ export class SpiralHybridBlockchain {
     
     let complexity = 1;
     if (ast.children && Array.isArray(ast.children)) {
-      complexity += ast.children.reduce((sum, child) => 
+      complexity += ast.children.reduce((sum: number, child: any) => 
         sum + this.calculateASTComplexity(child), 0
       );
     }
