@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST='{"components/spiral/spiral-code-editor.tsx -> @monaco-editor/react":{"id":1364,"files":["static/chunks/364.d75b74f24ea30de9.js"]}}';
+self.__REACT_LOADABLE_MANIFEST="{\"components/spiral/spiral-code-editor.tsx -> @monaco-editor/react\":{\"id\":\"components/spiral/spiral-code-editor.tsx -> @monaco-editor/react\",\"files\":[\"static/chunks/_app-pages-browser_node_modules_monaco-editor_react_dist_index_mjs.js\"]}}"
