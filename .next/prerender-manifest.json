@@ -1,30 +1,6 @@
 {
   "version": 4,
   "routes": {
-    "/spiral-ide": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "Next-Action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/spiral-ide",
-      "dataRoute": "/spiral-ide.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/": {
       "experimentalBypassFor": [
         {
@@ -48,13 +24,37 @@
         "x-next-revalidated-tags",
         "x-next-revalidate-tag-token"
       ]
+    },
+    "/spiral-ide": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/spiral-ide",
+      "dataRoute": "/spiral-ide.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
     }
   },
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "426da184d29456869f4559a4d508e247",
-    "previewModeSigningKey": "408c10a02d69e8e5b691aa6930137ef80536e91a0d21385adad70d04cbde2782",
-    "previewModeEncryptionKey": "4e710c73c1f286072dca893bae3477d20ca9eca039d05b422d62088229482c83"
+    "previewModeId": "1bd872555201e7d3b781465f9efabb25",
+    "previewModeSigningKey": "89e2f142fd218b0e589b1ccb179f747185ca5e2afdc202ce2c97c2154b346d29",
+    "previewModeEncryptionKey": "867716032fb3169a70f65a96019ad8432ad7e48510d41175dfede50a8f1c2176"
   }
 }
