@@ -4,8 +4,8 @@
 
 import { z } from 'zod';
 import { autoParser } from './auto-parser';
-import { unifiedSpiralParser } from '../generated/UnifiedSpiralParser';
-import { HybridBlock, HybridTransaction, HybridNode, HybridSmartContract } from '../../../shared/hybrid-blockchain-schema';
+// import { unifiedSpiralParser } from '../generated/UnifiedSpiralParser'; // Temporarily commented out
+import { HybridBlock, HybridTransaction, HybridNode, HybridSmartContract } from '@shared/hybrid-blockchain-schema';
 
 export interface SpiralContractExecution {
   contractAddress: string;
@@ -170,8 +170,8 @@ export class SpiralHybridBlockchain {
       
       return contractAddress;
       
-    } catch (error) {
-      throw new Error(`Contract deployment failed: ${error.message}`);
+    } catch (error: any) {
+      throw new Error(`Contract deployment failed: ${error?.message || 'Unknown error'}`);
     }
   }
 
@@ -214,7 +214,7 @@ export class SpiralHybridBlockchain {
         },
         contractExecution: {
           contractAddress,
-          language: result.language,
+          language: (result.language as 'SpiralScript' | 'HTSX' | 'SpiralLang') || 'SpiralScript',
           sourceCode: result.sourceCode || '',
           parsedAST: result.ast,
           executionResult: result.output,
@@ -229,8 +229,8 @@ export class SpiralHybridBlockchain {
       
       return result.output;
       
-    } catch (error) {
-      throw new Error(`Contract execution failed: ${error.message}`);
+    } catch (error: any) {
+      throw new Error(`Contract execution failed: ${error?.message || 'Unknown error'}`);
     }
   }
 
@@ -344,7 +344,7 @@ export class SpiralHybridBlockchain {
     
     let complexity = 1;
     if (ast.children && Array.isArray(ast.children)) {
-      complexity += ast.children.reduce((sum, child) => 
+      complexity += ast.children.reduce((sum: number, child: any) => 
         sum + this.calculateASTComplexity(child), 0
       );
     }

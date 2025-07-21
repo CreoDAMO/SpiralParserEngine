@@ -4,6 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Progress } from '../ui/progress';
+import { VirtualTransactionList } from '../ui/virtual-list';
+import { SkeletonTransaction } from '../ui/skeleton';
+import { useScreenSize } from '../../lib/hooks/use-mobile';
 import { 
   Coins, 
   Wallet,
@@ -85,6 +88,8 @@ export const TrustWallet: React.FC<TrustWalletProps> = ({
   const [showBalances, setShowBalances] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [breathingPattern, setBreathingPattern] = useState(0);
+  const [isLoadingTransactions, setIsLoadingTransactions] = useState(false);
+  const { isMobile, isTablet } = useScreenSize();
 
   // φ-harmonic breathing pattern for TU generation
   useEffect(() => {
@@ -187,14 +192,21 @@ export const TrustWallet: React.FC<TrustWalletProps> = ({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return <Badge variant="default" className="bg-green-600 text-xs">Confirmed</Badge>;
+        return <Badge variant="success" className="text-xs">Confirmed</Badge>;
       case 'pending':
-        return <Badge variant="secondary" className="bg-yellow-600 text-xs">Pending</Badge>;
+        return <Badge variant="warning" className="text-xs">Pending</Badge>;
       case 'failed':
         return <Badge variant="destructive" className="text-xs">Failed</Badge>;
+      case 'maintenance':
+        return <Badge variant="maintenance" className="text-xs">Maintenance</Badge>;
       default:
         return <Badge variant="outline" className="text-xs">Unknown</Badge>;
     }
+  };
+
+  const handleTransactionClick = (transaction: Transaction) => {
+    // Handle transaction details view
+    console.log('Transaction clicked:', transaction);
   };
 
   return (
@@ -290,11 +302,11 @@ export const TrustWallet: React.FC<TrustWalletProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className={`grid gap-3 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
             <Button 
               onClick={handleGenerateTU}
               disabled={isGenerating}
-              className="bg-yellow-600 hover:bg-yellow-700 text-black font-semibold"
+              className="bg-yellow-600 hover:bg-yellow-700 text-black font-semibold w-full"
             >
               {isGenerating ? (
                 <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
@@ -306,7 +318,7 @@ export const TrustWallet: React.FC<TrustWalletProps> = ({
             
             <Button 
               variant="outline"
-              className="text-purple-300 border-purple-400 hover:bg-purple-400/20"
+              className="text-purple-300 border-purple-400 hover:bg-purple-400/20 w-full"
             >
               <Send className="h-4 w-4 mr-2" />
               Send
@@ -326,32 +338,53 @@ export const TrustWallet: React.FC<TrustWalletProps> = ({
               </Button>
             </div>
             
-            <div className="space-y-2">
-              {transactions.slice(0, 5).map((tx) => (
-                <div key={tx.id} className="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    {getTransactionIcon(tx.type)}
-                    <div>
-                      <div className="text-sm text-white capitalize">
-                        {tx.type} {tx.currency}
+            {isLoadingTransactions ? (
+              <div className="space-y-2">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <SkeletonTransaction key={i} />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {/* Use virtual scrolling for large transaction lists */}
+                {transactions.length > 10 ? (
+                  <VirtualTransactionList
+                    transactions={transactions}
+                    onTransactionClick={handleTransactionClick}
+                    className="rounded-lg border border-gray-700"
+                  />
+                ) : (
+                  transactions.slice(0, 5).map((tx) => (
+                    <div 
+                      key={tx.id} 
+                      className="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg cursor-pointer hover:bg-gray-800/50 transition-colors"
+                      onClick={() => handleTransactionClick(tx)}
+                    >
+                      <div className="flex items-center space-x-3">
+                        {getTransactionIcon(tx.type)}
+                        <div>
+                          <div className="text-sm text-white capitalize">
+                            {tx.type} {tx.currency}
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {tx.timestamp.toLocaleTimeString()}
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-xs text-gray-400">
-                        {tx.timestamp.toLocaleTimeString()}
+                      
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-white">
+                          {tx.type === 'send' ? '-' : '+'}{formatCurrency(tx.amount, tx.currency)} {tx.currency}
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          {getStatusBadge(tx.status)}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="text-right">
-                    <div className="text-sm font-medium text-white">
-                      {tx.type === 'send' ? '-' : '+'}{formatCurrency(tx.amount, tx.currency)} {tx.currency}
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      {getStatusBadge(tx.status)}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
 
           {/* Wallet Address */}

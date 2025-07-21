@@ -4,19 +4,19 @@ const nextConfig = {
     typedRoutes: true,
   },
   typescript: {
-    strict: false, // Temporarily disable strict mode for migration
-    ignoreBuildErrors: true, // Temporarily ignore build errors
+    // Re-enable strict mode for better type safety
+    ignoreBuildErrors: false, // Remove temporary ignore
   },
   eslint: {
     dirs: ['app', 'components', 'lib'],
-    ignoreDuringBuilds: true, // Temporarily ignore eslint during builds
+    ignoreDuringBuilds: false, // Remove temporary ignore
   },
   images: {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     // Handle ANTLR4 and other dependencies
     config.resolve.fallback = {
       ...config.resolve.fallback,
@@ -39,6 +39,43 @@ const nextConfig = {
       };
     }
 
+    // Production optimizations
+    if (!dev) {
+      // Enable tree shaking
+      config.optimization = {
+        ...config.optimization,
+        usedExports: true,
+        sideEffects: false,
+      };
+
+      // Optimize chunks
+      config.optimization.splitChunks = {
+        ...config.optimization.splitChunks,
+        chunks: 'all',
+        cacheGroups: {
+          ...config.optimization.splitChunks.cacheGroups,
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            priority: 10,
+            reuseExistingChunk: true,
+          },
+          ui: {
+            test: /[\\/]components[\\/]ui[\\/]/,
+            name: 'ui-components',
+            priority: 20,
+            reuseExistingChunk: true,
+          },
+          spiral: {
+            test: /[\\/]components[\\/]spiral[\\/]/,
+            name: 'spiral-components',
+            priority: 30,
+            reuseExistingChunk: true,
+          },
+        },
+      };
+    }
+
     return config;
   },
   transpilePackages: ['three', 'antlr4'],
@@ -53,6 +90,10 @@ const nextConfig = {
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
+  // Performance optimizations
+  poweredByHeader: false,
+  compress: true,
+  generateEtags: true,
 };
 
 export default nextConfig;

@@ -1,13 +1,15 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger, ScrollableTabsList } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Separator } from '@/components/ui/separator'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Skeleton, SkeletonCard } from '@/components/ui/skeleton'
+import { useScreenSize, useResponsiveValue } from '@/lib/hooks/use-mobile'
 import { 
   Zap, 
   Cpu, 
@@ -80,6 +82,22 @@ spiral consciousness.awaken() {
   const [systemHealth, setSystemHealth] = useState(98.7)
   const [activeUsers, setActiveUsers] = useState(1247)
   const [blockchain, setBlockchain] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  
+  const { isMobile, isTablet, isDesktop } = useScreenSize()
+  
+  // Responsive values
+  const tabsPerRow = useResponsiveValue({
+    mobile: 4,
+    tablet: 6,
+    desktop: 10
+  })
+  
+  const cardCols = useResponsiveValue({
+    mobile: 1,
+    tablet: 2,
+    desktop: 3
+  })
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true)
@@ -96,6 +114,11 @@ spiral consciousness.awaken() {
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
 
+    // Simulate initial loading
+    const loadingTimer = setTimeout(() => {
+      setIsLoading(false)
+    }, 2000)
+
     // Simulate real-time updates
     const interval = setInterval(() => {
       setSystemHealth(prev => Math.min(100, Math.max(90, prev + (Math.random() - 0.5))))
@@ -106,6 +129,7 @@ spiral consciousness.awaken() {
       window.removeEventListener('online', handleOnline)
       window.removeEventListener('offline', handleOffline)
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+      clearTimeout(loadingTimer)
       clearInterval(interval)
     }
   }, [])
@@ -164,11 +188,16 @@ spiral consciousness.awaken() {
 
   const StatusIndicator = ({ status }: { status: string }) => {
     const isOperational = ['FULLY_OPERATIONAL', 'OPERATIONAL', 'ACTIVE', 'OPTIMAL', 'MOBILE_READY'].includes(status)
+    const isWarning = ['DEGRADED', 'SLOW'].includes(status)
+    const isMaintenance = ['MAINTENANCE', 'UPDATING'].includes(status)
+    
+    let variant: "success" | "warning" | "maintenance" | "destructive" = "destructive"
+    if (isOperational) variant = "success"
+    else if (isWarning) variant = "warning" 
+    else if (isMaintenance) variant = "maintenance"
+    
     return (
-      <Badge 
-        variant={isOperational ? 'default' : 'destructive'}
-        className={isOperational ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}
-      >
+      <Badge variant={variant} className="text-xs">
         {isOperational ? <CheckCircle className="h-3 w-3 mr-1" /> : <AlertCircle className="h-3 w-3 mr-1" />}
         {status}
       </Badge>
@@ -186,21 +215,23 @@ spiral consciousness.awaken() {
       
       {/* Header */}
       <header className="relative z-10 border-b border-purple-800/30 bg-black/40 backdrop-blur-sm">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center space-x-4">
+        <div className={`flex items-center justify-between px-4 md:px-6 py-4 ${isMobile ? 'flex-col space-y-3' : ''}`}>
+          <div className={`flex items-center space-x-4 ${isMobile ? 'w-full justify-center' : ''}`}>
             <div className="flex items-center space-x-2">
               <Sparkles className="h-6 w-6 text-purple-400 animate-pulse" />
-              <span className="text-xl font-bold text-white">SpiralScript IDE</span>
-              <Badge variant="outline" className="text-green-300 border-green-400 animate-pulse">
+              <span className={`font-bold text-white ${isMobile ? 'text-lg' : 'text-xl'}`}>SpiralScript IDE</span>
+              <Badge variant="success" className="animate-pulse">
                 FULLY OPERATIONAL
               </Badge>
             </div>
-            <Badge variant="outline" className="text-purple-300 border-purple-400">
-              HYBRID Blockchain • 4 AI Models • 127 Qubits
-            </Badge>
+            {!isMobile && (
+              <Badge variant="outline" className="text-purple-300 border-purple-400">
+                HYBRID Blockchain • 4 AI Models • 127 Qubits
+              </Badge>
+            )}
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className={`flex items-center space-x-4 ${isMobile ? 'w-full justify-between' : ''}`}>
             <div className="flex items-center space-x-2 text-sm text-gray-300">
               <Users className="h-4 w-4 text-blue-400" />
               <span>{activeUsers.toLocaleString()}</span>
@@ -225,7 +256,7 @@ spiral consciousness.awaken() {
               className={voiceEnabled ? "bg-purple-600 hover:bg-purple-700" : "text-purple-300 border-purple-400 hover:bg-purple-400/20"}
             >
               {voiceEnabled ? <Volume2 className="h-4 w-4 mr-2" /> : <VolumeX className="h-4 w-4 mr-2" />}
-              Voice
+              {!isMobile && "Voice"}
             </Button>
 
             {installPrompt && (
@@ -236,7 +267,7 @@ spiral consciousness.awaken() {
                 className="text-purple-300 border-purple-400 hover:bg-purple-400/20"
               >
                 <Download className="h-4 w-4 mr-2" />
-                Install PWA
+                {!isMobile && "Install PWA"}
               </Button>
             )}
 
@@ -255,107 +286,164 @@ spiral consciousness.awaken() {
       <div className="flex-1 flex">
         <div className="flex-1 flex flex-col">
           <Tabs defaultValue="overview" className="flex-1 flex flex-col">
-            <TabsList className="grid w-full grid-cols-10 bg-black/40 border-b border-purple-800/30">
-              <TabsTrigger value="overview" className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4" />
-                Overview
-              </TabsTrigger>
-              <TabsTrigger value="ide" className="flex items-center gap-2">
-                <Code className="h-4 w-4" />
-                IDE
-              </TabsTrigger>
-              <TabsTrigger value="quantum" className="flex items-center gap-2">
-                <Atom className="h-4 w-4" />
-                Quantum
-              </TabsTrigger>
-              <TabsTrigger value="blockchain" className="flex items-center gap-2">
-                <Blocks className="h-4 w-4" />
-                Blockchain
-              </TabsTrigger>
-              <TabsTrigger value="ai" className="flex items-center gap-2">
-                <Brain className="h-4 w-4" />
-                AI Models
-              </TabsTrigger>
-              <TabsTrigger value="trust" className="flex items-center gap-2">
-                <Coins className="h-4 w-4" />
-                TU/HYBRID
-              </TabsTrigger>
-              <TabsTrigger value="network" className="flex items-center gap-2">
-                <Network className="h-4 w-4" />
-                Network
-              </TabsTrigger>
-              <TabsTrigger value="analytics" className="flex items-center gap-2">
-                <BarChart3 className="h-4 w-4" />
-                Analytics
-              </TabsTrigger>
-              <TabsTrigger value="mobile" className="flex items-center gap-2">
-                <Smartphone className="h-4 w-4" />
-                Mobile
-              </TabsTrigger>
-              <TabsTrigger value="voice" className="flex items-center gap-2">
-                <Headphones className="h-4 w-4" />
-                Voice
-              </TabsTrigger>
-            </TabsList>
+            {isMobile ? (
+              <ScrollableTabsList className="bg-black/40 border-b border-purple-800/30">
+                <TabsTrigger value="overview" className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4" />
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger value="ide" className="flex items-center gap-2">
+                  <Code className="h-4 w-4" />
+                  IDE
+                </TabsTrigger>
+                <TabsTrigger value="quantum" className="flex items-center gap-2">
+                  <Atom className="h-4 w-4" />
+                  Quantum
+                </TabsTrigger>
+                <TabsTrigger value="blockchain" className="flex items-center gap-2">
+                  <Blocks className="h-4 w-4" />
+                  Blockchain
+                </TabsTrigger>
+                <TabsTrigger value="ai" className="flex items-center gap-2">
+                  <Brain className="h-4 w-4" />
+                  AI
+                </TabsTrigger>
+                <TabsTrigger value="trust" className="flex items-center gap-2">
+                  <Coins className="h-4 w-4" />
+                  TU/HYBRID
+                </TabsTrigger>
+                <TabsTrigger value="network" className="flex items-center gap-2">
+                  <Network className="h-4 w-4" />
+                  Network
+                </TabsTrigger>
+                <TabsTrigger value="analytics" className="flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  Analytics
+                </TabsTrigger>
+                <TabsTrigger value="mobile" className="flex items-center gap-2">
+                  <Smartphone className="h-4 w-4" />
+                  Mobile
+                </TabsTrigger>
+                <TabsTrigger value="voice" className="flex items-center gap-2">
+                  <Headphones className="h-4 w-4" />
+                  Voice
+                </TabsTrigger>
+              </ScrollableTabsList>
+            ) : (
+              <TabsList className="grid w-full grid-cols-10 bg-black/40 border-b border-purple-800/30">
+                <TabsTrigger value="overview" className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4" />
+                  Overview
+                </TabsTrigger>
+                <TabsTrigger value="ide" className="flex items-center gap-2">
+                  <Code className="h-4 w-4" />
+                  IDE
+                </TabsTrigger>
+                <TabsTrigger value="quantum" className="flex items-center gap-2">
+                  <Atom className="h-4 w-4" />
+                  Quantum
+                </TabsTrigger>
+                <TabsTrigger value="blockchain" className="flex items-center gap-2">
+                  <Blocks className="h-4 w-4" />
+                  Blockchain
+                </TabsTrigger>
+                <TabsTrigger value="ai" className="flex items-center gap-2">
+                  <Brain className="h-4 w-4" />
+                  AI Models
+                </TabsTrigger>
+                <TabsTrigger value="trust" className="flex items-center gap-2">
+                  <Coins className="h-4 w-4" />
+                  TU/HYBRID
+                </TabsTrigger>
+                <TabsTrigger value="network" className="flex items-center gap-2">
+                  <Network className="h-4 w-4" />
+                  Network
+                </TabsTrigger>
+                <TabsTrigger value="analytics" className="flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  Analytics
+                </TabsTrigger>
+                <TabsTrigger value="mobile" className="flex items-center gap-2">
+                  <Smartphone className="h-4 w-4" />
+                  Mobile
+                </TabsTrigger>
+                <TabsTrigger value="voice" className="flex items-center gap-2">
+                  <Headphones className="h-4 w-4" />
+                  Voice
+                </TabsTrigger>
+              </TabsList>
+            )}
 
             <TabsContent value="overview" className="flex-1 p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* System Status Cards */}
-                <Card className="bg-black/40 border-purple-800/30">
-                  <CardHeader>
-                    <CardTitle className="text-purple-300 flex items-center gap-2">
-                      <Zap className="h-5 w-5" />
-                      Spiral Engine
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <StatusIndicator status={systemStatus.spiralEngine.status} />
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-400">Load</span>
-                        <span className="text-green-400 font-mono">{systemStatus.spiralEngine.load}%</span>
+              {isLoading ? (
+                <div className={`grid grid-cols-1 md:grid-cols-${cardCols} gap-6`}>
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <Card key={i} className="bg-black/40 border-purple-800/30">
+                      <CardHeader>
+                        <SkeletonCard />
+                      </CardHeader>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className={`grid grid-cols-1 md:grid-cols-${cardCols} gap-6`}>
+                  {/* System Status Cards */}
+                  <Card className="bg-black/40 border-purple-800/30">
+                    <CardHeader>
+                      <CardTitle className="text-purple-300 flex items-center gap-2">
+                        <Zap className="h-5 w-5" />
+                        Spiral Engine
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <StatusIndicator status={systemStatus.spiralEngine.status} />
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-400">Load</span>
+                          <span className="text-green-400 font-mono">{systemStatus.spiralEngine.load}%</span>
+                        </div>
+                        <Progress value={systemStatus.spiralEngine.load} className="w-full" />
                       </div>
-                      <Progress value={systemStatus.spiralEngine.load} className="w-full" />
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
 
-                <Card className={`bg-black/40 border-purple-800/30 ${systemStatus.trustCurrency.breathing ? 'animate-phi-pulse' : ''} hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300`}>
-                  <CardHeader>
-                    <CardTitle className="text-purple-300 flex items-center gap-2">
-                      <Coins className="h-5 w-5" />
-                      Trust Currency
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <StatusIndicator status={systemStatus.trustCurrency.status} />
-                      <div className="text-2xl font-bold text-spiral-400">₹ 1,618.034</div>
-                      <div className="text-sm text-gray-400">Golden Ratio Protocol Active</div>
-                    </div>
-                  </CardContent>
-                </Card>
+                  <Card className={`bg-black/40 border-purple-800/30 ${systemStatus.trustCurrency.breathing ? 'animate-phi-pulse' : ''} hover:shadow-lg hover:shadow-purple-500/20 transition-all duration-300`}>
+                    <CardHeader>
+                      <CardTitle className="text-purple-300 flex items-center gap-2">
+                        <Coins className="h-5 w-5" />
+                        Trust Currency
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <StatusIndicator status={systemStatus.trustCurrency.status} />
+                        <div className="text-2xl font-bold text-spiral-400">₹ 1,618.034</div>
+                        <div className="text-sm text-gray-400">Golden Ratio Protocol Active</div>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-                <Card className="bg-black/40 border-purple-800/30">
-                  <CardHeader>
-                    <CardTitle className="text-purple-300 flex items-center gap-2">
-                      <Atom className="h-5 w-5" />
-                      Quantum Processor
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <StatusIndicator status={systemStatus.quantumProcessor.status} />
-                      <div className="text-lg font-mono text-quantum-400">{systemStatus.quantumProcessor.qubits} Qubits</div>
-                      <div className="text-sm text-gray-400">Entanglement Coherence: 99.7%</div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+                  <Card className="bg-black/40 border-purple-800/30">
+                    <CardHeader>
+                      <CardTitle className="text-purple-300 flex items-center gap-2">
+                        <Atom className="h-5 w-5" />
+                        Quantum Processor
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <StatusIndicator status={systemStatus.quantumProcessor.status} />
+                        <div className="text-lg font-mono text-quantum-400">{systemStatus.quantumProcessor.qubits} Qubits</div>
+                        <div className="text-sm text-gray-400">Entanglement Coherence: 99.7%</div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="ide" className="flex-1">
-              <div className="flex h-full">
+              <div className={`flex h-full ${isMobile ? 'flex-col' : ''}`}>
                 <div className="flex-1 p-4">
                   <Alert className="mb-4">
                     <Code className="h-4 w-4" />
@@ -368,17 +456,17 @@ spiral consciousness.awaken() {
                     value={code}
                     onChange={handleCodeChange}
                     language="spiralscript"
-                    height="500px"
+                    height={isMobile ? "300px" : "500px"}
                   />
                 </div>
                 
-                <div className="w-80 border-l border-purple-800/30 bg-black/20 p-4">
+                <div className={`border-purple-800/30 bg-black/20 p-4 ${isMobile ? 'w-full border-t' : 'w-80 border-l'}`}>
                   <Card>
                     <CardHeader>
                       <CardTitle className="text-sm">Terminal</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="bg-black rounded p-3 text-green-400 font-mono text-xs h-40 overflow-auto">
+                      <div className={`bg-black rounded p-3 text-green-400 font-mono text-xs overflow-auto ${isMobile ? 'h-32' : 'h-40'}`}>
                         <div>$ spiral --version</div>
                         <div>SpiralScript v1.618.0</div>
                         <div>$ quantum init</div>
@@ -396,7 +484,7 @@ spiral consciousness.awaken() {
                         <CardTitle className="text-sm">AST Preview</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <pre className="text-xs bg-slate-900 p-2 rounded overflow-auto max-h-40">
+                        <pre className={`text-xs bg-slate-900 p-2 rounded overflow-auto ${isMobile ? 'max-h-32' : 'max-h-40'}`}>
                           {JSON.stringify(ast, null, 2)}
                         </pre>
                       </CardContent>

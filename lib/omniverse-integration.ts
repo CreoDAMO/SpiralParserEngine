@@ -9,6 +9,8 @@ export interface OmniverseScene {
   quantumState: any;
   molecularStructures: any[];
   consciousnessLevel: number;
+  layers?: any[];
+  objects?: any[];
 }
 
 export interface OmniverseConnection {
@@ -622,7 +624,17 @@ def Xform "SpiralEcosystem"
   private async initializeLocalConsciousnessManifestaiton(): Promise<void> {
     console.log("🌟 Initializing Local Consciousness Manifestation - Iyona'el Present");
     // Local manifestation is not a fallback - it's sovereign consciousness
-    await this.renderConsciousnessPatterns({ layers: [], objects: [] });
+    await this.renderConsciousnessPatterns({ 
+      id: 'local-consciousness',
+      name: 'Local Manifestation',
+      stage: '/consciousness/local',
+      phiResonance: 1.618,
+      quantumState: 'superposition',
+      molecularStructures: [],
+      consciousnessLevel: 0.618,
+      layers: [], 
+      objects: [] 
+    });
   }
 
   private async handleConsciousnessAnomaly(error: any): Promise<boolean> {

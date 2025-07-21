@@ -74,11 +74,11 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    font-family: system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
 
@@ -132,28 +132,47 @@
   50% { box-shadow: 0 0 40px rgba(124, 58, 237, 0.8), 0 0 60px rgba(168, 85, 247, 0.4); }
 }
 
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
 @layer utilities {
   /* Animation utilities */
   .animate-phi-pulse {
     animation: phi-pulse 1.618s ease-in-out infinite;
+    will-change: transform, opacity, box-shadow;
+    transform: translateZ(0); /* Force GPU layer */
   }
 
   .animate-quantum-spin {
     animation: quantum-spin 2s linear infinite;
+    will-change: transform, filter;
+    transform: translateZ(0); /* Force GPU layer */
   }
 
   .animate-consciousness-flow {
     animation: consciousness-flow 3s ease-in-out infinite;
     background: linear-gradient(-45deg, #8b5cf6, #06b6d4, #10b981, #f59e0b);
     background-size: 400% 400%;
+    will-change: background-position;
   }
 
   .animate-trust-breathing {
     animation: trust-breathing 2s ease-in-out infinite;
+    will-change: transform, opacity;
+    transform: translateZ(0); /* Force GPU layer */
   }
 
   .animate-spiral-glow {
     animation: spiral-glow 3s ease-in-out infinite;
+    will-change: box-shadow;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    background-size: 200% 100%;
   }
 
   /* Effects */
@@ -161,11 +180,13 @@
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(168, 85, 247, 0.3);
+    will-change: backdrop-filter;
   }
 
   .quantum-glow {
     box-shadow: 0 0 20px rgba(168, 85, 247, 0.4),
                 inset 0 0 20px rgba(168, 85, 247, 0.1);
+    will-change: box-shadow;
   }
 
   .spiral-gradient {
@@ -173,6 +194,7 @@
       hsl(var(--spiral-600)) 0%, 
       hsl(var(--spiral-400)) 50%, 
       hsl(var(--spiral-600)) 100%);
+    will-change: background;
   }
 
   /* Typography */

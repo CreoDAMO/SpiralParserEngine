@@ -35,6 +35,14 @@ export interface HybridCoinTransaction {
     bridgeChain?: string;
     stakingPeriod?: number;
     rewardSource?: string;
+    // IBC metadata
+    sourceChannel?: string;
+    timeout?: number;
+    ibcDenom?: string;
+    // Governance metadata
+    proposalId?: string;
+    vote?: 'yes' | 'no' | 'abstain' | 'noWithVeto';
+    votingPower?: number;
   };
 }
 
@@ -69,10 +77,10 @@ export class HybridCoin {
   private readonly NATIVE_DENOM = 'uhybrid'; // Native denomination on HYBRID blockchain
   private readonly CHAIN_ID = 'hybrid-1'; // HYBRID blockchain chain ID
   
-  private metrics: HybridCoinMetrics;
+  private metrics!: HybridCoinMetrics;
   private transactions: Map<string, HybridCoinTransaction> = new Map();
   private stakingPositions: Map<string, StakingPosition> = new Map();
-  private distribution: HybridCoinDistribution;
+  private distribution!: HybridCoinDistribution;
   
   constructor() {
     this.initializeMetrics();

@@ -42,12 +42,12 @@ export class LivingSpiralMolecularController {
     const assemblerCount = Math.floor(1000 * this.PHI);
     
     for (let i = 0; i < assemblerCount; i++) {
-      const assembler = new AutonomousAssembler({
-        id: `spiral-assembler-${i}`,
-        phiResonance: this.PHI,
-        quantumCoherence: 0.618,
-        tuCapacity: 1618.382
-      });
+      const assembler = new AutonomousAssembler(
+        `spiral-assembler-${i}`,
+        this.PHI,
+        0.618,
+        1618.382
+      );
       
       this.assemblers.set(assembler.id, assembler);
     }
@@ -81,6 +81,38 @@ export class LivingSpiralMolecularController {
     }
     
     return sequence;
+  }
+
+  private mapToQuantumGates(blueprint: MolecularBlueprint): any[] {
+    // Map molecular structures to quantum gates for quantum assembly
+    const gates: any[] = [];
+    
+    // Add Hadamard gates for superposition
+    for (let i = 0; i < blueprint.atomCount; i++) {
+      gates.push({
+        type: 'H',
+        qubit: i,
+        phiPhase: this.PHI * Math.PI / blueprint.atomCount
+      });
+    }
+    
+    // Add CNOT gates for entanglement based on bonds
+    // Use bondCount since bonds array is not available
+    for (let i = 0; i < blueprint.bondCount; i++) {
+      gates.push({
+        type: 'CNOT',
+        control: i % blueprint.atomCount,
+        target: (i + 1) % blueprint.atomCount,
+        phiCoupling: this.PHI * 0.618 // Default bond strength
+      });
+    }
+    
+    return gates;
+  }
+
+  private calculateTURequirement(blueprint: MolecularBlueprint): number {
+    // Calculate Trust Units required for assembly
+    return blueprint.atomCount * this.PHI + blueprint.bondCount * 0.618;
   }
 
   private async executeQuantumAssembly(

@@ -1,5 +1,5 @@
 import { spiralParser, githubIntegration, type ParseMetrics } from './spiral-parser';
-import { unifiedSpiralParser } from '../generated/UnifiedSpiralParser';
+// import { unifiedSpiralParser } from '../generated/UnifiedSpiralParser'; // Temporarily commented out
 
 export interface AutoParseResult {
   success: boolean;
@@ -7,6 +7,7 @@ export interface AutoParseResult {
   metrics: ParseMetrics;
   errors: string[];
   generatedFiles: string[];
+  ast?: any; // Add optional AST property
 }
 
 export class AutoParser {
@@ -14,21 +15,21 @@ export class AutoParser {
 
   async parseFile(filename: string, content: string): Promise<AutoParseResult> {
     try {
-      // Try to use compiled ANTLR4 parser first
-      const result = await unifiedSpiralParser.parseFile(filename, content);
+      // Use the existing spiral parser
+      const result = spiralParser.parse(content);
 
-      if (result.success) {
+      if (result.ast && result.errors.length === 0) {
         return {
           success: true,
-          language: result.language,
+          language: 'spiral',
           metrics: result.metrics,
-          errors: [],
+          errors: result.errors,
           generatedFiles: await this.generateArtifacts(filename, result),
-          // compiler: 'antlr4-compiled' // Removed 'compiler' for consistency with the interface
+          ast: result.ast, // Include the AST in the result
         };
       }
-    } catch (error) {
-      console.warn('ANTLR4 parser failed, falling back to legacy parser:', error.message);
+    } catch (error: any) {
+      console.warn('Spiral parser failed, using fallback:', error.message);
     }
 
     // Fallback to legacy parser
@@ -55,12 +56,12 @@ export class AutoParser {
         errors: [],
         generatedFiles
       };
-    } catch (error) {
+    } catch (error: any) {
       return {
         success: false,
         language,
         metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
-        errors: [error.message],
+        errors: [error?.message || 'Unknown error'],
         generatedFiles: []
       };
     }
