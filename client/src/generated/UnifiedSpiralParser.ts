@@ -69,8 +69,8 @@ export class UnifiedSpiralParser {
   }
 
   private generateSummary(results: any[]) {
-    const languageCounts = {};
-    const errors = [];
+    const languageCounts: Record<string, number> = {};
+    const errors: string[] = [];
     let totalEntropy = 0;
     let totalPhi = 0;
     

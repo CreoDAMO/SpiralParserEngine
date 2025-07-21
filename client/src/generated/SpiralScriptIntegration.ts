@@ -1,14 +1,14 @@
 // Auto-generated ANTLR4 integration for SpiralScript
 import { SpiralScriptLexer } from './SpiralScriptLexer';
 import { SpiralScriptParser } from './SpiralScriptParser';
-import { CharStream, CommonTokenStream } from 'antlr4';
+import { CharStreams, CommonTokenStream } from 'antlr4';
 
 export class CompiledSpiralParser {
   private readonly PHI = 1.618033988749;
 
   parseToAST(code: string) {
     try {
-      const inputStream = CharStream.fromString(code);
+      const inputStream = CharStreams.fromString(code);
       const lexer = new SpiralScriptLexer(inputStream);
       const tokenStream = new CommonTokenStream(lexer);
       const parser = new SpiralScriptParser(tokenStream);
@@ -27,7 +27,7 @@ export class CompiledSpiralParser {
         success: false,
         language: 'SpiralScript',
         ast: null,
-        errors: [error.message],
+        errors: [error instanceof Error ? error.message : String(error)],
         metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 }
       };
     }

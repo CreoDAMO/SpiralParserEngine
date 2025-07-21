@@ -69,10 +69,32 @@ export class HybridCoin {
   private readonly NATIVE_DENOM = 'uhybrid'; // Native denomination on HYBRID blockchain
   private readonly CHAIN_ID = 'hybrid-1'; // HYBRID blockchain chain ID
   
-  private metrics: HybridCoinMetrics;
+  private metrics: HybridCoinMetrics = {
+    totalSupply: this.TOTAL_SUPPLY,
+    circulatingSupply: this.TOTAL_SUPPLY * 0.6,
+    initialPrice: this.INITIAL_PRICE,
+    currentPrice: this.INITIAL_PRICE,
+    marketCap: this.TOTAL_SUPPLY * this.INITIAL_PRICE,
+    inflationRate: 0.07,
+    stakingRewards: 0,
+    burnedAmount: 0,
+    backing: {
+      computationalResources: 1618.382 * 1000,
+      aiInferenceCapacity: 735 * 1000,
+      storageCapacity: 1618.382 * 1000,
+      quantumProcessingPower: 618
+    }
+  };
   private transactions: Map<string, HybridCoinTransaction> = new Map();
   private stakingPositions: Map<string, StakingPosition> = new Map();
-  private distribution: HybridCoinDistribution;
+  private distribution: HybridCoinDistribution = {
+    genesisSupply: this.TOTAL_SUPPLY,
+    validatorRewards: 0,
+    storageRewards: 0,
+    communityPool: 0,
+    developmentFund: 0,
+    burned: 0
+  };
   
   constructor() {
     this.initializeMetrics();
@@ -416,7 +438,7 @@ export class HybridCoin {
         sourceChannel,
         timeout,
         ibcDenom: `ibc/${this.NATIVE_DENOM}`
-      }
+      } as any
     };
 
     this.transactions.set(ibcTx.id, ibcTx);
@@ -444,7 +466,7 @@ export class HybridCoin {
         proposalId,
         vote,
         votingPower
-      }
+      } as any
     };
 
     this.transactions.set(govTx.id, govTx);

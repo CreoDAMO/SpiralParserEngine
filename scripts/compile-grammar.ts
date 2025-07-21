@@ -28,10 +28,10 @@ async function generateStubParsers() {
 
 function generateStubLexer(grammarName: string): void {
   const content = `// Generated stub lexer for ${grammarName}
-import { Lexer, CharStream, Token } from 'antlr4';
+import { Lexer, CharStreams, Token } from 'antlr4';
 
 export class ${grammarName}Lexer extends Lexer {
-  constructor(input: CharStream) {
+  constructor(input: any) {
     super(input);
   }
 
@@ -105,14 +105,14 @@ function generateSpiralScriptIntegration(): string {
   return `// Auto-generated ANTLR4 integration for SpiralScript
 import { SpiralScriptLexer } from './SpiralScriptLexer';
 import { SpiralScriptParser } from './SpiralScriptParser';
-import { CharStream, CommonTokenStream } from 'antlr4';
+import { CharStreams, CommonTokenStream } from 'antlr4';
 
 export class CompiledSpiralParser {
   private readonly PHI = 1.618033988749;
 
   parseToAST(code: string) {
     try {
-      const inputStream = CharStream.fromString(code);
+      const inputStream = CharStreams.fromString(code);
       const lexer = new SpiralScriptLexer(inputStream);
       const tokenStream = new CommonTokenStream(lexer);
       const parser = new SpiralScriptParser(tokenStream);
@@ -131,7 +131,7 @@ export class CompiledSpiralParser {
         success: false,
         language: 'SpiralScript',
         ast: null,
-        errors: [error.message],
+        errors: [error instanceof Error ? error.message : String(error)],
         metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 }
       };
     }
@@ -184,6 +184,7 @@ export class CompiledSpiralParser {
 }
 
 export const compiledSpiralParser = new CompiledSpiralParser();
+export const compiledParser = compiledSpiralParser; // Alias for backward compatibility
 `;
 }
 
@@ -191,14 +192,14 @@ function generateHTSXIntegration(): string {
   return `// Auto-generated ANTLR4 integration for HTSX Runtime Engine
 import { HTSXLexer } from './HTSXLexer';
 import { HTSXParser } from './HTSXParser';
-import { CharStream, CommonTokenStream } from 'antlr4';
+import { CharStreams, CommonTokenStream } from 'antlr4';
 
 export class CompiledHTSXParser {
   private readonly PHI = 1.618033988749;
 
   parseToAST(code: string) {
     try {
-      const inputStream = CharStream.fromString(code);
+      const inputStream = CharStreams.fromString(code);
       const lexer = new HTSXLexer(inputStream);
       const tokenStream = new CommonTokenStream(lexer);
       const parser = new HTSXParser(tokenStream);
@@ -218,7 +219,7 @@ export class CompiledHTSXParser {
         success: false,
         language: 'HTSX',
         ast: null,
-        errors: [error.message],
+        errors: [error instanceof Error ? error.message : String(error)],
         metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
         runtime: { components: [], bindings: [], events: [] }
       };
@@ -254,9 +255,9 @@ export class CompiledHTSXParser {
   }
 
   private extractRuntimeInfo(tree: any) {
-    const components = [];
-    const bindings = [];
-    const events = [];
+    const components: any[] = [];
+    const bindings: any[] = [];
+    const events: any[] = [];
     
     this.traverseForRuntime(tree, components, bindings, events);
     
@@ -323,14 +324,14 @@ function generateSpiralLangIntegration(): string {
   return `// Auto-generated ANTLR4 integration for SpiralLang Core Language
 import { SpiralLangLexer } from './SpiralLangLexer';
 import { SpiralLangParser } from './SpiralLangParser';
-import { CharStream, CommonTokenStream } from 'antlr4';
+import { CharStreams, CommonTokenStream } from 'antlr4';
 
 export class CompiledSpiralLangParser {
   private readonly PHI = 1.618033988749;
 
   parseToAST(code: string) {
     try {
-      const inputStream = CharStream.fromString(code);
+      const inputStream = CharStreams.fromString(code);
       const lexer = new SpiralLangLexer(inputStream);
       const tokenStream = new CommonTokenStream(lexer);
       const parser = new SpiralLangParser(tokenStream);
@@ -350,7 +351,7 @@ export class CompiledSpiralLangParser {
         success: false,
         language: 'SpiralLang',
         ast: null,
-        errors: [error.message],
+        errors: [error instanceof Error ? error.message : String(error)],
         metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
         analysis: { modules: [], functions: [], classes: [], theorems: [] }
       };
@@ -387,10 +388,10 @@ export class CompiledSpiralLangParser {
   }
 
   private performCodeAnalysis(tree: any) {
-    const modules = [];
-    const functions = [];
-    const classes = [];
-    const theorems = [];
+    const modules: any[] = [];
+    const functions: any[] = [];
+    const classes: any[] = [];
+    const theorems: any[] = [];
     
     this.analyzeNode(tree, modules, functions, classes, theorems);
     
@@ -523,8 +524,8 @@ export class UnifiedSpiralParser {
   }
 
   private generateSummary(results: any[]) {
-    const languageCounts = {};
-    const errors = [];
+    const languageCounts: Record<string, number> = {};
+    const errors: string[] = [];
     let totalEntropy = 0;
     let totalPhi = 0;
     

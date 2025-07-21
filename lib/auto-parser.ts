@@ -28,7 +28,7 @@ export class AutoParser {
         };
       }
     } catch (error) {
-      console.warn('ANTLR4 parser failed, falling back to legacy parser:', error.message);
+      console.warn('ANTLR4 parser failed, falling back to legacy parser:', error instanceof Error ? error.message : String(error));
     }
 
     // Fallback to legacy parser
@@ -60,7 +60,7 @@ export class AutoParser {
         success: false,
         language,
         metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
-        errors: [error.message],
+        errors: [error instanceof Error ? error.message : String(error)],
         generatedFiles: []
       };
     }

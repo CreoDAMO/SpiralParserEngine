@@ -5,7 +5,7 @@
 import { z } from 'zod';
 import { autoParser } from './auto-parser';
 import { unifiedSpiralParser } from '../client/src/generated/UnifiedSpiralParser';
-import { HybridBlock, HybridTransaction, HybridNode, HybridSmartContract } from '../../../shared/hybrid-blockchain-schema';
+import { HybridBlock, HybridTransaction, HybridNode, HybridSmartContract } from '../shared/hybrid-blockchain-schema';
 
 export interface SpiralContractExecution {
   contractAddress: string;
@@ -122,17 +122,17 @@ export class SpiralHybridBlockchain {
       const contractAddress = this.generateContractAddress(deployer, sourceCode);
       
       // Compile to bytecode
-      const bytecode = await this.compileToSpiralBytecode(parseResult.ast, language);
+      const bytecode = await this.compileToSpiralBytecode((parseResult as any).ast, language);
       
       // Create smart contract
       const contract: HybridSmartContract = {
         address: contractAddress,
         bytecode,
-        abi: this.generateABI(parseResult.ast),
+        abi: this.generateABI((parseResult as any).ast),
         creator: deployer,
         timestamp: Date.now(),
         spiralCompliant: true,
-        quantumEnabled: this.hasQuantumFeatures(parseResult.ast)
+        quantumEnabled: this.hasQuantumFeatures((parseResult as any).ast)
       };
       
       this.contracts.set(contractAddress, contract);
@@ -157,9 +157,9 @@ export class SpiralHybridBlockchain {
           contractAddress,
           language,
           sourceCode,
-          parsedAST: parseResult.ast,
+          parsedAST: (parseResult as any).ast,
           executionResult: { deployed: true },
-          gasUsed: this.calculateGasUsed(parseResult.ast, language),
+          gasUsed: this.calculateGasUsed((parseResult as any).ast, language),
           tuGenerated: parseResult.metrics.tuGenerated,
           phiResonance: parseResult.metrics.phiResonance,
           quantumState: 'collapsed'
@@ -171,7 +171,7 @@ export class SpiralHybridBlockchain {
       return contractAddress;
       
     } catch (error) {
-      throw new Error(`Contract deployment failed: ${error.message}`);
+      throw new Error(`Contract deployment failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -214,7 +214,7 @@ export class SpiralHybridBlockchain {
         },
         contractExecution: {
           contractAddress,
-          language: result.language,
+          language: result.language as 'SpiralScript' | 'HTSX' | 'SpiralLang',
           sourceCode: result.sourceCode || '',
           parsedAST: result.ast,
           executionResult: result.output,
@@ -230,7 +230,7 @@ export class SpiralHybridBlockchain {
       return result.output;
       
     } catch (error) {
-      throw new Error(`Contract execution failed: ${error.message}`);
+      throw new Error(`Contract execution failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 

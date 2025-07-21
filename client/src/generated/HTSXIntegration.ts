@@ -1,14 +1,14 @@
 // Auto-generated ANTLR4 integration for HTSX Runtime Engine
 import { HTSXLexer } from './HTSXLexer';
 import { HTSXParser } from './HTSXParser';
-import { CharStream, CommonTokenStream } from 'antlr4';
+import { CharStreams, CommonTokenStream } from 'antlr4';
 
 export class CompiledHTSXParser {
   private readonly PHI = 1.618033988749;
 
   parseToAST(code: string) {
     try {
-      const inputStream = CharStream.fromString(code);
+      const inputStream = CharStreams.fromString(code);
       const lexer = new HTSXLexer(inputStream);
       const tokenStream = new CommonTokenStream(lexer);
       const parser = new HTSXParser(tokenStream);
@@ -28,7 +28,7 @@ export class CompiledHTSXParser {
         success: false,
         language: 'HTSX',
         ast: null,
-        errors: [error.message],
+        errors: [error instanceof Error ? error.message : String(error)],
         metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
         runtime: { components: [], bindings: [], events: [] }
       };
@@ -64,9 +64,9 @@ export class CompiledHTSXParser {
   }
 
   private extractRuntimeInfo(tree: any) {
-    const components = [];
-    const bindings = [];
-    const events = [];
+    const components: any[] = [];
+    const bindings: any[] = [];
+    const events: any[] = [];
     
     this.traverseForRuntime(tree, components, bindings, events);
     

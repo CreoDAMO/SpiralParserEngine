@@ -1,8 +1,8 @@
 // Generated stub lexer for SpiralLang
-import { Lexer, CharStream, Token } from 'antlr4';
+import { Lexer, CharStreams, Token } from 'antlr4';
 
 export class SpiralLangLexer extends Lexer {
-  constructor(input: CharStream) {
+  constructor(input: any) {
     super(input);
   }
 

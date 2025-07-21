@@ -67,11 +67,28 @@ export class FounderWallet {
   private readonly INITIAL_ALLOCATION = 20_000_000_000; // 20B HYBRID (20% of total supply)
   private readonly PHI = 1.618033988749;
   
-  private config: FounderWalletConfig;
+  private config: FounderWalletConfig = {
+    address: this.FOUNDER_ADDRESS,
+    multiSigThreshold: 3,
+    authorizedSigners: [this.FOUNDER_ADDRESS],
+    vestingSchedule: [],
+    governanceWeight: 0.25, // 25% governance weight
+    emergencyPowers: true
+  };
   private vestingSchedule: Map<string, VestingPeriod> = new Map();
   private pendingTransactions: Map<string, FounderTransaction> = new Map();
   private governanceProposals: Map<string, GovernanceProposal> = new Map();
-  private walletState: HybridWalletState;
+  private walletState: HybridWalletState = {
+    address: this.FOUNDER_ADDRESS,
+    hybridBalance: this.INITIAL_ALLOCATION,
+    tuBalance: 0,
+    sriScore: 1.0,
+    phiResonance: this.PHI,
+    nodeLicenses: [],
+    stakingRewards: 0,
+    governanceVotingPower: 0.25,
+    crossChainAssets: []
+  };
 
   constructor() {
     this.initializeFounderWallet();
