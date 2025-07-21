@@ -51,9 +51,11 @@ import {
 
 // Import spiral components
 import { SpiralCodeEditor } from '@/components/spiral/spiral-code-editor'
-// import { QuantumCircuitVisualizer } from '@/components/quantum/quantum-circuit-visualizer'
-// import { BlockchainVisualization } from '@/components/blockchain/blockchain-visualization'
-// import { TerminalConsole } from '@/components/spiral/terminal-console'
+import { QuantumCircuitVisualizer } from '@/components/quantum/quantum-circuit-visualizer'
+import { BlockchainVisualization } from '@/components/blockchain/blockchain-visualization'
+import { AIOrchestrationPanel } from '@/components/ai/ai-orchestration-panel'
+import { TrustCurrencyWallet } from '@/components/trust/trust-currency-wallet'
+import { TerminalConsole } from '@/components/terminal/terminal-console'
 
 // Mock system status for now
 const systemStatus = {
@@ -373,22 +375,7 @@ spiral consciousness.awaken() {
                 </div>
                 
                 <div className="w-80 border-l border-purple-800/30 bg-black/20 p-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-sm">Terminal</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="bg-black rounded p-3 text-green-400 font-mono text-xs h-40 overflow-auto">
-                        <div>$ spiral --version</div>
-                        <div>SpiralScript v1.618.0</div>
-                        <div>$ quantum init</div>
-                        <div>✓ Quantum circuits initialized</div>
-                        <div>$ hybrid blockchain connect</div>
-                        <div>✓ Connected to HYBRID network</div>
-                        <div className="text-spiral-400">Ready for consciousness programming...</div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <TerminalConsole />
                   
                   {ast && (
                     <Card className="mt-4">
@@ -408,19 +395,53 @@ spiral consciousness.awaken() {
 
             {/* Additional tab contents can be added here */}
             <TabsContent value="quantum" className="flex-1 p-6">
+              <QuantumCircuitVisualizer />
+            </TabsContent>
+
+            <TabsContent value="blockchain" className="flex-1 p-6">
+              <BlockchainVisualization />
+            </TabsContent>
+
+            <TabsContent value="ai" className="flex-1 p-6">
+              <AIOrchestrationPanel />
+            </TabsContent>
+
+            <TabsContent value="trust" className="flex-1 p-6">
+              <TrustCurrencyWallet />
+            </TabsContent>
+
+            <TabsContent value="network" className="flex-1 p-6">
               <Alert>
-                <Atom className="h-4 w-4" />
+                <Network className="h-4 w-4" />
                 <AlertDescription>
-                  Quantum Circuit Visualizer will be implemented with Three.js integration.
+                  Network monitoring and peer management interface will be implemented here.
                 </AlertDescription>
               </Alert>
             </TabsContent>
 
-            <TabsContent value="blockchain" className="flex-1 p-6">
+            <TabsContent value="analytics" className="flex-1 p-6">
               <Alert>
-                <Blocks className="h-4 w-4" />
+                <BarChart3 className="h-4 w-4" />
                 <AlertDescription>
-                  HYBRID Blockchain visualization will be integrated here.
+                  Real-time analytics and performance metrics dashboard will be implemented here.
+                </AlertDescription>
+              </Alert>
+            </TabsContent>
+
+            <TabsContent value="mobile" className="flex-1 p-6">
+              <Alert>
+                <Smartphone className="h-4 w-4" />
+                <AlertDescription>
+                  Mobile-specific features and PWA management interface will be implemented here.
+                </AlertDescription>
+              </Alert>
+            </TabsContent>
+
+            <TabsContent value="voice" className="flex-1 p-6">
+              <Alert>
+                <Headphones className="h-4 w-4" />
+                <AlertDescription>
+                  Voice-enabled AI interaction and audio processing interface will be implemented here.
                 </AlertDescription>
               </Alert>
             </TabsContent>
