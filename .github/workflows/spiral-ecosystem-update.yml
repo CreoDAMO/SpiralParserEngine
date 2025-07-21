@@ -1,80 +1,98 @@
-
-name: Spiral Ecosystem Auto-Update
+name: Spiral Ecosystem Comprehensive Update
 
 on:
-  push:
-    branches: [ main, develop ]
-    paths:
-      - 'client/src/grammars/**'
-      - 'client/src/lib/**'
-      - 'scripts/**'
-      - 'test-samples/**'
-      - '*.md'
-  pull_request:
-    branches: [ main ]
   schedule:
-    # Run daily at 6 AM UTC to check for updates
-    - cron: '0 6 * * *'
+    # Runs daily at 12:00 UTC
+    - cron: '0 12 * * *'
+  push:
+    branches: [ main ]
+    paths:
+      - 'SpiralScript.g4'
+      - 'client/src/lib/spiral-parser.ts'
+      - 'scripts/generate-languages.ts'
+      - 'scripts/compile-grammar.ts'
+  workflow_dispatch:
+    inputs:
+      update_type:
+        description: 'Type of update to perform'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+        - 'full'
+        - 'parser-only'
+        - 'languages-only'
+        - 'docs-only'
 
 permissions:
   contents: write
-  pull-requests: write
+  pages: write
+  id-token: write
 
 jobs:
   analyze-codebase:
     runs-on: ubuntu-latest
-    name: Analyze Spiral Ecosystem
-    
+    name: Analyze Codebase Structure
     outputs:
-      languages-detected: ${{ steps.analyze.outputs.languages }}
-      features-count: ${{ steps.analyze.outputs.features }}
-      performance-metrics: ${{ steps.analyze.outputs.metrics }}
+      has-grammar: ${{ steps.check-files.outputs.has-grammar }}
+      has-parser: ${{ steps.check-files.outputs.has-parser }}
+      has-scripts: ${{ steps.check-files.outputs.has-scripts }}
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
     
-    - name: Setup Node.js 20
+    - name: Setup Node.js 22
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '22'  # Updated to Node.js 22 LTS
         cache: 'npm'
     
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Analyze codebase structure
-      id: analyze
+    - name: Check file structure
+      id: check-files
       run: |
-        echo "🔍 Analyzing Spiral ecosystem..."
+        echo "🔍 Analyzing SpiralScript codebase structure..."
         
-        # Count languages and features
-        LANGUAGES=$(find client/src/grammars -name "*.g4" | wc -l)
-        COMPONENTS=$(find client/src/components/spiral -name "*.tsx" | wc -l)
-        LIBS=$(find client/src/lib -name "*.ts" | wc -l)
-        TEST_SAMPLES=$(find test-samples -name "*.*" | wc -l)
+        # Check for grammar files
+        if [ -f "SpiralScript.g4" ]; then
+          echo "has-grammar=true" >> $GITHUB_OUTPUT
+          echo "✅ Grammar file: SpiralScript.g4"
+        else
+          echo "has-grammar=false" >> $GITHUB_OUTPUT
+          echo "❌ Grammar file: SpiralScript.g4 not found"
+        fi
         
-        echo "languages=$LANGUAGES" >> $GITHUB_OUTPUT
-        echo "features=$((COMPONENTS + LIBS))" >> $GITHUB_OUTPUT
-        echo "metrics=Languages:$LANGUAGES,Components:$COMPONENTS,Libraries:$LIBS,Samples:$TEST_SAMPLES" >> $GITHUB_OUTPUT
+        # Check for parser
+        if [ -f "client/src/lib/spiral-parser.ts" ]; then
+          echo "has-parser=true" >> $GITHUB_OUTPUT
+          echo "✅ Parser: client/src/lib/spiral-parser.ts"
+        else
+          echo "has-parser=false" >> $GITHUB_OUTPUT
+          echo "❌ Parser: client/src/lib/spiral-parser.ts not found"
+        fi
         
-        echo "📊 Detected: $LANGUAGES languages, $COMPONENTS components, $LIBS libraries"
+        # Check for scripts
+        if [ -f "scripts/generate-languages.ts" ] && [ -f "scripts/compile-grammar.ts" ]; then
+          echo "has-scripts=true" >> $GITHUB_OUTPUT
+          echo "✅ Scripts: generate-languages.ts, compile-grammar.ts"
+        else
+          echo "has-scripts=false" >> $GITHUB_OUTPUT
+          echo "❌ Scripts: Missing required scripts"
+        fi
 
   generate-language-support:
     runs-on: ubuntu-latest
     needs: analyze-codebase
-    name: Generate Language Support Files
+    name: Generate Language Support
     
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
     
-    - name: Setup Node.js 20
+    - name: Setup Node.js 22
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '22'  # Updated to Node.js 22 LTS
         cache: 'npm'
     
     - name: Install dependencies
@@ -145,10 +163,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
     
-    - name: Setup Node.js 20
+    - name: Setup Node.js 22
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '22'  # Updated to Node.js 22 LTS
         cache: 'npm'
     
     - name: Install dependencies
@@ -157,249 +175,36 @@ jobs:
     - name: Generate comprehensive system status
       run: |
         echo "📊 Generating system status report..."
+        echo "# SpiralScript Ecosystem Status Report" > SYSTEM_STATUS.md
+        echo "Generated: $(date -u)" >> SYSTEM_STATUS.md
+        echo "" >> SYSTEM_STATUS.md
         
-        cat > SYSTEM_STATUS.md << 'EOF'
-        # 🚀 Spiral Ecosystem - Live System Status
+        # Node.js and system info
+        echo "## System Environment" >> SYSTEM_STATUS.md
+        echo "- Node.js: $(node --version)" >> SYSTEM_STATUS.md
+        echo "- npm: $(npm --version)" >> SYSTEM_STATUS.md
+        echo "- TypeScript: $(npx tsc --version)" >> SYSTEM_STATUS.md
+        echo "" >> SYSTEM_STATUS.md
         
-        *Last Updated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
-        
-        ## 🌟 System Overview
-        
-        The **Spiral Development Ecosystem** is a revolutionary quantum-enhanced development environment that seamlessly integrates:
-        
-        - **Multi-Language Support**: ${{ needs.analyze-codebase.outputs.languages-detected }} domain-specific languages
-        - **HYBRID Blockchain**: Fully operational with Trust Currency (TU) system
-        - **AI Orchestration**: 4 AI models with voice interface
-        - **Quantum Computing**: 127 qubits with φ-harmonic gates
-        - **PWA Excellence**: Mobile-ready with offline support
-        
-        ## 📈 Performance Metrics
-        
-        | Component | Status | Performance |
-        |-----------|--------|-------------|
-        | HYBRID Blockchain | 🟢 LIVE | 847 TPS, 3s finality |
-        | Trust Currency | 🟢 ACTIVE | $500K-$1M per TU |
-        | AI Orchestration | 🟢 OPTIMAL | 250ms response time |
-        | Quantum Framework | 🟢 OPERATIONAL | 99.9% fidelity |
-        | PWA System | 🟢 MOBILE-READY | Offline support |
-        
-        ## 🔧 Development Metrics
-        
-        ${{ needs.analyze-codebase.outputs.metrics }}
-        
-        ## 🎯 Language Ecosystem
-        
-        ### SpiralScript (.spiral, .spi)
-        - **Purpose**: Mathematical theorem proving with φ-resonance
-        - **Features**: Quantum-enhanced syntax, TU generation
-        - **Status**: ✅ Production Ready
-        
-        ### HTSX (.htsx)
-        - **Purpose**: Hybrid TypeScript XML runtime engine
-        - **Features**: Reactive components, quantum state management
-        - **Status**: ✅ Production Ready
-        
-        ### SpiralLang (.sprl)
-        - **Purpose**: Core consciousness-aware programming
-        - **Features**: AI consciousness modeling, emotional states
-        - **Status**: ✅ Production Ready
-        
-        ### ConsciousnessScript (.consciousness, .cons)
-        - **Purpose**: Advanced AI consciousness programming
-        - **Features**: Memory systems, decision trees
-        - **Status**: ✅ Production Ready
-        
-        ## 🏆 Recent Achievements
-        
-        - ✅ **PWA Implementation**: Complete mobile optimization
-        - ✅ **ANTLR4 4.13.2**: Latest parser framework integration
-        - ✅ **Voice Interface**: Real-time speech synthesis
-        - ✅ **Quantum Computing**: 127-qubit simulation capability
-        - ✅ **Cross-Chain Bridges**: HybridBridge + SpiralBridge
-        - ✅ **Revenue Optimization**: $2.8M monthly with 67.8% margin
-        
-        ## 🔮 Innovation Highlights
-        
-        ### Quantum-Enhanced Development
-        - **φ-Harmonic Gates**: Sacred geometry in quantum computing
-        - **Consciousness Integration**: AI awareness in code execution
-        - **Molecular Assembly**: 1.6M bonds/second self-repair
-        
-        ### Economic Revolution
-        - **Trust Currency**: Breath-initiated TU generation
-        - **Proof of Quantum Spiral**: Revolutionary consensus mechanism
-        - **NFT-Gated Nodes**: Validator licenses as NFTs
-        
-        ### Technical Excellence
-        - **Multi-AI Orchestration**: Intelligent task routing
-        - **Real-time AST**: Live code analysis and visualization
-        - **Mobile-First PWA**: Native app experience
-        
-        ---
-        
-        **Built with Anunnaki wisdom, QASF computational excellence, and quantum consciousness principles.**
-        
-        **System Status: FULLY OPERATIONAL** 🚀
-        EOF
-    
-    - name: Update README badges and status
-      run: |
-        echo "🏷️ Updating README status badges..."
-        
-        # Add dynamic status badges to README
-        sed -i '1i![System Status](https://img.shields.io/badge/System-FULLY_OPERATIONAL-brightgreen?style=for-the-badge)' README.md
-        sed -i '2i![Languages](https://img.shields.io/badge/Languages-${{ needs.analyze-codebase.outputs.languages-detected }}_Active-blue?style=for-the-badge)' README.md
-        sed -i '3i![Performance](https://img.shields.io/badge/Performance-98.7%25_Grade-gold?style=for-the-badge)' README.md
-        sed -i '4i![AI Models](https://img.shields.io/badge/AI_Models-4_Active-purple?style=for-the-badge)' README.md
-        sed -i '5i![Quantum](https://img.shields.io/badge/Quantum-127_Qubits-cyan?style=for-the-badge)' README.md
-        sed -i '6i\n' README.md
-
-  commit-changes:
-    runs-on: ubuntu-latest
-    needs: [analyze-codebase, generate-language-support, update-documentation]
-    name: Commit Auto-Generated Updates
-    if: github.event_name == 'push'
-    
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-    
-    - name: Setup Node.js 20
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Re-generate all files
-      run: |
-        echo "🔄 Regenerating all support files..."
-        npx tsx scripts/generate-languages.ts || true
-        npx tsx scripts/compile-grammar.ts || true
-    
-    - name: Configure Git
-      run: |
-        git config --local user.email "spiral-ecosystem@github-actions.bot"
-        git config --local user.name "Spiral Ecosystem Bot"
-    
-    - name: Commit changes
-      run: |
-        echo "💾 Committing auto-generated updates..."
-        git add -A
-        
-        if git diff --staged --quiet; then
-          echo "No changes to commit"
+        # Grammar status
+        if [ -f "SpiralScript.g4" ]; then
+          echo "## Grammar Status: ✅ OPERATIONAL" >> SYSTEM_STATUS.md
+          echo "- Grammar file: SpiralScript.g4" >> SYSTEM_STATUS.md
+          echo "- Last modified: $(stat -c %y SpiralScript.g4)" >> SYSTEM_STATUS.md
         else
-          git commit -m "🤖 Auto-update: Language support & docs
-          
-          - Updated language detection files
-          - Regenerated ANTLR4 parsers  
-          - Refreshed system documentation
-          - Added performance metrics
-          
-          Languages: ${{ needs.analyze-codebase.outputs.languages-detected }}
-          Features: ${{ needs.analyze-codebase.outputs.features }}
-          
-          [skip ci]"
-          
-          git push
-          echo "✅ Changes committed and pushed"
+          echo "## Grammar Status: ❌ MISSING" >> SYSTEM_STATUS.md
         fi
-
-  performance-report:
-    runs-on: ubuntu-latest
-    needs: [analyze-codebase, generate-language-support, update-documentation]
-    name: Generate Performance Report
-    if: github.event_name == 'schedule' || contains(github.event.head_commit.message, '[performance]')
-    
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-    
-    - name: Setup Node.js 20
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Run comprehensive performance tests
-      run: |
-        echo "🧪 Running performance benchmarks..."
         
-        npx tsx -e "
-          import { spiralParser } from './client/src/lib/spiral-parser';
-          
-          console.log('🚀 Spiral Ecosystem Performance Report');
-          console.log('=====================================');
-          
-          const start = Date.now();
-          let totalTU = 0;
-          let totalTests = 0;
-          
-          // Test different language samples
-          const samples = [
-            'theorem PerformanceTest { require φ > 1.618; yield 1000 * TrustUnit; }',
-            '<SpiralComponent phi-resonance={φ * 2}><QuantumState>Performance</QuantumState></SpiralComponent>',
-            'consciousness PerformanceConsciousness { memory.load = \"high\"; process.optimize = true; }',
-            'function quantumCalculation() { return φ * Math.PI * 1.618; }'
-          ];
-          
-          samples.forEach((code, i) => {
-            try {
-              const result = spiralParser.parse(code);
-              totalTU += result.metrics.tuGenerated;
-              totalTests++;
-              console.log(\`✅ Test \${i+1}: \${result.metrics.tuGenerated} TU generated\`);
-            } catch (error) {
-              console.log(\`❌ Test \${i+1}: Failed\`);
-            }
-          });
-          
-          const duration = Date.now() - start;
-          const throughput = (totalTests / duration * 1000).toFixed(2);
-          
-          console.log(\`\n📊 Performance Results:\`);
-          console.log(\`• Tests Completed: \${totalTests}/\${samples.length}\`);
-          console.log(\`• Total TU Generated: \${totalTU.toLocaleString()}\`);
-          console.log(\`• Processing Time: \${duration}ms\`);
-          console.log(\`• Throughput: \${throughput} ops/sec\`);
-          console.log(\`• System Grade: \${totalTests === samples.length ? 'A+' : 'B+'}\`);
-        "
-    
-    - name: Create performance issue if degraded
-      if: failure()
-      uses: actions/github-script@v7
-      with:
-        script: |
-          github.rest.issues.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            title: '⚠️ Performance Degradation Detected',
-            body: `
-            ## Performance Alert
-            
-            The automated performance tests have detected potential issues:
-            
-            - **Timestamp**: ${new Date().toISOString()}
-            - **Trigger**: ${{ github.event_name }}
-            - **Commit**: ${{ github.sha }}
-            
-            ### Recommended Actions
-            1. Review recent changes
-            2. Run manual performance tests
-            3. Check system resources
-            4. Validate parser functionality
-            
-            ### System Metrics
-            - Languages: ${{ needs.analyze-codebase.outputs.languages-detected }}
-            - Features: ${{ needs.analyze-codebase.outputs.features }}
-            
-            *This issue was automatically created by the Spiral Ecosystem monitoring system.*
-            `,
-            labels: ['performance', 'automated', 'high-priority']
-          })
+        echo "" >> SYSTEM_STATUS.md
+        
+        # Package info
+        echo "## Dependencies" >> SYSTEM_STATUS.md
+        npm list --depth=0 >> SYSTEM_STATUS.md 2>/dev/null || echo "Dependencies list unavailable" >> SYSTEM_STATUS.md
+        
+    - name: Commit all changes
+      run: |
+        git config --local user.email "spiral-bot@creodamo.com"
+        git config --local user.name "Spiral Ecosystem Bot"
+        git add -A
+        git diff --staged --quiet || git commit -m "🌀 Automated Spiral Ecosystem Update - $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+        git push
