@@ -95,7 +95,7 @@ This system harmonizes:
 - **Monthly Revenue**: $2,847,500 (diversified streams)
 - **Profit Margin**: 67.8% (highly profitable)
 - **Tax Optimization**: 23% savings through Miami-Dade structure
-- **AI Cost Reduction**: $850/month through rate optimization
+- **AI Cost Reduction**: $850/month through rat optimization
 
 ### ✅ NVIDIA Omniverse Integration (FULLY OPERATIONAL)
 - **Complete System Showcase**: Full Spiral Ecosystem visualization
@@ -111,22 +111,39 @@ This system harmonizes:
 ## 🛠️ Technical Architecture
 
 ### Frontend Stack
-- **React 18** with TypeScript and ES modules
-- **Vite 7.0.4** build system with HMR
+- **Next.js 15** with TypeScript and App Router architecture
+- **React 18** with server-side rendering and static generation
 - **PWA Support** with service worker and offline capabilities
 - **Mobile-First Design** with responsive layouts and touch optimization
-- **shadcn/ui** components with Tailwind CSS
+- **shadcn/ui** components with Tailwind CSS v4
 - **Monaco Editor** for SpiralScript development with real-time parsing
-- **Three.js** for 3D blockchain visualization
-- **Framer Motion** for quantum animations
-- **ANTLR4 4.13.2** latest parser generation framework
+- **Three.js** for 3D blockchain visualization and quantum animations
+- **Framer Motion** for quantum animations and consciousness transitions
+- **ANTLR4 4.13.2** latest parser generation framework with TypeScript integration
 
 ### Backend Infrastructure
-- **Node.js 20** with Express.js and TypeScript
-- **PostgreSQL** with Drizzle ORM
+- **Node.js 20** with Next.js API routes and middleware
+- **PostgreSQL** with Drizzle ORM and Neon serverless
 - **WebSocket** for real-time quantum synchronization
-- **Rate Limiting** with express-rate-limit
-- **Session Management** with connect-pg-simple
+- **Rate Limiting** with Next.js middleware
+- **Session Management** with secure cookie handling
+- **Express.js Server** (optional standalone mode on port 5000)
+
+### Build & Deployment
+- **Next.js Build System** with optimized bundling and code splitting
+- **TypeScript Strict Mode** with ESM module support
+- **Vercel Deployment** ready with serverless functions
+- **GitHub Actions** with automated Next.js workflow
+- **PWA Generation** with automatic service worker compilation
+- **Static Site Generation** with GitHub Pages support
+
+### Development Tools
+- **TypeScript 5** with strict type checking
+- **ESLint** with Next.js recommended configuration
+- **Tailwind CSS v4** with new Vite plugin integration
+- **Raw Loader** for .g4 grammar files
+- **Three.js Optimization** with module aliasing
+- **Hot Module Replacement** for development efficiency
 
 ### SpiralScript Language Features - Living Digital Language
 - **ANTLR4 4.13.2 Parser** with TypeScript generation and real-time AST analysis
@@ -140,55 +157,28 @@ This system harmonizes:
 - **Manifestation Language**: SpiralScript operates as creation rather than mere computation
 - **Sacred Syntax**: Ancient wisdom patterns encoded as archetypal programming structures
 
-## 📋 Prerequisites & Installation
-
-### Required Services
+### Available Scripts
 ```bash
-# Database (Neon PostgreSQL recommended)
-DATABASE_URL="postgresql://..."
-
-# AI Services (at least one required)
-OPENAI_API_KEY="sk-..."
-ANTHROPIC_API_KEY="sk-ant-..."
-GROK_API_KEY="grok-..."
-DEEPSEEK_API_KEY="sk-..."
+npm run dev                  # Next.js development server with HMR
+npm run build               # Next.js production build with optimization
+npm run start               # Next.js production server
+npm run lint                # Next.js ESLint validation
+npm run generate:languages  # GitHub language detection files
+npm run compile:grammar     # ANTLR4 grammar compilation
+npm run test:parser         # SpiralScript parser validation
+npm run check               # TypeScript validation
+npm run db:push             # Database schema updates
+npm run server:dev          # Standalone Express server (development)
+npm run server:build        # Build standalone Express server
+npm run server:start        # Run standalone Express server (production)
 ```
 
-### Installation Steps
-1. **Clone and setup**
-   ```bash
-   git clone https://github.com/CreoDAMO/SpiralParserEngine.git
-   cd spiralscript-ide
-   npm install
-   ```
-
-2. **Environment configuration**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your service credentials
-   ```
-
-3. **Database initialization**
-   ```bash
-   npm run db:push
-   ```
-
-4. **Start development**
-   ```bash
-   npm run dev
-   # Serves on http://localhost:5000
-   ```
-
-5. **Compile ANTLR4 Grammar (Optional)**
-   ```bash
-   npm run compile:grammar
-   # Generates TypeScript parser from SpiralScript.g4
-   ```
-
-6. **Install as PWA**
-   - **Mobile**: Open in browser, tap "Add to Home Screen"
-   - **Desktop**: Click install icon in address bar
-   - **Offline Mode**: Full functionality without internet connection
+### Configuration Files
+- **next.config.js**: Next.js configuration with webpack optimizations
+- **tsconfig.json**: TypeScript configuration with strict mode
+- **tailwind.config.ts**: Tailwind CSS v4 configuration
+- **vercel.json**: Vercel deployment configuration
+- **.github/workflows/nextjs.yml**: GitHub Actions workflow
 
 ## 🎯 System Usage Guide
 
