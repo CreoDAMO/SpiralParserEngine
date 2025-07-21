@@ -1,5 +1,5 @@
 import { spiralParser, githubIntegration, type ParseMetrics } from './spiral-parser';
-import { unifiedSpiralParser } from '../generated/UnifiedSpiralParser';
+import { unifiedSpiralParser } from '../client/src/generated/UnifiedSpiralParser';
 
 export interface AutoParseResult {
   success: boolean;

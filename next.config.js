@@ -4,12 +4,13 @@ const nextConfig = {
     typedRoutes: true,
   },
   typescript: {
-    strict: false, // Temporarily disable strict mode for migration
-    ignoreBuildErrors: true, // Temporarily ignore build errors
+    // Enable strict mode for production builds
+    ignoreBuildErrors: false,
   },
   eslint: {
     dirs: ['app', 'components', 'lib'],
-    ignoreDuringBuilds: true, // Temporarily ignore eslint during builds
+    // Enable ESLint during builds for better code quality
+    ignoreDuringBuilds: false,
   },
   images: {
     dangerouslyAllowSVG: true,

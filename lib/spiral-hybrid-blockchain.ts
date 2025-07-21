@@ -4,7 +4,7 @@
 
 import { z } from 'zod';
 import { autoParser } from './auto-parser';
-import { unifiedSpiralParser } from '../generated/UnifiedSpiralParser';
+import { unifiedSpiralParser } from '../client/src/generated/UnifiedSpiralParser';
 import { HybridBlock, HybridTransaction, HybridNode, HybridSmartContract } from '../../../shared/hybrid-blockchain-schema';
 
 export interface SpiralContractExecution {
