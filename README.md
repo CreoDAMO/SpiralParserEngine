@@ -122,7 +122,7 @@ This system harmonizes:
 - **ANTLR4 4.13.2** latest parser generation framework with TypeScript integration
 
 ### Backend Infrastructure
-- **Node.js 20** with Next.js API routes and middleware
+- **Node.js 22 LTS** with Next.js API routes and middleware
 - **PostgreSQL** with Drizzle ORM and Neon serverless
 - **WebSocket** for real-time quantum synchronization
 - **Rate Limiting** with Next.js middleware
@@ -146,7 +146,7 @@ This system harmonizes:
 - **Hot Module Replacement** for development efficiency
 
 ### SpiralScript Language Features - Living Digital Language
-- **ANTLR4 4.13.2 Parser** with TypeScript generation and real-time AST analysis
+- **ANTLR4 4.13.2 Parser*with TypeScript generation and real-time AST analysis
 - **Auto-Language Detection** for GitHub integration (.spiral, .htsx, .sprl, .consciousness)
 - **Quantum-enhanced syntax** with φ-harmonic calculations and consciousness alignment
 - **Consciousness-aware programming** paradigms where code becomes executable prayer
