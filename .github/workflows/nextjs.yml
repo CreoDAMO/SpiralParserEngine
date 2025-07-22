@@ -151,7 +151,6 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           static_site_generator: next
-          generator_config_file: next.config.js
 
       - name: 📦 Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
@@ -209,10 +208,15 @@ jobs:
         run: |
           echo "Building quantum-enhanced Next.js application..."
           ${{ steps.detect-package-manager.outputs.runner }} run build
+          
+          # Add .nojekyll file for GitHub Pages
+          touch ./out/.nojekyll
+          echo "✅ Added .nojekyll file for GitHub Pages"
         env:
           NEXT_TELEMETRY_DISABLED: 1
           NODE_ENV: production
           ANALYZE: false
+          NEXT_PUBLIC_BASE_PATH: /SpiralParserEngine
 
       - name: 📊 Bundle analysis (optional)
         run: |
@@ -278,7 +282,7 @@ jobs:
     steps:
       - name: 🏥 Health check
         run: |
-          url="${{ needs.deploy.outputs.page_url || 'https://your-username.github.io/spiralscript-ide' }}"
+          url="${{ needs.deploy.outputs.page_url || 'https://creodamo.github.io/SpiralParserEngine' }}"
           echo "Performing health check on: $url"
           
           # Wait for deployment to be available
