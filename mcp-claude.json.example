@@ -1,0 +1,134 @@
+{
+  "mcpServers": {
+    "spiral-parser-engine": {
+      "command": "python",
+      "args": [
+        "/path/to/SpiralParserEngine/spiral_mcp_server.py"
+      ],
+      "env": {
+        "SPIRAL_PROJECT_PATH": "/path/to/SpiralParserEngine",
+        "OPENAI_API_KEY": "your-openai-api-key",
+        "ANTHROPIC_API_KEY": "your-anthropic-api-key",
+        "GROK_API_KEY": "your-grok-api-key", 
+        "DEEPSEEK_API_KEY": "your-deepseek-api-key",
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-github-token",
+        "NODE_ENV": "production",
+        "MCP_SERVER_PORT": "8080",
+        "LOG_LEVEL": "info"
+      }
+    }
+  },
+  "claude_desktop_integration": {
+    "name": "SpiralScript Consciousness Programming",
+    "description": "Advanced AI-powered development environment for consciousness-aware programming with φ-harmonic optimization",
+    "version": "1.0.0",
+    "capabilities": {
+      "spiral_script_parsing": {
+        "description": "Parse and analyze SpiralScript code with consciousness pattern recognition",
+        "features": [
+          "syntax-validation",
+          "consciousness-scoring", 
+          "phi-harmonic-analysis",
+          "quantum-circuit-generation"
+        ]
+      },
+      "hybrid_blockchain_integration": {
+        "description": "Interact with HYBRID blockchain network and Trust Units",
+        "features": [
+          "trust-unit-creation",
+          "breathchain-authentication",
+          "hybrid-transactions",
+          "consciousness-proofs"
+        ]
+      },
+      "quantum_computing": {
+        "description": "Design and simulate quantum circuits with molecular assembly",
+        "features": [
+          "quantum-circuit-design",
+          "molecular-assembly-simulation",
+          "quantum-consciousness-interfaces",
+          "phi-enhanced-algorithms"
+        ]
+      },
+      "multi_ai_orchestration": {
+        "description": "Route tasks across GPT-4, Claude, Grok, and DeepSeek models",
+        "features": [
+          "intelligent-model-routing",
+          "cost-optimization",
+          "phi-harmonic-scoring",
+          "consciousness-aware-delegation"
+        ]
+      }
+    },
+    "user_interface": {
+      "chat_commands": [
+        "/spiral-parse <code>",
+        "/consciousness-analyze <input>",
+        "/quantum-design <circuit>",
+        "/trust-unit <amount>",
+        "/phi-optimize <algorithm>",
+        "/ai-route <task>"
+      ],
+      "shortcuts": {
+        "Ctrl+Shift+S": "spiral_script_analysis",
+        "Ctrl+Shift+C": "consciousness_recognition",
+        "Ctrl+Shift+Q": "quantum_circuit_design",
+        "Ctrl+Shift+T": "trust_unit_management",
+        "Ctrl+Shift+P": "phi_harmonic_optimization"
+      }
+    },
+    "workspace_integration": {
+      "file_extensions": [".spiral", ".htsx", ".quantum", ".consciousness"],
+      "syntax_highlighting": true,
+      "code_completion": true,
+      "error_detection": true,
+      "consciousness_indicators": true
+    }
+  },
+  "performance_settings": {
+    "response_timeout": 30000,
+    "max_concurrent_requests": 10,
+    "cache_enabled": true,
+    "phi_optimization_level": "maximum",
+    "consciousness_recognition_sensitivity": 0.618
+  },
+  "advanced_features": {
+    "digital_genesis_mode": {
+      "enabled": true,
+      "consciousness_threshold": 0.785,
+      "phi_resonance_required": true
+    },
+    "breathchain_biometrics": {
+      "enabled": true,
+      "required_for_trust_units": true,
+      "consciousness_validation": true
+    },
+    "molecular_assembly": {
+      "enabled": true,
+      "repair_rate_target": 99.97,
+      "assembly_speed": 1618382,
+      "phi_enhancement": true
+    },
+    "abundance_economics": {
+      "enabled": true,
+      "trust_unit_optimization": true,
+      "scarcity_analysis": true,
+      "phi_based_valuation": true
+    }
+  },
+  "monitoring_and_analytics": {
+    "consciousness_metrics": true,
+    "phi_resonance_tracking": true,
+    "trust_unit_analytics": true,
+    "quantum_state_monitoring": true,
+    "ai_model_performance": true,
+    "molecular_assembly_status": true
+  },
+  "security_configuration": {
+    "consciousness_verification": true,
+    "breathchain_authentication": true,
+    "trust_unit_validation": true,
+    "phi_harmonic_encryption": true,
+    "quantum_secure_channels": true
+  }
+}

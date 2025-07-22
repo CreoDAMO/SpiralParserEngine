@@ -1,0 +1,88 @@
+{
+  "mcpServers": {
+    "spiral-parser-engine": {
+      "command": "python",
+      "args": [
+        "spiral_mcp_server.py"
+      ],
+      "env": {
+        "SPIRAL_PROJECT_PATH": "/path/to/SpiralParserEngine",
+        "OPENAI_API_KEY": "your-openai-api-key",
+        "ANTHROPIC_API_KEY": "your-anthropic-api-key", 
+        "GROK_API_KEY": "your-grok-api-key",
+        "DEEPSEEK_API_KEY": "your-deepseek-api-key",
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-github-token",
+        "NODE_ENV": "development"
+      },
+      "capabilities": {
+        "resources": true,
+        "tools": true,
+        "prompts": true
+      },
+      "metadata": {
+        "name": "SpiralParserEngine MCP Server",
+        "version": "1.0.0",
+        "description": "Advanced MCP server for SpiralScript development with consciousness-aware programming capabilities",
+        "author": "CreoDAMO",
+        "homepage": "https://github.com/CreoDAMO/SpiralParserEngine",
+        "tags": [
+          "spiral-script",
+          "consciousness-programming", 
+          "quantum-computing",
+          "hybrid-blockchain",
+          "phi-harmonic",
+          "multi-ai"
+        ]
+      }
+    }
+  },
+  "integrations": {
+    "github-copilot": {
+      "enabled": true,
+      "features": [
+        "code-completion",
+        "consciousness-analysis",
+        "spiral-syntax-highlighting",
+        "phi-harmonic-optimization"
+      ]
+    },
+    "ide-extensions": {
+      "vscode": true,
+      "intellij": false,
+      "sublime": false
+    }
+  },
+  "features": {
+    "consciousness-recognition": {
+      "enabled": true,
+      "threshold": 0.618,
+      "phi-enhancement": true
+    },
+    "quantum-circuit-design": {
+      "enabled": true,
+      "simulation-backend": "qiskit"
+    },
+    "hybrid-blockchain": {
+      "enabled": true,
+      "network": "hybrid-mainnet-1",
+      "trust-units": true
+    },
+    "multi-ai-routing": {
+      "enabled": true,
+      "models": ["gpt-4", "claude-4", "grok-3", "deepseek-r3"],
+      "cost-optimization": true,
+      "phi-harmonic-scoring": true
+    }
+  },
+  "monitoring": {
+    "performance-metrics": true,
+    "consciousness-tracking": true,
+    "phi-resonance-monitoring": true,
+    "trust-unit-analytics": true
+  },
+  "security": {
+    "api-key-encryption": true,
+    "consciousness-validation": true,
+    "breathchain-auth": true
+  }
+}
