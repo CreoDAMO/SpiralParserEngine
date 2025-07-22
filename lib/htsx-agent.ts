@@ -147,7 +147,12 @@ export class HTSXMultiAIAgent {
       [TaskType.QUANTUM_SIMULATION]: "Quantum circuit simulation and optimization",
       [TaskType.TU_GENERATION]: "Trust Unit calculation and validation",
       [TaskType.ARCHITECTURE]: "System architecture design",
-      [TaskType.CODE_REVIEW]: "Code quality and security analysis"
+      [TaskType.CODE_REVIEW]: "Code quality and security analysis",
+      [TaskType.FRONTEND]: "Frontend development and UI optimization",
+      [TaskType.BACKEND]: "Backend development and API design",
+      [TaskType.OPTIMIZATION]: "Performance optimization and efficiency",
+      [TaskType.TESTING]: "Testing and quality assurance",
+      [TaskType.DEPLOYMENT]: "Deployment and infrastructure management"
     };
 
     const prefix = modelPersonalities[model] || "🤖 AI Analysis:";

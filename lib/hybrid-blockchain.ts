@@ -237,12 +237,13 @@ export class HybridBlockchain {
       signature: this.generateSignature(),
       type: 'HYBRID',
       metadata: {
+        spiralResonance: amount * this.PHI,
         bridgeType,
         fromChain,
         toChain,
         recipient,
         asset
-      }
+      } as any
     };
 
     this.transactions.set(bridgeTransaction.id, bridgeTransaction);
@@ -282,12 +283,12 @@ export class HybridBlockchain {
       signature: this.generateSignature(),
       type: 'QUANTUM',
       metadata: {
+        quantumState: 'superposition',
         proposal,
         aiModels,
         confidence,
-        consensusResult,
-        quantumState: 'superposition'
-      }
+        consensusResult
+      } as any
     };
 
     this.transactions.set(consensusTransaction.id, consensusTransaction);

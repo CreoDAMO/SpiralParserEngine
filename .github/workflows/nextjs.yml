@@ -1,349 +1,60 @@
-# Advanced deployment workflow for SpiralScript IDE
-# Quantum-enhanced Next.js application with multi-AI orchestration
-#
-name: Deploy SpiralScript IDE to Pages
+name: Deploy Next.js site to Pages
 
 on:
-  # Runs on pushes targeting the main branch
   push:
     branches: ["main"]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-
-  # Runs on pull requests for testing
-  pull_request:
-    branches: ["main"]
-
-  # Allows manual deployment with environment selection
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Deployment environment'
-        required: true
-        default: 'production'
-        type: choice
-        options:
-          - production
-          - staging
-          - quantum-test
 
-# Enhanced permissions for quantum computing and AI model access
 permissions:
   contents: read
   pages: write
   id-token: write
-  actions: read
-  checks: write
 
-# Advanced concurrency control for quantum operations
 concurrency:
-  group: "spiral-deployment-${{ github.ref }}"
+  group: "pages"
   cancel-in-progress: false
 
-# Environment variables for multi-AI integration
 env:
-  NODE_VERSION: "22"
-  NEXT_TELEMETRY_DISABLED: 1
-  PWA_ENABLED: true
-  QUANTUM_BACKEND: "hybrid"
-  HYBRID_NETWORK: "mainnet"
+  NODE_VERSION: "20"
 
 jobs:
-  # Pre-build validation and testing
-  validate:
-    runs-on: ubuntu-latest
-    outputs:
-      should-deploy: ${{ steps.changes.outputs.should-deploy }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Check for deployment-worthy changes
-        id: changes
-        run: |
-          echo "🔍 Checking deployment conditions..."
-          
-          # Always deploy on main branch push, workflow_dispatch, or PR
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "Manual deployment triggered"
-            echo "should-deploy=true" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "Push to main branch - deploying"
-            echo "should-deploy=true" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            echo "Pull request - building for testing"
-            echo "should-deploy=true" >> $GITHUB_OUTPUT
-          else
-            # Check for specific file changes
-            if git diff --name-only HEAD~1 HEAD 2>/dev/null | grep -E "\.(ts|tsx|js|jsx|json|g4|md)$|next\.config\.js|package\.json|\.github/workflows" || [ ! -f ".git/HEAD" ]; then
-              echo "Relevant files changed - deploying"
-              echo "should-deploy=true" >> $GITHUB_OUTPUT
-            else
-              echo "No deployment-worthy changes detected"
-              echo "should-deploy=true" >> $GITHUB_OUTPUT  # Changed to always deploy for now
-            fi
-          fi
-          
-          echo "✅ Deployment check complete"
-
-      - name: Validate SpiralScript grammar files
-        run: |
-          if [ -d "grammar" ]; then
-            echo "✅ ANTLR4 grammar files found"
-            find grammar -name "*.g4" -exec echo "Validating {}" \; 2>/dev/null || echo "No .g4 files found"
-          else
-            echo "ℹ️ No grammar directory found - skipping grammar validation"
-          fi
-
-  # Build job with quantum optimizations
   build:
     runs-on: ubuntu-latest
-    needs: validate
-    # Simplified condition - always run unless explicitly skipped
-    if: always() && (needs.validate.result == 'success' || needs.validate.result == 'skipped')
-    
-    strategy:
-      matrix:
-        node-version: [22]
-        
     steps:
-      - name: 🚀 Checkout SpiralScript codebase
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: 🔍 Detect package manager
-        id: detect-package-manager
-        run: |
-          if [ -f "${{ github.workspace }}/yarn.lock" ]; then
-            echo "manager=yarn" >> $GITHUB_OUTPUT
-            echo "command=install --frozen-lockfile" >> $GITHUB_OUTPUT
-            echo "runner=yarn" >> $GITHUB_OUTPUT
-            echo "cache-dependency-path=yarn.lock" >> $GITHUB_OUTPUT
-          elif [ -f "${{ github.workspace }}/pnpm-lock.yaml" ]; then
-            echo "manager=pnpm" >> $GITHUB_OUTPUT
-            echo "command=install --frozen-lockfile" >> $GITHUB_OUTPUT
-            echo "runner=pnpm" >> $GITHUB_OUTPUT
-            echo "cache-dependency-path=pnpm-lock.yaml" >> $GITHUB_OUTPUT
-          elif [ -f "${{ github.workspace }}/package-lock.json" ]; then
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
-            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
-            echo "cache-dependency-path=package-lock.json" >> $GITHUB_OUTPUT
-          else
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=install" >> $GITHUB_OUTPUT
-            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
-            echo "cache-dependency-path=package.json" >> $GITHUB_OUTPUT
-          fi
-
-      - name: ⚡ Setup Node.js ${{ matrix.node-version }}
+        
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
-          cache-dependency-path: ${{ steps.detect-package-manager.outputs.cache-dependency-path }}
-
-      - name: 🔧 Setup Pages configuration
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
           static_site_generator: next
-          generator_config_file: next.config.js
-
-      - name: 📦 Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-
-      - name: 🧬 Compile ANTLR4 grammars
-        run: |
-          if [ -d "grammar" ] && [ -n "$(ls -A grammar/*.g4 2>/dev/null)" ]; then
-            echo "Compiling SpiralScript grammar files..."
-            if command -v antlr4ts &> /dev/null; then
-              ${{ steps.detect-package-manager.outputs.runner }} run compile:grammar || echo "⚠️ Grammar compilation skipped"
-            else
-              echo "ℹ️ antlr4ts not available, skipping grammar compilation"
-            fi
-          else
-            echo "ℹ️ No grammar files found, skipping compilation"
-          fi
-
-      - name: 🔬 Type checking
-        run: |
-          if [ -f "tsconfig.json" ]; then
-            ${{ steps.detect-package-manager.outputs.runner }} run type-check || echo "⚠️ Type checking skipped"
-          else
-            echo "ℹ️ No TypeScript config found, skipping type check"
-          fi
-
-      - name: 🧪 Run quantum tests
-        run: |
-          if npm run | grep -q "test:quantum"; then
-            ${{ steps.detect-package-manager.outputs.runner }} run test:quantum --passWithNoTests || echo "⚠️ Quantum tests completed with warnings"
-            echo "✅ Quantum operations validated"
-          else
-            echo "ℹ️ Quantum tests not configured, skipping..."
-          fi
-
-      - name: 🤖 Test AI orchestration
-        run: |
-          if npm run | grep -q "test:ai"; then
-            ${{ steps.detect-package-manager.outputs.runner }} run test:ai --passWithNoTests || echo "⚠️ AI tests completed with warnings"
-            echo "✅ AI models orchestration validated"
-          else
-            echo "ℹ️ AI tests not configured, skipping..."
-          fi
-
-      - name: 🔄 Restore Next.js cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            .next/cache
-            node_modules/.cache
-          key: ${{ runner.os }}-spiral-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx', '**/*.g4') }}
-          restore-keys: |
-            ${{ runner.os }}-spiral-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}-
-
-      - name: 🏗️ Build SpiralScript IDE
-        run: |
-          echo "Building quantum-enhanced Next.js application..."
-          ${{ steps.detect-package-manager.outputs.runner }} run build
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build with Next.js
+        run: npm run build
         env:
-          NEXT_TELEMETRY_DISABLED: 1
           NODE_ENV: production
-          ANALYZE: false
-
-      - name: 📊 Bundle analysis (optional)
-        run: |
-          if [ -f ".next/analyze/client.html" ]; then
-            echo "📦 Bundle analysis available at .next/analyze/"
-          fi
-
-      - name: 🔒 Security audit
-        run: |
-          if command -v npm &> /dev/null && [ -f "package.json" ]; then
-            npm audit --audit-level=high || echo "⚠️ Security audit completed with warnings"
-          else
-            echo "ℹ️ npm not available or no package.json found, skipping security audit"
-          fi
-
-      - name: 📤 Upload Pages artifact
+          
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./out
-          name: spiral-ide-artifact
 
-      - name: 📤 Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: spiral-build-${{ github.sha }}
-          path: |
-            .next/
-            out/
-            public/sw.js
-          retention-days: 7
-
-  # Deployment job with enhanced monitoring
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: [validate, build]
-    # Deploy if build was successful
-    if: always() && needs.build.result == 'success'
-
+    needs: build
     steps:
-      - name: 🚀 Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          artifact_name: spiral-ide-artifact
-
-      - name: 🌐 Deployment status
-        run: |
-          echo "🎉 SpiralScript IDE deployed successfully!"
-          echo "📍 URL: ${{ steps.deployment.outputs.page_url }}"
-          echo "🔗 Quantum circuits: ${{ steps.deployment.outputs.page_url }}quantum"
-          echo "🤖 AI dashboard: ${{ steps.deployment.outputs.page_url }}ai"
-          echo "⛓️ Blockchain explorer: ${{ steps.deployment.outputs.page_url }}blockchain"
-
-  # Post-deployment validation
-  validate-deployment:
-    runs-on: ubuntu-latest
-    needs: deploy
-    if: needs.deploy.result == 'success'
-
-    steps:
-      - name: 🏥 Health check
-        run: |
-          url="${{ needs.deploy.outputs.page_url || 'https://your-username.github.io/spiralscript-ide' }}"
-          echo "Performing health check on: $url"
-          
-          # Wait for deployment to be available
-          sleep 30
-          
-          # Check if the site is accessible
-          if curl -f -s -o /dev/null "$url"; then
-            echo "✅ Site is accessible"
-          else
-            echo "❌ Site health check failed"
-            exit 1
-          fi
-
-      - name: 🧬 Validate quantum features
-        run: |
-          echo "🔬 Quantum computing features validated"
-          echo "🎯 φ-harmonic resonance: Active"
-          echo "⚡ 127-qubit processing: Ready"
-          echo "🌌 Consciousness-aware paradigms: Online"
-
-      - name: 📊 Performance metrics
-        run: |
-          echo "📈 Performance Report:"
-          echo "├── Build time: ${{ job.duration || 'N/A' }}"
-          echo "├── Bundle optimization: PWA + Code splitting"
-          echo "├── Quantum sync: Service Worker enabled"
-          echo "└── Multi-AI orchestration: 4 models ready"
-
-  # Notification job
-  notify:
-    runs-on: ubuntu-latest
-    needs: [deploy, validate-deployment]
-    if: always()
-
-    steps:
-      - name: 📢 Deployment notification
-        run: |
-          if [ "${{ needs.deploy.result }}" == "success" ]; then
-            echo "🎉 SpiralScript IDE deployment completed successfully!"
-            echo "🔗 Live at: ${{ needs.deploy.outputs.page_url }}"
-          else
-            echo "❌ Deployment failed. Check the logs for details."
-            exit 1
-          fi
-
-# Additional workflow for staging deployments
-  deploy-staging:
-    if: github.event.inputs.environment == 'staging'
-    runs-on: ubuntu-latest
-    needs: build
-    
-    steps:
-      - name: 🧪 Deploy to staging environment
-        run: |
-          echo "🚧 Deploying to staging environment..."
-          echo "This would deploy to a separate staging URL"
-          
-  # Cleanup job for failed deployments
-  cleanup:
-    runs-on: ubuntu-latest
-    needs: [deploy]
-    if: failure()
-    
-    steps:
-      - name: 🧹 Cleanup failed deployment
-        run: |
-          echo "🗑️ Cleaning up failed deployment artifacts..."
-          echo "This would remove any partial deployments"

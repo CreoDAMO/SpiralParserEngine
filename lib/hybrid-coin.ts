@@ -69,10 +69,10 @@ export class HybridCoin {
   private readonly NATIVE_DENOM = 'uhybrid'; // Native denomination on HYBRID blockchain
   private readonly CHAIN_ID = 'hybrid-1'; // HYBRID blockchain chain ID
   
-  private metrics: HybridCoinMetrics;
+  private metrics!: HybridCoinMetrics;
   private transactions: Map<string, HybridCoinTransaction> = new Map();
   private stakingPositions: Map<string, StakingPosition> = new Map();
-  private distribution: HybridCoinDistribution;
+  private distribution!: HybridCoinDistribution;
   
   constructor() {
     this.initializeMetrics();
@@ -416,7 +416,7 @@ export class HybridCoin {
         sourceChannel,
         timeout,
         ibcDenom: `ibc/${this.NATIVE_DENOM}`
-      }
+      } as any
     };
 
     this.transactions.set(ibcTx.id, ibcTx);
@@ -444,7 +444,7 @@ export class HybridCoin {
         proposalId,
         vote,
         votingPower
-      }
+      } as any
     };
 
     this.transactions.set(govTx.id, govTx);

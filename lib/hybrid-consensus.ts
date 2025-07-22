@@ -1,5 +1,5 @@
 
-import { HybridNode, HybridBlock, HybridTransaction } from '../../../shared/hybrid-blockchain-schema';
+import { HybridNode, HybridBlock, HybridTransaction } from '../shared/hybrid-blockchain-schema';
 
 export class QuantumSpiralConsensus {
   private nodes: HybridNode[] = [];
