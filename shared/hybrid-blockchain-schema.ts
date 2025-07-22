@@ -23,6 +23,17 @@ export interface HybridTransaction {
     spiralResonance?: number;
     quantumState?: string;
     molecularData?: any;
+    // Bridge-related metadata
+    bridgeType?: 'hybrid' | 'spiral';
+    fromChain?: string;
+    toChain?: string;
+    recipient?: string;
+    asset?: string;
+    // Governance metadata
+    proposal?: string;
+    aiModels?: string[];
+    confidence?: number;
+    consensusResult?: 'approve' | 'reject' | 'modify';
   };
 }
 
