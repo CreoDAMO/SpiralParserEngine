@@ -67,11 +67,11 @@ export class FounderWallet {
   private readonly INITIAL_ALLOCATION = 20_000_000_000; // 20B HYBRID (20% of total supply)
   private readonly PHI = 1.618033988749;
   
-  private config: FounderWalletConfig;
+  private config!: FounderWalletConfig;
   private vestingSchedule: Map<string, VestingPeriod> = new Map();
   private pendingTransactions: Map<string, FounderTransaction> = new Map();
   private governanceProposals: Map<string, GovernanceProposal> = new Map();
-  private walletState: HybridWalletState;
+  private walletState!: HybridWalletState;
 
   constructor() {
     this.initializeFounderWallet();
