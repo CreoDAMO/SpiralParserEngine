@@ -242,7 +242,7 @@ export class HybridBlockchain {
         toChain,
         recipient,
         asset
-      }
+      } as any
     };
 
     this.transactions.set(bridgeTransaction.id, bridgeTransaction);
@@ -287,7 +287,7 @@ export class HybridBlockchain {
         confidence,
         consensusResult,
         quantumState: 'superposition'
-      }
+      } as any
     };
 
     this.transactions.set(consensusTransaction.id, consensusTransaction);

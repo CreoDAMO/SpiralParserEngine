@@ -74,6 +74,28 @@ export class FounderWallet {
   private walletState: HybridWalletState;
 
   constructor() {
+    // Initialize config with default values
+    this.config = {
+      address: this.FOUNDER_ADDRESS,
+      multiSigThreshold: 3,
+      authorizedSigners: ['signer1', 'signer2', 'signer3'],
+      vestingSchedule: [],
+      governanceWeight: 100,
+      emergencyPowers: true,
+    };
+    
+    this.walletState = {
+      address: this.FOUNDER_ADDRESS,
+      hybridBalance: this.INITIAL_ALLOCATION,
+      tuBalance: 0,
+      sriScore: 100,
+      phiResonance: this.PHI,
+      nodeLicenses: [],
+      stakingRewards: 0,
+      governanceVotingPower: 1000,
+      crossChainAssets: [],
+    };
+    
     this.initializeFounderWallet();
     this.setupVestingSchedule();
     this.initializeGovernance();
