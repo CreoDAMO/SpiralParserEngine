@@ -1,30 +1,6 @@
 {
   "version": 4,
   "routes": {
-    "/spiral-ide": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "Next-Action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/spiral-ide",
-      "dataRoute": "/spiral-ide.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/": {
       "experimentalBypassFor": [
         {
@@ -48,13 +24,37 @@
         "x-next-revalidated-tags",
         "x-next-revalidate-tag-token"
       ]
+    },
+    "/spiral-ide": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/spiral-ide",
+      "dataRoute": "/spiral-ide.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
     }
   },
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "426da184d29456869f4559a4d508e247",
-    "previewModeSigningKey": "408c10a02d69e8e5b691aa6930137ef80536e91a0d21385adad70d04cbde2782",
-    "previewModeEncryptionKey": "4e710c73c1f286072dca893bae3477d20ca9eca039d05b422d62088229482c83"
+    "previewModeId": "c3a436232db8e0a38e79140795be2a58",
+    "previewModeSigningKey": "803eb2b4df90c167afb20dd622f063e26a27a55216e7623e2ffde034517f986f",
+    "previewModeEncryptionKey": "758a6f6db7e8702287589cf5df7db7c74d5457c4bf47eed7926e013563e17b76"
   }
 }

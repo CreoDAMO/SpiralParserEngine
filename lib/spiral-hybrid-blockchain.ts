@@ -4,8 +4,7 @@
 
 import { z } from 'zod';
 import { autoParser } from './auto-parser';
-import { unifiedSpiralParser } from '../generated/UnifiedSpiralParser';
-import { HybridBlock, HybridTransaction, HybridNode, HybridSmartContract } from '../../../shared/hybrid-blockchain-schema';
+import { HybridBlock, HybridTransaction, HybridNode, HybridSmartContract } from '../shared/hybrid-blockchain-schema';
 
 export interface SpiralContractExecution {
   contractAddress: string;
@@ -121,18 +120,18 @@ export class SpiralHybridBlockchain {
       // Generate contract address
       const contractAddress = this.generateContractAddress(deployer, sourceCode);
       
-      // Compile to bytecode
-      const bytecode = await this.compileToSpiralBytecode(parseResult.ast, language);
+      // Compile to bytecode (using source code since AST is not available)
+      const bytecode = await this.compileToSpiralBytecode(sourceCode, language);
       
       // Create smart contract
       const contract: HybridSmartContract = {
         address: contractAddress,
         bytecode,
-        abi: this.generateABI(parseResult.ast),
+        abi: this.generateABI(sourceCode),
         creator: deployer,
         timestamp: Date.now(),
         spiralCompliant: true,
-        quantumEnabled: this.hasQuantumFeatures(parseResult.ast)
+        quantumEnabled: this.hasQuantumFeatures(sourceCode)
       };
       
       this.contracts.set(contractAddress, contract);
@@ -157,9 +156,9 @@ export class SpiralHybridBlockchain {
           contractAddress,
           language,
           sourceCode,
-          parsedAST: parseResult.ast,
+          parsedAST: null, // AST not available in current parser result
           executionResult: { deployed: true },
-          gasUsed: this.calculateGasUsed(parseResult.ast, language),
+          gasUsed: this.calculateGasUsed(sourceCode, language),
           tuGenerated: parseResult.metrics.tuGenerated,
           phiResonance: parseResult.metrics.phiResonance,
           quantumState: 'collapsed'
@@ -171,7 +170,7 @@ export class SpiralHybridBlockchain {
       return contractAddress;
       
     } catch (error) {
-      throw new Error(`Contract deployment failed: ${error.message}`);
+      throw new Error(`Contract deployment failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -214,7 +213,7 @@ export class SpiralHybridBlockchain {
         },
         contractExecution: {
           contractAddress,
-          language: result.language,
+          language: (result.language || 'SpiralScript') as 'HTSX' | 'SpiralScript' | 'SpiralLang',
           sourceCode: result.sourceCode || '',
           parsedAST: result.ast,
           executionResult: result.output,
@@ -230,7 +229,7 @@ export class SpiralHybridBlockchain {
       return result.output;
       
     } catch (error) {
-      throw new Error(`Contract execution failed: ${error.message}`);
+      throw new Error(`Contract execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -308,23 +307,22 @@ export class SpiralHybridBlockchain {
     return await autoParser.parseFile(filename, sourceCode);
   }
 
-  private async compileToSpiralBytecode(ast: any, language: string): Promise<string> {
-    // Compile AST to Spiral bytecode
+  private async compileToSpiralBytecode(sourceCode: string, language: string): Promise<string> {
+    // Compile source code to Spiral bytecode
     const compiler = new SpiralBytecodeCompiler(language);
-    return await compiler.compile(ast);
+    return await compiler.compileFromSource(sourceCode);
   }
 
-  private generateABI(ast: any): any[] {
-    // Generate ABI from parsed AST
+  private generateABI(sourceCode: string): any[] {
+    // Generate ABI from source code
     const abiGenerator = new SpiralABIGenerator();
-    return abiGenerator.generate(ast);
+    return abiGenerator.generateFromSource(sourceCode);
   }
 
-  private hasQuantumFeatures(ast: any): boolean {
-    const astString = JSON.stringify(ast);
-    return astString.includes('quantum') || 
-           astString.includes('entangle') || 
-           astString.includes('collapse');
+  private hasQuantumFeatures(sourceCode: string): boolean {
+    return sourceCode.includes('quantum') || 
+           sourceCode.includes('entangle') || 
+           sourceCode.includes('collapse');
   }
 
   private calculateDeploymentFee(sourceCode: string, language: string): number {
@@ -333,10 +331,36 @@ export class SpiralHybridBlockchain {
     return baseSize * 0.001 * langMultiplier;
   }
 
-  private calculateGasUsed(ast: any, language: string): number {
-    const complexity = this.calculateASTComplexity(ast);
+  private calculateGasUsed(sourceCode: string, language: string): number {
+    const complexity = this.calculateSourceComplexity(sourceCode);
     const langMultiplier = this.languageRegistry.get(language)?.gasMultiplier || 1.0;
     return Math.floor(complexity * 100 * langMultiplier);
+  }
+
+  private calculateSourceComplexity(sourceCode: string): number {
+    let complexity = 1;
+    
+    // Count lines
+    const lines = sourceCode.split('\n').length;
+    complexity += lines * 0.1;
+    
+    // Count keywords that indicate complexity
+    const complexityKeywords = [
+      'function', 'class', 'if', 'for', 'while', 'switch', 'try', 'catch',
+      'quantum', 'entangle', 'collapse', 'spiral', 'consciousness'
+    ];
+    
+    for (const keyword of complexityKeywords) {
+      const matches = (sourceCode.match(new RegExp(keyword, 'g')) || []).length;
+      complexity += matches * 0.5;
+    }
+    
+    // Quantum operations are more complex
+    if (sourceCode.includes('quantum') || sourceCode.includes('entangle')) {
+      complexity *= this.PHI;
+    }
+    
+    return complexity;
   }
 
   private calculateASTComplexity(ast: any): number {
@@ -344,7 +368,7 @@ export class SpiralHybridBlockchain {
     
     let complexity = 1;
     if (ast.children && Array.isArray(ast.children)) {
-      complexity += ast.children.reduce((sum, child) => 
+      complexity += ast.children.reduce((sum: number, child: any) => 
         sum + this.calculateASTComplexity(child), 0
       );
     }
@@ -638,6 +662,12 @@ class SpiralBytecodeCompiler {
     const hash = JSON.stringify(ast).length.toString(16);
     return `${this.language.toLowerCase()}-bytecode-${hash}`;
   }
+  
+  async compileFromSource(sourceCode: string): Promise<string> {
+    // Compile source code to Spiral bytecode
+    const hash = sourceCode.length.toString(16);
+    return `${this.language.toLowerCase()}-bytecode-${hash}`;
+  }
 }
 
 // ABI Generator for Spiral Languages
@@ -652,6 +682,28 @@ class SpiralABIGenerator {
         outputs: [{ name: 'result', type: 'any' }]
       }
     ];
+  }
+  
+  generateFromSource(sourceCode: string): any[] {
+    // Generate ABI from source code patterns
+    const functions: any[] = (sourceCode.match(/function\s+(\w+)/g) || []).map(match => ({
+      name: match.replace('function ', ''),
+      type: 'function',
+      inputs: [],
+      outputs: []
+    }));
+    
+    if (functions.length === 0) {
+      // Default function if none found
+      functions.push({
+        name: 'execute',
+        type: 'function',
+        inputs: [{ name: 'params', type: 'any[]' }],
+        outputs: [{ name: 'result', type: 'any' }]
+      });
+    }
+    
+    return functions;
   }
 }
 

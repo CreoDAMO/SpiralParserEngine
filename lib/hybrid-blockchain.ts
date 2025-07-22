@@ -237,11 +237,15 @@ export class HybridBlockchain {
       signature: this.generateSignature(),
       type: 'HYBRID',
       metadata: {
-        bridgeType,
-        fromChain,
-        toChain,
-        recipient,
-        asset
+        spiralResonance: 0,
+        quantumState: 'bridge',
+        molecularData: {
+          bridgeType,
+          fromChain,
+          toChain,
+          recipient,
+          asset
+        }
       }
     };
 
@@ -282,11 +286,14 @@ export class HybridBlockchain {
       signature: this.generateSignature(),
       type: 'QUANTUM',
       metadata: {
-        proposal,
-        aiModels,
-        confidence,
-        consensusResult,
-        quantumState: 'superposition'
+        spiralResonance: confidence,
+        quantumState: 'superposition',
+        molecularData: {
+          proposal,
+          aiModels,
+          confidence,
+          consensusResult
+        }
       }
     };
 

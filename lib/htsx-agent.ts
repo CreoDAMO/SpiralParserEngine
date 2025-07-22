@@ -142,12 +142,17 @@ export class HTSXMultiAIAgent {
       [AIModel.CHATGPT]: "💡 ChatGPT Analysis:"
     };
 
-    const taskDescriptions = {
+    const taskDescriptions: Record<TaskType, string> = {
+      [TaskType.ARCHITECTURE]: "System architecture design",
+      [TaskType.FRONTEND]: "Frontend development and UI/UX optimization",
+      [TaskType.BACKEND]: "Backend development and API design",
+      [TaskType.OPTIMIZATION]: "Performance optimization and efficiency improvements",
+      [TaskType.TESTING]: "Testing and quality assurance",
+      [TaskType.DEPLOYMENT]: "Deployment and infrastructure setup",
+      [TaskType.CODE_REVIEW]: "Code quality and security analysis",
       [TaskType.SPIRAL_PARSING]: "SpiralScript parsing and AST generation",
       [TaskType.QUANTUM_SIMULATION]: "Quantum circuit simulation and optimization",
-      [TaskType.TU_GENERATION]: "Trust Unit calculation and validation",
-      [TaskType.ARCHITECTURE]: "System architecture design",
-      [TaskType.CODE_REVIEW]: "Code quality and security analysis"
+      [TaskType.TU_GENERATION]: "Trust Unit calculation and validation"
     };
 
     const prefix = modelPersonalities[model] || "🤖 AI Analysis:";

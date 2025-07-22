@@ -1,5 +1,4 @@
 import { spiralParser, githubIntegration, type ParseMetrics } from './spiral-parser';
-import { unifiedSpiralParser } from '../generated/UnifiedSpiralParser';
 
 export interface AutoParseResult {
   success: boolean;
@@ -13,25 +12,7 @@ export class AutoParser {
   private readonly PHI = 1.618033988749;
 
   async parseFile(filename: string, content: string): Promise<AutoParseResult> {
-    try {
-      // Try to use compiled ANTLR4 parser first
-      const result = await unifiedSpiralParser.parseFile(filename, content);
-
-      if (result.success) {
-        return {
-          success: true,
-          language: result.language,
-          metrics: result.metrics,
-          errors: [],
-          generatedFiles: await this.generateArtifacts(filename, result),
-          // compiler: 'antlr4-compiled' // Removed 'compiler' for consistency with the interface
-        };
-      }
-    } catch (error) {
-      console.warn('ANTLR4 parser failed, falling back to legacy parser:', error.message);
-    }
-
-    // Fallback to legacy parser
+    // Use the main spiral parser
     const language = githubIntegration.detectLanguage(filename);
 
     if (!language) {
@@ -60,7 +41,7 @@ export class AutoParser {
         success: false,
         language,
         metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
-        errors: [error.message],
+        errors: [error instanceof Error ? error.message : 'Unknown error occurred'],
         generatedFiles: []
       };
     }

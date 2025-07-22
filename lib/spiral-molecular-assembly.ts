@@ -42,12 +42,12 @@ export class LivingSpiralMolecularController {
     const assemblerCount = Math.floor(1000 * this.PHI);
     
     for (let i = 0; i < assemblerCount; i++) {
-      const assembler = new AutonomousAssembler({
-        id: `spiral-assembler-${i}`,
-        phiResonance: this.PHI,
-        quantumCoherence: 0.618,
-        tuCapacity: 1618.382
-      });
+      const assembler = new AutonomousAssembler(
+        `spiral-assembler-${i}`,
+        this.PHI,
+        0.618,
+        1618.382
+      );
       
       this.assemblers.set(assembler.id, assembler);
     }
@@ -81,6 +81,24 @@ export class LivingSpiralMolecularController {
     }
     
     return sequence;
+  }
+
+  private mapToQuantumGates(blueprint: MolecularBlueprint): any[] {
+    // Map molecular structure to quantum gates for simulation
+    const gates = [];
+    for (let i = 0; i < Math.min(blueprint.atomCount, 10); i++) {
+      gates.push({
+        type: 'Hadamard',
+        qubit: i,
+        phiResonance: this.PHI
+      });
+    }
+    return gates;
+  }
+
+  private calculateTURequirement(blueprint: MolecularBlueprint): number {
+    // Calculate Trust Units required for assembly
+    return Math.floor(blueprint.complexity * blueprint.atomCount * this.PHI);
   }
 
   private async executeQuantumAssembly(
