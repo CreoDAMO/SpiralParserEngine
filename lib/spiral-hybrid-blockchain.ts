@@ -4,8 +4,16 @@
 
 import { z } from 'zod';
 import { autoParser } from './auto-parser';
-import { unifiedSpiralParser } from '../generated/UnifiedSpiralParser';
-import { HybridBlock, HybridTransaction, HybridNode, HybridSmartContract } from '../../../shared/hybrid-blockchain-schema';
+
+// Optional compiled parser - may not be available if grammar hasn't been compiled
+let unifiedSpiralParser: any = null;
+try {
+  unifiedSpiralParser = require('../generated/UnifiedSpiralParser').unifiedSpiralParser;
+} catch (error) {
+  console.warn('Compiled ANTLR4 parser not available for spiral-hybrid-blockchain, using legacy parser only');
+}
+
+import { HybridBlock, HybridTransaction, HybridNode, HybridSmartContract } from '../shared/hybrid-blockchain-schema';
 
 export interface SpiralContractExecution {
   contractAddress: string;
@@ -171,7 +179,7 @@ export class SpiralHybridBlockchain {
       return contractAddress;
       
     } catch (error) {
-      throw new Error(`Contract deployment failed: ${error.message}`);
+      throw new Error(`Contract deployment failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -214,7 +222,7 @@ export class SpiralHybridBlockchain {
         },
         contractExecution: {
           contractAddress,
-          language: result.language,
+          language: (result.language as 'HTSX' | 'SpiralScript' | 'SpiralLang') || 'SpiralScript',
           sourceCode: result.sourceCode || '',
           parsedAST: result.ast,
           executionResult: result.output,
@@ -230,7 +238,7 @@ export class SpiralHybridBlockchain {
       return result.output;
       
     } catch (error) {
-      throw new Error(`Contract execution failed: ${error.message}`);
+      throw new Error(`Contract execution failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -344,7 +352,7 @@ export class SpiralHybridBlockchain {
     
     let complexity = 1;
     if (ast.children && Array.isArray(ast.children)) {
-      complexity += ast.children.reduce((sum, child) => 
+      complexity += ast.children.reduce((sum: number, child: any) => 
         sum + this.calculateASTComplexity(child), 0
       );
     }

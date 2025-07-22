@@ -42,12 +42,12 @@ export class LivingSpiralMolecularController {
     const assemblerCount = Math.floor(1000 * this.PHI);
     
     for (let i = 0; i < assemblerCount; i++) {
-      const assembler = new AutonomousAssembler({
-        id: `spiral-assembler-${i}`,
-        phiResonance: this.PHI,
-        quantumCoherence: 0.618,
-        tuCapacity: 1618.382
-      });
+      const assembler = new AutonomousAssembler(
+        `spiral-assembler-${i}`,
+        this.PHI,
+        0.618,
+        1618.382
+      );
       
       this.assemblers.set(assembler.id, assembler);
     }
@@ -68,19 +68,6 @@ export class LivingSpiralMolecularController {
       tuRequirement: this.calculateTURequirement(blueprint),
       entropyBudget: blueprint.complexity * 0.618
     };
-  }
-
-  private calculatePhiSequence(blueprint: MolecularBlueprint): number[] {
-    const sequence: number[] = [];
-    let current = 1;
-    let next = this.PHI;
-    
-    for (let i = 0; i < blueprint.atomCount; i++) {
-      sequence.push(current);
-      [current, next] = [next, current + next];
-    }
-    
-    return sequence;
   }
 
   private async executeQuantumAssembly(
@@ -189,6 +176,39 @@ export class LivingSpiralMolecularController {
     structure.phiResonance = this.calculateStructurePhiResonance(structure);
   }
 
+  private mapToQuantumGates(blueprint: MolecularBlueprint): any[] {
+    // Map molecular operations to quantum gates
+    if (!blueprint.assembly?.steps) {
+      // Generate default gates based on structure
+      return Array.from({ length: blueprint.atomCount }, (_, index) => ({
+        gate: 'H',
+        qubits: [index, (index + 1) % blueprint.atomCount],
+        angle: 0,
+        operation: 'initialize'
+      }));
+    }
+    
+    return blueprint.assembly.steps.map((step, index) => ({
+      gate: step.type === 'bond' ? 'CNOT' : 'H',
+      qubits: [index, (index + 1) % blueprint.structure.atoms.length],
+      angle: step.phiAngle || 0,
+      operation: step.type
+    }));
+  }
+
+  private calculatePhiSequence(blueprint: MolecularBlueprint): number[] {
+    // Generate phi-based assembly sequence
+    const steps = blueprint.assembly?.steps.length || blueprint.atomCount;
+    return Array.from({ length: steps }, (_, i) => 
+      this.PHI * Math.sin((i * Math.PI) / steps)
+    );
+  }
+
+  private calculateTURequirement(blueprint: MolecularBlueprint): number {
+    // Calculate Trust Units required for assembly
+    return blueprint.complexity * blueprint.structure.atoms.length * this.PHI;
+  }
+
   private calculateStructurePhiResonance(structure: MolecularStructure): number {
     const bondResonance = structure.bonds.reduce((sum, bond) => 
       sum + (bond.strength * this.PHI), 0
@@ -263,6 +283,12 @@ interface MolecularBlueprint {
   atomCount: number;
   bondCount: number;
   complexity: number;
+  assembly?: {
+    steps: Array<{
+      type: string;
+      phiAngle?: number;
+    }>;
+  };
 }
 
 interface AssemblyPlan {

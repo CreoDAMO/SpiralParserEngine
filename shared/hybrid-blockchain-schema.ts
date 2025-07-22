@@ -23,6 +23,16 @@ export interface HybridTransaction {
     spiralResonance?: number;
     quantumState?: string;
     molecularData?: any;
+    bridgeType?: string;
+    fromChain?: string;
+    toChain?: string;
+    recipient?: string;
+    asset?: string;
+    proposal?: any;
+    aiModels?: string[];
+    confidence?: number;
+    consensusResult?: any;
+    [key: string]: any; // Allow additional properties
   };
 }
 

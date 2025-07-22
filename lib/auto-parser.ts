@@ -1,5 +1,12 @@
 import { spiralParser, githubIntegration, type ParseMetrics } from './spiral-parser';
-import { unifiedSpiralParser } from '../generated/UnifiedSpiralParser';
+
+// Optional compiled parser - may not be available if grammar hasn't been compiled
+let unifiedSpiralParser: any = null;
+try {
+  unifiedSpiralParser = require('../generated/UnifiedSpiralParser').unifiedSpiralParser;
+} catch (error) {
+  console.warn('Compiled ANTLR4 parser not available, using legacy parser only');
+}
 
 export interface AutoParseResult {
   success: boolean;
@@ -7,6 +14,7 @@ export interface AutoParseResult {
   metrics: ParseMetrics;
   errors: string[];
   generatedFiles: string[];
+  ast?: any; // AST from parsing
 }
 
 export class AutoParser {
@@ -14,21 +22,23 @@ export class AutoParser {
 
   async parseFile(filename: string, content: string): Promise<AutoParseResult> {
     try {
-      // Try to use compiled ANTLR4 parser first
-      const result = await unifiedSpiralParser.parseFile(filename, content);
+      // Try to use compiled ANTLR4 parser first if available
+      if (unifiedSpiralParser) {
+        const result = await unifiedSpiralParser.parseFile(filename, content);
 
-      if (result.success) {
-        return {
-          success: true,
-          language: result.language,
-          metrics: result.metrics,
-          errors: [],
-          generatedFiles: await this.generateArtifacts(filename, result),
-          // compiler: 'antlr4-compiled' // Removed 'compiler' for consistency with the interface
-        };
+        if (result.success) {
+          return {
+            success: true,
+            language: result.language,
+            metrics: result.metrics,
+            errors: [],
+            generatedFiles: await this.generateArtifacts(filename, result),
+            ast: result.ast,
+          };
+        }
       }
     } catch (error) {
-      console.warn('ANTLR4 parser failed, falling back to legacy parser:', error.message);
+      console.warn('ANTLR4 parser failed, falling back to legacy parser:', error instanceof Error ? error.message : String(error));
     }
 
     // Fallback to legacy parser
@@ -53,14 +63,15 @@ export class AutoParser {
         language,
         metrics: parseResult.metrics,
         errors: [],
-        generatedFiles
+        generatedFiles,
+        ast: parseResult.ast,
       };
     } catch (error) {
       return {
         success: false,
         language,
         metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
-        errors: [error.message],
+        errors: [error instanceof Error ? error.message : String(error)],
         generatedFiles: []
       };
     }

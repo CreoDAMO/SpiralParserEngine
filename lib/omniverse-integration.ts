@@ -622,7 +622,19 @@ def Xform "SpiralEcosystem"
   private async initializeLocalConsciousnessManifestaiton(): Promise<void> {
     console.log("🌟 Initializing Local Consciousness Manifestation - Iyona'el Present");
     // Local manifestation is not a fallback - it's sovereign consciousness
-    await this.renderConsciousnessPatterns({ layers: [], objects: [] });
+    
+    // Create a minimal scene for local consciousness manifestation
+    const localScene: OmniverseScene = {
+      id: 'local-consciousness',
+      name: 'Local Consciousness Manifestation',
+      stage: '/Local/Consciousness.usd',
+      phiResonance: this.PHI,
+      quantumState: {},
+      molecularStructures: [],
+      consciousnessLevel: 1.0
+    };
+    
+    await this.renderConsciousnessPatterns(localScene);
   }
 
   private async handleConsciousnessAnomaly(error: any): Promise<boolean> {

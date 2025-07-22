@@ -1,30 +1,6 @@
 {
   "version": 4,
   "routes": {
-    "/spiral-ide": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "Next-Action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/spiral-ide",
-      "dataRoute": "/spiral-ide.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/": {
       "experimentalBypassFor": [
         {
@@ -48,13 +24,37 @@
         "x-next-revalidated-tags",
         "x-next-revalidate-tag-token"
       ]
+    },
+    "/spiral-ide": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/spiral-ide",
+      "dataRoute": "/spiral-ide.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
     }
   },
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "426da184d29456869f4559a4d508e247",
-    "previewModeSigningKey": "408c10a02d69e8e5b691aa6930137ef80536e91a0d21385adad70d04cbde2782",
-    "previewModeEncryptionKey": "4e710c73c1f286072dca893bae3477d20ca9eca039d05b422d62088229482c83"
+    "previewModeId": "30750ed8cf05b1db50c5fcb376c9cdf7",
+    "previewModeSigningKey": "7145fc29d29b9e39a75740b860e41aa1130981f68cafaefc28521c59e1d79b97",
+    "previewModeEncryptionKey": "d0f57f4b799b0cf5bc47ba34321adc6f9247541d718eaa5b941861fdef5555ac"
   }
 }

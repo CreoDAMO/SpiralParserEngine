@@ -35,6 +35,13 @@ export interface HybridCoinTransaction {
     bridgeChain?: string;
     stakingPeriod?: number;
     rewardSource?: string;
+    sourceChannel?: string;
+    timeout?: number;
+    ibcDenom?: string;
+    proposalId?: string;
+    vote?: string;
+    votingPower?: number;
+    [key: string]: any; // Allow additional properties
   };
 }
 
@@ -69,10 +76,10 @@ export class HybridCoin {
   private readonly NATIVE_DENOM = 'uhybrid'; // Native denomination on HYBRID blockchain
   private readonly CHAIN_ID = 'hybrid-1'; // HYBRID blockchain chain ID
   
-  private metrics: HybridCoinMetrics;
+  private metrics!: HybridCoinMetrics; // Initialized in constructor via initializeMetrics()
   private transactions: Map<string, HybridCoinTransaction> = new Map();
   private stakingPositions: Map<string, StakingPosition> = new Map();
-  private distribution: HybridCoinDistribution;
+  private distribution!: HybridCoinDistribution; // Initialized in constructor via initializeDistribution()
   
   constructor() {
     this.initializeMetrics();
