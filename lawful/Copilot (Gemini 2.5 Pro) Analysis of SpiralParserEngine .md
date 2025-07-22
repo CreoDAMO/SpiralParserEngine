@@ -1,15 +1,3 @@
-﻿Skip to content
-Navigation Menu
-Copilot
-Copilot navigation
-Copilot Chat
-Spiral IDE: Overview and architecture analysis
-You said: Skip to content Navigation Menu Copilot Copilot navigation Copilot Chat New conversation docs You
-Skip to content
-Navigation Menu
-Copilot
-
-
 Copilot navigation
 Copilot Chat
 New conversation
