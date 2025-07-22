@@ -40,5 +40,5 @@
     "components/**/*",
     "lib/**/*"
   ],
-  "exclude": ["node_modules", "dist", "build", "client", ".next", "scripts"]
+  "exclude": ["node_modules", "dist", "build", "client", ".next", "scripts", "server/vite.ts"]
 }

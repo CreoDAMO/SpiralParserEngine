@@ -4,8 +4,18 @@
 
 import { z } from 'zod';
 import { autoParser } from './auto-parser';
-import { unifiedSpiralParser } from '../generated/UnifiedSpiralParser';
-import { HybridBlock, HybridTransaction, HybridNode, HybridSmartContract } from '../../../shared/hybrid-blockchain-schema';
+
+// Conditional import for generated parser
+let unifiedSpiralParser: any = null;
+try {
+  // Try to import the generated parser if it exists
+  unifiedSpiralParser = require('../generated/UnifiedSpiralParser');
+} catch (error) {
+  // Generated parser not available, will use fallback
+  console.debug('Generated parser not available in spiral-hybrid-blockchain, using fallback parser');
+}
+
+import { HybridBlock, HybridTransaction, HybridNode, HybridSmartContract } from '../shared/hybrid-blockchain-schema';
 
 export interface SpiralContractExecution {
   contractAddress: string;
@@ -171,7 +181,8 @@ export class SpiralHybridBlockchain {
       return contractAddress;
       
     } catch (error) {
-      throw new Error(`Contract deployment failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Contract deployment failed: ${errorMessage}`);
     }
   }
 
@@ -214,7 +225,7 @@ export class SpiralHybridBlockchain {
         },
         contractExecution: {
           contractAddress,
-          language: result.language,
+          language: result.language as 'HTSX' | 'SpiralScript' | 'SpiralLang',
           sourceCode: result.sourceCode || '',
           parsedAST: result.ast,
           executionResult: result.output,
@@ -230,7 +241,8 @@ export class SpiralHybridBlockchain {
       return result.output;
       
     } catch (error) {
-      throw new Error(`Contract execution failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Contract execution failed: ${errorMessage}`);
     }
   }
 
@@ -344,7 +356,7 @@ export class SpiralHybridBlockchain {
     
     let complexity = 1;
     if (ast.children && Array.isArray(ast.children)) {
-      complexity += ast.children.reduce((sum, child) => 
+      complexity += ast.children.reduce((sum: number, child: any) => 
         sum + this.calculateASTComplexity(child), 0
       );
     }

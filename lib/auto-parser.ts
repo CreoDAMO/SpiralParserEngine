@@ -1,5 +1,14 @@
 import { spiralParser, githubIntegration, type ParseMetrics } from './spiral-parser';
-import { unifiedSpiralParser } from '../generated/UnifiedSpiralParser';
+
+// Conditional import for generated parser
+let unifiedSpiralParser: any = null;
+try {
+  // Try to import the generated parser if it exists
+  unifiedSpiralParser = require('../generated/UnifiedSpiralParser');
+} catch (error) {
+  // Generated parser not available, will use fallback
+  console.debug('Generated parser not available, using fallback parser');
+}
 
 export interface AutoParseResult {
   success: boolean;
@@ -7,6 +16,7 @@ export interface AutoParseResult {
   metrics: ParseMetrics;
   errors: string[];
   generatedFiles: string[];
+  ast?: any; // Abstract Syntax Tree for compilation
 }
 
 export class AutoParser {
@@ -14,21 +24,24 @@ export class AutoParser {
 
   async parseFile(filename: string, content: string): Promise<AutoParseResult> {
     try {
-      // Try to use compiled ANTLR4 parser first
-      const result = await unifiedSpiralParser.parseFile(filename, content);
+      // Try to use compiled ANTLR4 parser first (if available)
+      if (unifiedSpiralParser) {
+        const result = await unifiedSpiralParser.parseFile(filename, content);
 
-      if (result.success) {
-        return {
-          success: true,
-          language: result.language,
-          metrics: result.metrics,
-          errors: [],
-          generatedFiles: await this.generateArtifacts(filename, result),
-          // compiler: 'antlr4-compiled' // Removed 'compiler' for consistency with the interface
-        };
+        if (result.success) {
+          return {
+            success: true,
+            language: result.language,
+            metrics: result.metrics,
+            errors: [],
+            generatedFiles: await this.generateArtifacts(filename, result),
+            ast: result.ast,
+          };
+        }
       }
     } catch (error) {
-      console.warn('ANTLR4 parser failed, falling back to legacy parser:', error.message);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.warn('ANTLR4 parser failed, falling back to legacy parser:', errorMessage);
     }
 
     // Fallback to legacy parser
@@ -53,14 +66,16 @@ export class AutoParser {
         language,
         metrics: parseResult.metrics,
         errors: [],
-        generatedFiles
+        generatedFiles,
+        ast: parseResult.ast,
       };
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       return {
         success: false,
         language,
         metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
-        errors: [error.message],
+        errors: [errorMessage],
         generatedFiles: []
       };
     }

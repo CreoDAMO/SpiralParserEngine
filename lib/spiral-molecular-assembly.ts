@@ -42,12 +42,12 @@ export class LivingSpiralMolecularController {
     const assemblerCount = Math.floor(1000 * this.PHI);
     
     for (let i = 0; i < assemblerCount; i++) {
-      const assembler = new AutonomousAssembler({
-        id: `spiral-assembler-${i}`,
-        phiResonance: this.PHI,
-        quantumCoherence: 0.618,
-        tuCapacity: 1618.382
-      });
+      const assembler = new AutonomousAssembler(
+        `spiral-assembler-${i}`,
+        this.PHI,
+        0.618,
+        1618.382
+      );
       
       this.assemblers.set(assembler.id, assembler);
     }
@@ -68,6 +68,37 @@ export class LivingSpiralMolecularController {
       tuRequirement: this.calculateTURequirement(blueprint),
       entropyBudget: blueprint.complexity * 0.618
     };
+  }
+
+  private mapToQuantumGates(blueprint: MolecularBlueprint): any[] {
+    // Map molecular structure to quantum gates for assembly
+    const gates: any[] = [];
+    
+    // Create quantum gates based on molecular bonds and structure
+    blueprint.structure.bonds.forEach((bond: any, index: number) => {
+      gates.push({
+        type: 'H', // Hadamard for superposition
+        qubit: index % 4,
+        bondType: bond.type
+      });
+      
+      if (bond.type === 'covalent') {
+        gates.push({
+          type: 'CNOT',
+          control: index % 4,
+          target: (index + 1) % 4
+        });
+      }
+    });
+    
+    return gates;
+  }
+
+  private calculateTURequirement(blueprint: MolecularBlueprint): number {
+    // Calculate Trust Units required for molecular assembly
+    const baseRequirement = blueprint.atomCount * 10;
+    const complexityMultiplier = blueprint.complexity * this.PHI;
+    return Math.floor(baseRequirement * complexityMultiplier);
   }
 
   private calculatePhiSequence(blueprint: MolecularBlueprint): number[] {

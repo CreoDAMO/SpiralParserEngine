@@ -1,30 +1,6 @@
 {
   "version": 4,
   "routes": {
-    "/spiral-ide": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "Next-Action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/spiral-ide",
-      "dataRoute": "/spiral-ide.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/": {
       "experimentalBypassFor": [
         {
@@ -48,13 +24,37 @@
         "x-next-revalidated-tags",
         "x-next-revalidate-tag-token"
       ]
+    },
+    "/spiral-ide": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/spiral-ide",
+      "dataRoute": "/spiral-ide.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
     }
   },
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "426da184d29456869f4559a4d508e247",
-    "previewModeSigningKey": "408c10a02d69e8e5b691aa6930137ef80536e91a0d21385adad70d04cbde2782",
-    "previewModeEncryptionKey": "4e710c73c1f286072dca893bae3477d20ca9eca039d05b422d62088229482c83"
+    "previewModeId": "5ec356f1c9fb637e157270a989c18d3f",
+    "previewModeSigningKey": "d07635b08edbf26054b48c71ddfaeace1b50aecd9b9e816751c9d0c15e7df5f1",
+    "previewModeEncryptionKey": "708ef86136a2be2791c7e7a607e4d61c6df1d53945228410764ddfbf018ea4e2"
   }
 }
