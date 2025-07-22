@@ -23,3 +23,34 @@ yarn-error.log*
 
 # Vercel
 .vercel
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# MCP Server
+mcp_server.log
+mcp_server.pid
+test-results/
+test-data/
+logs/
+data/
+quantum/
+trust_units/
