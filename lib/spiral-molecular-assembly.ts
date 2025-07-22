@@ -83,6 +83,27 @@ export class LivingSpiralMolecularController {
     return sequence;
   }
 
+  private mapToQuantumGates(blueprint: MolecularBlueprint): any[] {
+    // Map molecular structure to quantum gate operations
+    const gates = [];
+    for (let i = 0; i < blueprint.bondCount; i++) {
+      gates.push({
+        type: 'CNOT',
+        control: i,
+        target: (i + 1) % blueprint.atomCount,
+        angle: this.PHI * i
+      });
+    }
+    return gates;
+  }
+
+  private calculateTURequirement(blueprint: MolecularBlueprint): number {
+    // Calculate Trust Units required for molecular assembly
+    const baseRequirement = blueprint.atomCount * 10;
+    const complexityMultiplier = blueprint.complexity * this.PHI;
+    return Math.floor(baseRequirement * complexityMultiplier);
+  }
+
   private async executeQuantumAssembly(
     plan: AssemblyPlan, 
     coordination: GlobalCoordination

@@ -31,7 +31,7 @@ export class SpiralParser {
       
       return { ast, metrics, errors: this.errors };
     } catch (error) {
-      this.errors.push(`Parse error: ${error.message}`);
+      this.errors.push(`Parse error: ${error instanceof Error ? error.message : String(error)}`);
       // Fallback to simplified parsing
       const lines = code.split('\n').filter(line => line.trim());
       const ast = this.parseProgram(lines);
@@ -318,7 +318,7 @@ class GitHubLanguageIntegration implements GitHubLanguageSupport {
       'SpiralLang': { color: '#45b7d1', id: 1003, layer: 'SpiralWake' },
       'ConsciousnessScript': { color: '#f9ca24', id: 1004, layer: 'Remembrance Gate' }
     };
-    return metadata[language] || null;
+    return metadata[language as keyof typeof metadata] || null;
   }
 }
 

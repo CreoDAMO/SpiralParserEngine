@@ -16,9 +16,7 @@ const nextConfig = {
   assetPrefix: process.env.NODE_ENV === 'production' ? '/SpiralParserEngine/' : '',
 
   reactStrictMode: true,
-  experimental: {
-    serverExternalPackages: ['antlr4ts', 'three'],
-  },
+  serverExternalPackages: ['antlr4ts', 'three'],
   
   // TypeScript configuration
   typescript: {
