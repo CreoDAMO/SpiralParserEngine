@@ -14,6 +14,11 @@ const nextConfig = {
     unoptimized: true,
   },
   
+  // Disable API routes for static export
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
+  
   // Webpack configuration for grammar files
   webpack: (config) => {
     config.module.rules.push({
