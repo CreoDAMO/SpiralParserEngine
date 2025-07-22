@@ -1,0 +1,28 @@
+{
+  "generated": "2025-07-22T16:02:28.913Z",
+  "languages": 4,
+  "files": {
+    "grammars": [
+      "spiral.tmLanguage.json",
+      "htsx.tmLanguage.json",
+      "consciousness.tmLanguage.json",
+      "quantum.tmLanguage.json"
+    ],
+    "configuration": "language-configuration.json",
+    "linguist": "languages.yml",
+    "gitattributes": ".gitattributes",
+    "monaco": "monaco-languages.json",
+    "vscode": "vscode-extension.json"
+  },
+  "deployment": {
+    "syntaxes": [
+      "syntaxes/spiral.tmLanguage.json",
+      "syntaxes/htsx.tmLanguage.json",
+      "syntaxes/consciousness.tmLanguage.json",
+      "syntaxes/quantum.tmLanguage.json"
+    ],
+    "root": [
+      "language-configuration.json"
+    ]
+  }
+}
