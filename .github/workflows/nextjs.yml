@@ -261,7 +261,7 @@ jobs:
     steps:
       - name: 🏥 Health check
         run: |
-          url="${{ needs.deploy.outputs.page_url || 'https://github.com/CreoDAMO/SpiralParserEngine.git' }}"
+          url="${{ needs.deploy.outputs.page_url || 'https://creodamo.github.io/SpiralParserEngine/.' }}"
           echo "Performing health check on: $url"
           sleep 30
           if curl -f -s -o /dev/null "$url"; then
