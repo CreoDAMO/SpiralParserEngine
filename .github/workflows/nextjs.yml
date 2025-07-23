@@ -3,7 +3,6 @@ Advanced deployment workflow for SpiralScript IDE
 Quantum-enhanced Next.js application with multi-AI orchestration
 
 
-
 name: Deploy SpiralScript IDE to Pages
 
 on:
