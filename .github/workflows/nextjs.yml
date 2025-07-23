@@ -205,10 +205,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-spiral-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock', '**/pnpm-lock.yaml') }}-
 
-      - name: 🏗️ Build SpiralScript IDE
-        run: |
-          echo "Building quantum-enhanced Next.js application..."
-          ${{ steps.detect-package-manager.outputs.runner }} run build
+      - name: 🏗️ Build & Export SpiralScript IDE for GitHub Pages
+  run: |
+    ${{ steps.detect-package-manager.outputs.runner }} run build
+    ${{ steps.detect-package-manager.outputs.runner }} run export
         env:
           NEXT_TELEMETRY_DISABLED: 1
           NODE_ENV: production
