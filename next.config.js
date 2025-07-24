@@ -278,104 +278,8 @@ Calibrating φ-Harmonic Resonance...
 ),
 })
 
-// ==========================================
-// API Routes Structure
-// ==========================================
+// API routes are handled in the app/ directory structure
 
-// pages/api/quantum/circuits.ts
-import type { NextApiRequest, NextApiResponse } from 'next'
-
-export default async function handler(
-req: NextApiRequest,
-res: NextApiResponse
-) {
-if (req.method === 'POST') {
-try {
-// Quantum circuit processing logic
-const { qubits, gates, phi_resonance } = req.body
-
-// Process quantum operations with φ-harmonic calculations  
-  const result = await processQuantumCircuit({  
-    qubits,  
-    gates,  
-    phi_resonance,  
-  })  
-    
-  res.status(200).json({  
-    success: true,  
-    result,  
-    fidelity: result.fidelity,  
-    coherence_time: result.coherence_time,  
-  })  
-} catch (error) {  
-  res.status(500).json({  
-    success: false,  
-    error: 'Quantum circuit processing failed',  
-  })  
-}
-
-}
-}
-
-// pages/api/ai/orchestrate.ts
-import type { NextApiRequest, NextApiResponse } from 'next'
-
-export default async function handler(
-req: NextApiRequest,
-res: NextApiResponse
-) {
-const { task, model_preference, consciousness_level } = req.body
-
-try {
-// Multi-AI orchestration logic
-const selectedModel = routeToOptimalModel(task, model_preference)
-const response = await executeAITask(selectedModel, task, consciousness_level)
-
-res.status(200).json({  
-  success: true,  
-  model_used: selectedModel,  
-  response,  
-  cost_optimization: response.cost_savings,  
-  response_time: response.processing_time,  
-})
-
-} catch (error) {
-res.status(500).json({
-success: false,
-error: 'AI orchestration failed',
-})
-}
-}
-
-// pages/api/blockchain/hybrid.ts
-import type { NextApiRequest, NextApiResponse } from 'next'
-
-export default async function handler(
-req: NextApiRequest,
-res: NextApiResponse
-) {
-try {
-// HYBRID blockchain operations
-const networkStatus = await getHybridNetworkStatus()
-const trustUnits = await getTrustUnitMetrics()
-
-res.status(200).json({  
-  success: true,  
-  network: networkStatus,  
-  trust_units: trustUnits,  
-  tps: networkStatus.transactions_per_second,  
-  uptime: networkStatus.uptime_percentage,  
-})
-
-} catch (error) {
-res.status(500).json({
-success: false,
-error: 'HYBRID network connection failed',
-})
-}
-}
-
-// ==========================================
 // TypeScript Configuration Updates
 // ==========================================
 
@@ -532,4 +436,3 @@ active_validators: 127,
 consensus_status: 'ACTIVE',
 }
 }
-
