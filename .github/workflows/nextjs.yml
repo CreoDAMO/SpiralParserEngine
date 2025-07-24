@@ -1,5 +1,5 @@
-# Simplified Next.js deployment workflow for SpiralScript IDE
-name: Deploy SpiralScript IDE to Pages
+
+name: Deploy SpiralScript IDE to GitHub Pages
 
 on:
   push:
@@ -42,10 +42,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Compile ANTLR grammar
+        run: npm run compile:grammar
+        continue-on-error: true
+
+      - name: Generate language files
+        run: npm run generate:languages
+        continue-on-error: true
+
       - name: Build with Next.js
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: 1
+          NODE_ENV: production
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
