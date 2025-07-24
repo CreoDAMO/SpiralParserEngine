@@ -1,33 +1,11 @@
-
 // next.config.js
 const withPWA = require('@ducanh2912/next-pwa').default({
   dest: 'public',
-  cacheOnFrontEndNav: true,
-  aggressiveFrontEndNavCaching: true,
-  reloadOnOnline: true,
-  swcMinify: true,
   disable: process.env.NODE_ENV === 'development',
-  workboxOptions: {
-    disableDevLogs: true,
-    maximumFileSizeToCacheInBytes: 5000000, // 5MB for quantum assets
-    runtimeCaching: [
-      {
-        urlPattern: /^https?.*/,
-        handler: 'NetworkFirst',
-        options: {
-          cacheName: 'spiral-cache',
-          networkTimeoutSeconds: 15,
-          expiration: {
-            maxEntries: 1000,
-            maxAgeSeconds: 24 * 60 * 60, // 24 hours
-          },
-        },
-      },
-    ],
-  }
-})
+  register: true,
+  skipWaiting: true,
+});
 
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,

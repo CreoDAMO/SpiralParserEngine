@@ -9,7 +9,7 @@ run = ["sh", "-c", "npm start"]
 build = ["sh", "-c", "npm run build"]
 
 [workflows]
-runButton = "SpiralScript Development"
+runButton = "SpiralScript Development (Fixed)"
 
 [[workflows.workflow]]
 name = "SpiralScript Development"
@@ -27,6 +27,19 @@ args = "npm run compile:grammar"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run generate:languages"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+
+[[workflows.workflow]]
+name = "SpiralScript Development (Fixed)"
+author = 45468930
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm install"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
