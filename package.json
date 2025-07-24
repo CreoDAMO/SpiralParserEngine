@@ -5,21 +5,12 @@
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run compile:grammar && next build",
     "start": "next start",
     "lint": "next lint",
-    "prebuild": "npm run generate:languages",
-    "generate:languages": "tsx scripts/generate-languages.ts",
     "compile:grammar": "tsx scripts/compile-grammar.ts",
-    "test:parser": "tsx -e \"import('./lib/spiral-parser').then(m => console.log('Parser loaded:', !!m.spiralParser))\"",
-    "test:antlr": "tsx -e \"import('./client/src/generated/SpiralScriptIntegration').then(m => console.log('ANTLR4 Parser loaded:', !!m.compiledParser)).catch(e => console.log('ANTLR4 not compiled yet, run compile:grammar first'))\"",
-    "test:generated-files": "tsx scripts/test-generated-files.ts",
-    "validate:languages": "tsx scripts/generate-languages.ts && tsx scripts/test-generated-files.ts",
-    "check": "tsc --noEmit",
-    "db:push": "drizzle-kit push",
-    "server:dev": "NODE_ENV=development tsx server/index.ts",
-    "server:build": "esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "server:start": "NODE_ENV=production node dist/index.js"
+    "generate:languages": "tsx scripts/generate-languages.ts",
+    "test:generated": "tsx scripts/test-generated-files.ts"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",

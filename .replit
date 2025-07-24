@@ -7,3 +7,23 @@ channel = "stable-25_05"
 [deployment]
 run = ["sh", "-c", "npm start"]
 build = ["sh", "-c", "npm run build"]
+
+[workflows]
+runButton = "SpiralScript Development"
+
+[[workflows.workflow]]
+name = "SpiralScript Development"
+author = 45468930
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run compile:grammar"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run generate:languages"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
