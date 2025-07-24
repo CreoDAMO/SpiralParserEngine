@@ -210,7 +210,21 @@ import dynamic from 'next/dynamic'
 export const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
 ssr: false,
 loading: () => (
-<div className="flex items-center justify-center h-64 bg-gray-900 rounded-lg">
+// Fixed Next.js configuration
+const nextConfig = {
+  experimental: {
+    appDir: true,
+  },
+  webpack: (config) => {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+    };
+    return config;
+  },
+};
 <div className="text-green-400 text-lg animate-pulse">
 Loading SpiralScript Editor...
 </div>
