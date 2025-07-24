@@ -19,8 +19,6 @@ const nextConfig = {
   // Image optimization
   images: {
     unoptimized: true,
-    domains: ['localhost', 'spiralscript.io', 'quantum-assets.com'],
-    formats: ['image/webp', 'image/avif'],
   },
 
   // Webpack configuration for SpiralScript IDE
@@ -29,37 +27,31 @@ const nextConfig = {
     config.module.rules.push({
       test: /\.g4$/,
       use: 'raw-loader',
-    })
+    });
 
-    // Three.js optimization for quantum visualizations  
-    config.resolve.alias = {  
-      ...config.resolve.alias,  
-      'three/examples/jsm/controls/OrbitControls': 'three/examples/jsm/controls/OrbitControls.js',  
-      'three/examples/jsm/loaders/GLTFLoader': 'three/examples/jsm/loaders/GLTFLoader.js',  
-      'three/examples/jsm/postprocessing/EffectComposer': 'three/examples/jsm/postprocessing/EffectComposer.js',  
-    }  
+    // Three.js optimization for quantum visualizations
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'three/examples/jsm/controls/OrbitControls': 'three/examples/jsm/controls/OrbitControls.js',
+      'three/examples/jsm/loaders/GLTFLoader': 'three/examples/jsm/loaders/GLTFLoader.js',
+      'three/examples/jsm/postprocessing/EffectComposer': 'three/examples/jsm/postprocessing/EffectComposer.js',
+    };
 
-    // Handle Node.js modules in browser environment  
-    config.resolve.fallback = {  
-      ...config.resolve.fallback,  
-      fs: false,  
-      net: false,  
-      tls: false,  
-      crypto: require.resolve('crypto-browserify'),  
-      stream: require.resolve('stream-browserify'),  
-      util: require.resolve('util'),  
-      buffer: require.resolve('buffer'),  
-      process: require.resolve('process/browser'),  
-    }  
+    // Handle Node.js modules in browser environment
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+      crypto: require.resolve('crypto-browserify'),
+      stream: require.resolve('stream-browserify'),
+      util: require.resolve('util'),
+      buffer: require.resolve('buffer'),
+      process: require.resolve('process/browser'),
+    };
 
-    // Monaco Editor webpack configuration  
-    config.module.rules.push({  
-      test: /\.worker\.js$/,  
-      use: { loader: 'worker-loader' },  
-    })  
-
-    // Quantum computing libraries support  
-    config.externals = config.externals || []  
+    // Quantum computing libraries support
+    config.externals = config.externals || [];
     if (!isServer) {  
       config.externals.push({  
         'qiskit': 'qiskit',  
