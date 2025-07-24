@@ -1,3 +1,4 @@
+
 // next.config.js
 const withPWA = require('@ducanh2912/next-pwa').default({
   dest: 'public',
@@ -30,18 +31,14 @@ const withPWA = require('@ducanh2912/next-pwa').default({
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  output: 'export',
   trailingSlash: true,
-  distDir: 'out',
-  basePath: process.env.NODE_ENV === 'production' ? '/SpiralParserEngine' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/SpiralParserEngine/' : '',
 
   experimental: {
     esmExternals: false,
     serverComponentsExternalPackages: ['antlr4ts', 'three'],
   },
 
-  // Image optimization for static export
+  // Image optimization
   images: {
     unoptimized: true,
     domains: ['localhost', 'spiralscript.io', 'quantum-assets.com'],
