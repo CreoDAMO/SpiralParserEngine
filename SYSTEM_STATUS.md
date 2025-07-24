@@ -1,5 +1,5 @@
 # SpiralScript Ecosystem Status Report
-Generated: Wed Jul 23 12:14:31 UTC 2025
+Generated: Thu Jul 24 12:57:03 UTC 2025
 
 ## System Environment
 - Node.js: v22.17.1
@@ -9,7 +9,7 @@ Generated: Wed Jul 23 12:14:31 UTC 2025
 ## Grammar Status: ❌ MISSING
 
 ## Dependencies
-rest-express@1.0.0 /home/runner/work/SpiralParserEngine/SpiralParserEngine
+spiral-parser-engine@1.0.0 /home/runner/work/SpiralParserEngine/SpiralParserEngine
 ├── @emnapi/core@1.4.5 extraneous
 ├── @emnapi/runtime@1.4.5 extraneous
 ├── @emnapi/wasi-threads@1.0.4 extraneous
