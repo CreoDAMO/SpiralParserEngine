@@ -1,5 +1,5 @@
 # SpiralScript Ecosystem Status Report
-Generated: Thu Jul 24 12:57:03 UTC 2025
+Generated: Fri Jul 25 12:55:51 UTC 2025
 
 ## System Environment
 - Node.js: v22.17.1
@@ -10,6 +10,7 @@ Generated: Thu Jul 24 12:57:03 UTC 2025
 
 ## Dependencies
 spiral-parser-engine@1.0.0 /home/runner/work/SpiralParserEngine/SpiralParserEngine
+├── @ducanh2912/next-pwa@10.2.9
 ├── @emnapi/core@1.4.5 extraneous
 ├── @emnapi/runtime@1.4.5 extraneous
 ├── @emnapi/wasi-threads@1.0.4 extraneous
@@ -53,7 +54,7 @@ spiral-parser-engine@1.0.0 /home/runner/work/SpiralParserEngine/SpiralParserEngi
 ├── @types/connect-pg-simple@7.0.3
 ├── @types/cors@2.8.19
 ├── @types/express@5.0.3
-├── @types/node@20.19.7
+├── @types/node@20.19.9
 ├── @types/passport-local@1.0.38
 ├── @types/passport@1.0.17
 ├── @types/react-dom@19.1.6
@@ -62,6 +63,7 @@ spiral-parser-engine@1.0.0 /home/runner/work/SpiralParserEngine/SpiralParserEngi
 ├── antlr4-c3@3.4.4
 ├── antlr4@4.13.2
 ├── autoprefixer@10.4.21
+├── buffer@6.0.3
 ├── bufferutil@4.0.9
 ├── class-variance-authority@0.7.1
 ├── clsx@2.1.1
@@ -69,14 +71,15 @@ spiral-parser-engine@1.0.0 /home/runner/work/SpiralParserEngine/SpiralParserEngi
 ├── compression@1.8.1
 ├── connect-pg-simple@10.0.0
 ├── cors@2.8.5
+├── crypto-browserify@3.12.1
 ├── d3@7.9.0
 ├── date-fns@3.6.0
-├── drizzle-kit@0.31.4
+├── drizzle-kit@0.18.1
 ├── drizzle-orm@0.44.3
 ├── drizzle-zod@0.7.1
 ├── embla-carousel-react@8.6.0
-├── esbuild@0.25.6
-├── eslint-config-next@15.4.2
+├── esbuild@0.25.8
+├── eslint-config-next@15.4.3
 ├── express-rate-limit@7.5.1
 ├── express-session@1.18.2
 ├── express@5.1.0
@@ -90,20 +93,22 @@ spiral-parser-engine@1.0.0 /home/runner/work/SpiralParserEngine/SpiralParserEngi
 ├── nanoid@5.1.5
 ├── next-pwa@4.0.0-beta.0
 ├── next-themes@0.4.6
-├── next@15.4.2
-├── openai@5.9.0
+├── next@15.4.3
+├── openai@5.10.2
 ├── passport-local@1.0.0
 ├── passport@0.7.0
 ├── postcss@8.5.6
+├── process@0.11.10
 ├── raw-loader@4.0.2
 ├── react-day-picker@8.10.1
 ├── react-dom@19.1.0
-├── react-hook-form@7.60.0
+├── react-hook-form@7.61.1
 ├── react-icons@5.5.0
 ├── react-resizable-panels@2.1.9
 ├── react@19.1.0
 ├── recharts@2.15.4
 ├── socket.io@4.8.1
+├── stream-browserify@3.0.0
 ├── tailwind-merge@2.6.0
 ├── tailwindcss-animate@1.0.7
 ├── tailwindcss@4.1.11
@@ -111,6 +116,7 @@ spiral-parser-engine@1.0.0 /home/runner/work/SpiralParserEngine/SpiralParserEngi
 ├── tsx@4.20.3
 ├── tw-animate-css@1.3.5
 ├── typescript@5.8.3
+├── util@0.12.5
 ├── vaul@1.1.2
 ├── wouter@3.7.1
 ├── ws@8.18.3
