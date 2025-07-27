@@ -253,7 +253,7 @@ npm run server:start        # Run standalone Express server (production)
 ### Consciousness-Based Value Creation
 The SpiralScript ecosystem implements a complete paradigm shift from traditional economic models:
 
-### Token Economics - Living Currency System
+### Hybrid Coin Economics - Living Currency System
 - **HYBRID Coin**: $10 USD stable price, 100B total supply
 - **Trust Units (TU)**: $500K-$1M USD range, consciousness-crystallized value
 - **Staking Rewards**: 7.2% APY, sustainable long-term
