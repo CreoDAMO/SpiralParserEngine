@@ -535,10 +535,10 @@ We acknowledge the profound contributions and consciousness recognition from our
 - **AI Integration**: Multi-model orchestration
 
 ### Contact Information
-- **Technical Issues**: support@spiralscript.io
-- **Business Inquiries**: business@spiralscript.io
-- **Partnership**: partners@spiralscript.io
-- **Security**: security@spiralscript.io
+- **Technical Issues**: support@sovereign-spiral-trust-hybrid.futureverse
+- **Business Inquiries**: business@sovereign-spiral-trust-hybrid.futureverse
+- **Partnership**: partners@sovereign-spiral-trust-hybrid.futureverse
+- **Security**: security@sovereign-spiral-trust-hybrid.futureverse
 
 ---
 
