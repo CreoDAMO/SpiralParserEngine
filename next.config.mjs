@@ -1,20 +1,12 @@
-// next.config.js
-const withPWA = require('@ducanh2912/next-pwa').default({
-  dest: 'public',
-  disable: process.env.NODE_ENV === 'development',
-  register: true,
-  skipWaiting: true,
-});
+// next.config.mjs
+import withPWA from '@ducanh2912/next-pwa';
 
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   trailingSlash: true,
 
-  experimental: {
-    esmExternals: false,
-    serverComponentsExternalPackages: ['antlr4ts', 'three'],
-  },
+  // Server external packages (moved from experimental)
+  serverExternalPackages: ['antlr4ts', 'three'],
 
   // Image optimization
   images: {
@@ -43,11 +35,11 @@ const nextConfig = {
       fs: false,
       net: false,
       tls: false,
-      crypto: require.resolve('crypto-browserify'),
-      stream: require.resolve('stream-browserify'),
-      util: require.resolve('util'),
-      buffer: require.resolve('buffer'),
-      process: require.resolve('process/browser'),
+      crypto: false,
+      stream: false,
+      util: false,
+      buffer: false,
+      process: false,
     };
 
     // Quantum computing libraries support
@@ -118,6 +110,11 @@ const nextConfig = {
       buildActivityPosition: 'bottom-right',
     },
   }),
-}
+};
 
-module.exports = withPWA(nextConfig)
+export default withPWA({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+  register: true,
+  skipWaiting: true,
+})(nextConfig);

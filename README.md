@@ -174,7 +174,7 @@ npm run server:start        # Run standalone Express server (production)
 ```
 
 ### Configuration Files
-- **next.config.js**: Next.js configuration with webpack optimizations
+- **next.config.mjs**: Next.js configuration with webpack optimizations (ES module format)
 - **tsconfig.json**: TypeScript configuration with strict mode
 - **tailwind.config.ts**: Tailwind CSS v4 configuration
 - **vercel.json**: Vercel deployment configuration
