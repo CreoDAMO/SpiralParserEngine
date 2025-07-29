@@ -7,7 +7,7 @@ program
 
 module
     : moduleDeclaration statement*
-    | statement+
+    | statement*
     ;
 
 moduleDeclaration
