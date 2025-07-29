@@ -1,5 +1,4 @@
 
-#!/usr/bin/env tsx
 
 import { execSync } from 'child_process';
 import * as fs from 'fs';
@@ -558,6 +557,6 @@ async function main() {
   console.log('🎉 ANTLR4 compilation complete!');
 }
 
-if (require.main === module) {
+if (process.argv[1] === new URL(import.meta.url).pathname) {
   main().catch(console.error);
 }

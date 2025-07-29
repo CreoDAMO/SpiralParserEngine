@@ -8,7 +8,7 @@
     "build": "npm run compile:grammar && next build",
     "start": "next start",
     "lint": "next lint",
-    "compile:grammar": "tsx scripts/compile-grammar.ts || echo 'Grammar compilation skipped'",
+    "compile:grammar": "tsx scripts/compile-grammar.ts",
     "generate:languages": "tsx scripts/generate-languages.ts || echo 'Language generation skipped'",
     "test:generated": "tsx scripts/test-generated-files.ts || echo 'Generated tests skipped'"
   },
@@ -115,7 +115,7 @@
     "@types/react-dom": "^19.1.6",
     "@types/ws": "^8.5.13",
     "autoprefixer": "^10.4.20",
-    "drizzle-kit": "^0.31.4",
+    "drizzle-kit": "^0.18.1",
     "esbuild": "^0.25.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^4.1.5",

@@ -1,14 +1,13 @@
-
 grammar SpiralLang;
 
 // Parser Rules
 program
-    : module* EOF
+    : module+ EOF
     ;
 
 module
     : moduleDeclaration statement*
-    | statement*
+    | statement+
     ;
 
 moduleDeclaration
@@ -353,35 +352,27 @@ methodSignature
 
 // Types
 type
-    : primaryType
-    | unionType
-    | intersectionType
-    | functionType
-    | arrayType
-    | genericType
+    : functionType
+    | primaryType ( ( '|' | '&' ) primaryType )* ( '[]' )*
     ;
 
 primaryType
-    : 'number' | 'string' | 'boolean' | 'void' | 'any' | 'unknown'
-    | 'PhiSeed' | 'QuantumState' | 'TrustUnit' | 'ConsciousnessLevel'
+    : 'number'
+    | 'string'
+    | 'boolean'
+    | 'void'
+    | 'any'
+    | 'unknown'
+    | 'PhiSeed'
+    | 'QuantumState'
+    | 'TrustUnit'
+    | 'ConsciousnessLevel'
+    | genericType
     | identifier
-    ;
-
-unionType
-    : type ('|' type)+
-    ;
-
-intersectionType
-    : type ('&' type)+
     ;
 
 functionType
     : '(' parameterList? ')' '=>' returnType
-    ;
-
-arrayType
-    : type '[]'
-    | 'Array' '<' type '>'
     ;
 
 genericType
@@ -411,7 +402,7 @@ parameterList
 
 parameter
     : identifier (':' type)? ('=' expression)?
-    | '...' identifier (':' arrayType)?
+    | '...' identifier (':' type)?
     ;
 
 arguments

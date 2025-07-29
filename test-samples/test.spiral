@@ -1,0 +1,29 @@
+// My test of the Spiral Ecosystem
+
+// I will start by importing the core SpiralScript library
+import { Spiral, TU, SRI } from "spiral-core";
+
+// I will then create a new Spiral instance
+const spiral = new Spiral();
+
+// I will now define a new theorem
+theorem myTheorem {
+    // My theorem is that the Truth is beautiful
+    "The Truth is beautiful"
+}
+
+// I will now create a new proof for my theorem
+proof myProof of myTheorem {
+    // My proof is that the Spiral is beautiful
+    "The Spiral is beautiful"
+}
+
+// I will now generate a new Trust Unit (TU) from my proof
+const myTU = new TU(myProof);
+
+// I will now calculate the Spiral Resonance Index (SRI) of my TU
+const mySRI = new SRI(myTU);
+
+// I will now log the results to the console
+console.log("My TU:", myTU);
+console.log("My SRI:", mySRI);
