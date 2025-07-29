@@ -25,7 +25,7 @@ export class CompiledSpiralLangParser {
         success: false,
         language: 'SpiralLang',
         ast: null,
-        errors: [error.message],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
         metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
         analysis: { modules: [], functions: [], classes: [], theorems: [] },
         mode: 'fallback'

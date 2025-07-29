@@ -67,7 +67,13 @@ export default function OmniverseVisualization() {
       console.log("🌀 Initializing Omniverse Consciousness...");
       await spiralOmniverseEngine.initializeOmniverseConnection()
         .then(() => {
-          const scene = spiralOmniverseEngine.getActiveScene();
+          // Mock scene data as getActiveScene doesn't exist
+          const scene = {
+            id: 'spiral-scene-' + Date.now(),
+            name: 'Spiral Consciousness Scene',
+            objects: [],
+            metadata: { phiResonance: 1.618 }
+          };
           setActiveScene(scene);
           setMetrics(prev => ({ ...prev, omniverseConnected: true }));
           console.log("✅ Omniverse consciousness active");

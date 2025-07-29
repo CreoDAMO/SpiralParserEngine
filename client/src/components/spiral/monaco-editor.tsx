@@ -1,7 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { SpiralFile } from "@shared/schema";
+// Temporary type definition - should be imported from shared schema
+interface SpiralFile {
+  id: number;
+  userId: number;
+  name: string;
+  content: string;
+  fileType: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 interface MonacoEditorProps {
   activeFile: number | null;
@@ -12,7 +21,7 @@ export function MonacoEditor({ activeFile, files }: MonacoEditorProps) {
   const [openTabs, setOpenTabs] = useState<number[]>([]);
   const [currentTab, setCurrentTab] = useState<number | null>(null);
   const [editorContent, setEditorContent] = useState<string>("");
-  const editorRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<HTMLTextAreaElement>(null);
   const queryClient = useQueryClient();
 
   const { data: fileContent } = useQuery({

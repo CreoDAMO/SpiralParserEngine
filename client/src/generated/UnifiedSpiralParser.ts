@@ -63,7 +63,7 @@ export class UnifiedSpiralParser {
         success: false,
         language: language || 'unknown',
         ast: null,
-        errors: [error.message],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
         metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
         mode: this.mode
       };

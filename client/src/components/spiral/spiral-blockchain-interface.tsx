@@ -158,7 +158,7 @@ consciousness AdvancedAI {
 
       alert(`Contract deployed successfully!\nAddress: ${contractAddress}`);
     } catch (error) {
-      alert(`Deployment failed: ${error.message}`);
+      alert(`Deployment failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsDeploying(false);
     }
@@ -198,7 +198,7 @@ consciousness AdvancedAI {
       updateBlockchainInfo();
 
     } catch (error) {
-      alert(`Execution failed: ${error.message}`);
+      alert(`Execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsExecuting(false);
     }
@@ -211,7 +211,7 @@ consciousness AdvancedAI {
       updateBlockchainInfo();
       alert('Block mined successfully!');
     } catch (error) {
-      alert(`Mining failed: ${error.message}`);
+      alert(`Mining failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 

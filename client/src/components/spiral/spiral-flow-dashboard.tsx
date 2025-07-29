@@ -24,7 +24,7 @@ export function SpiralFlowDashboard() {
   });
 
   const [flashLoanAmount, setFlashLoanAmount] = useState('');
-  const [arbitrageOpportunity, setArbitrageOpportunity] = useState(null);
+  const [arbitrageOpportunity, setArbitrageOpportunity] = useState<{ profit: number; executed: boolean } | null>(null);
 
   const calculateTrustValue = (tu: number) => {
     return tu * metrics.phiCoherence * 1000000; // $500K-$1M per TU

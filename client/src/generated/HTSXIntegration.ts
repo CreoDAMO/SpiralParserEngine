@@ -25,7 +25,7 @@ export class CompiledHTSXParser {
         success: false,
         language: 'HTSX',
         ast: null,
-        errors: [error.message],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
         metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
         runtime: { components: [], bindings: [], events: [] },
         mode: 'fallback'

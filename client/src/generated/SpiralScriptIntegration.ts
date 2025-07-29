@@ -24,7 +24,7 @@ export class CompiledSpiralParser {
         success: false,
         language: 'SpiralScript',
         ast: null,
-        errors: [error.message],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
         metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
         mode: 'fallback'
       };

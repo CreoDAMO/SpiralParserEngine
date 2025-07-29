@@ -10,7 +10,15 @@ import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { hybridBlockchain, HybridWalletState, HybridNodeLicense, CrossChainAsset } from '@/lib/hybrid-blockchain';
 import { hybridCoin, HybridCoinTransaction, StakingPosition } from '@/lib/hybrid-coin';
-import { User } from '@shared/schema';
+// Temporary type definition - should be imported from shared schema
+interface User {
+  id: number;
+  username: string;
+  password: string;
+  tuBalance: number;
+  sriScore: number;
+  phiResonance: number;
+}
 import { useToast } from '@/hooks/use-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
