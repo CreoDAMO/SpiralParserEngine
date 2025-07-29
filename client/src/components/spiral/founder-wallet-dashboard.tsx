@@ -59,11 +59,16 @@ export function FounderWalletDashboard({ className }: FounderWalletDashboardProp
 
   // Create multisig transaction
   const createTransactionMutation = useMutation({
-    mutationFn: async (params: typeof newTransaction) => {
+    mutationFn: async (params: {
+      type: 'governance' | 'vesting' | 'emergency' | 'distribution' | 'burn';
+      amount: number;
+      recipient?: string;
+      purpose: string;
+    }) => {
       return founderWallet.createMultiSigTransaction(
         params.type,
         params.amount,
-        params.recipient,
+        params.recipient || '',
         params.purpose
       );
     },

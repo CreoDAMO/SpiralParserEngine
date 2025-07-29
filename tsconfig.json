@@ -24,10 +24,11 @@
       "@/components/*": ["./components/*"],
       "@/client/*": ["./client/*"],
       "@/pages/*": ["./client/src/pages/*"],
+      "@/hooks/*": ["./lib/hooks/*", "./client/src/hooks/*"],
       "@/lib/*": ["./lib/*"],
       "@/types/*": ["./types/*"],
       "@/styles/*": ["./styles/*"],
-      "@shared/*": ["./shared/*"],
+      "@/shared/*": ["./shared/*"],
       "~/*": ["./*"]
     }
   },

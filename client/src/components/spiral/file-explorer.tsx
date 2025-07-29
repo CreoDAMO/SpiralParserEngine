@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { SpiralFile } from "@shared/schema";
+// Temporary type definition - should be imported from shared schema
+interface SpiralFile {
+  id: number;
+  userId: number;
+  name: string;
+  content: string;
+  fileType: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 interface FileExplorerProps {
   files: SpiralFile[];

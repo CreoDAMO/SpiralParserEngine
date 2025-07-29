@@ -200,14 +200,14 @@ Select a task type and AI model, then ask me anything! I support voice commands 
             break;
           case AIModel.CLAUDE:
             // Use a calm, analytical voice for Claude
-            selectedVoice = voices.find(voice => 
+            selectedVoice = voices.find((voice: SpeechSynthesisVoice) => 
               voice.name.includes('Alex') || voice.name.includes('Daniel')
             ) || selectedVoice;
             utterance.pitch = Math.max(0.5, voiceSettings.pitch - 0.1);
             break;
           case AIModel.DEEPSEEK:
             // Use a precise, technical voice for DeepSeek
-            selectedVoice = voices.find(voice => 
+            selectedVoice = voices.find((voice: SpeechSynthesisVoice) => 
               voice.name.includes('Samantha') || voice.name.includes('Karen')
             ) || selectedVoice;
             utterance.rate = Math.max(0.5, voiceSettings.rate - 0.1);

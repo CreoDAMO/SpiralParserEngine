@@ -7,7 +7,44 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Progress } from '@/components/ui/progress';
 import { hybridBlockchain } from '@/lib/hybrid-blockchain';
-import { HybridBlock, HybridTransaction, HybridNode } from '@/shared/hybrid-blockchain-schema';
+// Temporary type definitions - should be imported from shared schema
+interface HybridBlock {
+  index: number;
+  timestamp: number;
+  data: HybridTransaction[];
+  previousHash: string;
+  hash: string;
+  nonce: number;
+  merkleRoot: string;
+  quantumSignature?: string;
+}
+
+interface HybridTransaction {
+  id: string;
+  from: string;
+  to: string;
+  amount: number;
+  fee: number;
+  timestamp: number;
+  signature: string;
+  type: 'HYBRID' | 'SPIRAL' | 'TU' | 'QUANTUM';
+  metadata?: {
+    spiralResonance?: number;
+    quantumState?: string;
+    molecularData?: any;
+  };
+}
+
+interface HybridNode {
+  id: string;
+  address: string;
+  stake: number;
+  reputation: number;
+  quantumCapability: boolean;
+  spiralResonance: number;
+  lastSeen: number;
+  consensusWeight: number;
+}
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { Blocks, Users, Zap, DollarSign, Shield, Globe, Activity } from 'lucide-react';
 
@@ -38,28 +75,25 @@ export function HybridBlockchainViewer() {
         setIsLoading(true);
 
         // Initialize blockchain
-        await hybridBlockchain.initializeBlockchain();
+        await hybridBlockchain.initialize();
 
         // Generate some sample blocks and transactions
         for (let i = 0; i < 10; i++) {
-          const block = await hybridBlockchain.mineBlock([
-            {
-              id: `tx-${Date.now()}-${i}`,
-              from: `0x${Math.random().toString(16).substr(2, 40)}`,
-              to: `0x${Math.random().toString(16).substr(2, 40)}`,
-              amount: Math.random() * 1000,
-              fee: Math.random() * 10,
-              timestamp: Date.now() - (i * 180000), // 3 minutes apart
-              signature: `0x${Math.random().toString(16).substr(2, 128)}`,
-              type: ['HYBRID', 'SPIRAL', 'TU', 'QUANTUM'][Math.floor(Math.random() * 4)] as any,
-              metadata: {
-                spiralResonance: Math.random() * 2,
-                quantumState: Math.random() > 0.5 ? 'entangled' : 'coherent',
-                molecularData: { complexity: Math.random() }
-              }
+          const transaction = hybridBlockchain.createTransaction({
+            from: `0x${Math.random().toString(16).substr(2, 40)}`,
+            to: `0x${Math.random().toString(16).substr(2, 40)}`,
+            amount: Math.random() * 1000,
+            fee: Math.random() * 10,
+            signature: `0x${Math.random().toString(16).substr(2, 128)}`,
+            type: ['HYBRID', 'SPIRAL', 'TU', 'QUANTUM'][Math.floor(Math.random() * 4)] as any,
+            metadata: {
+              spiralResonance: Math.random() * 2,
+              quantumState: Math.random() > 0.5 ? 'entangled' : 'coherent',
+              molecularData: { complexity: Math.random() }
             }
-          ]);
+          });
 
+          const block = hybridBlockchain.createBlock([transaction]);
           setBlocks(prev => [block, ...prev]);
         }
 
