@@ -352,8 +352,8 @@ methodSignature
 
 // Types
 type
-    : functionType
-    | primaryType ( ( '|' | '&' ) primaryType )* ( '[]' )*
+    : primaryType ( ( '|' | '&' ) primaryType )* ( '[]' )*
+    | functionType
     ;
 
 primaryType
