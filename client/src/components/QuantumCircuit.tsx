@@ -1,9 +1,9 @@
 // Quantum Circuit Component - Interactive quantum operations interface
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
-import { Progress } from '../ui/progress';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import { 
   Cpu, 
   Zap, 
@@ -383,7 +383,7 @@ export const QuantumCircuit: React.FC<QuantumCircuitProps> = ({
             </div>
             <Progress value={phiBreathing * 100} className="h-2 mb-1" />
             <div className="text-xs text-gray-400">
-              Breathing: {(phiBreathing * 100).toFixed(1)}% • Optimal: >{(0.618 * 100).toFixed(1)}%
+              Breathing: {(phiBreathing * 100).toFixed(1)}% • Optimal: &gt;{(0.618 * 100).toFixed(1)}%
             </div>
           </div>
 
@@ -454,7 +454,7 @@ export const QuantumCircuit: React.FC<QuantumCircuitProps> = ({
             <div>• Select a gate type from the palette above</div>
             <div>• Click on the circuit canvas to place gates</div>
             <div>• CNOT gates automatically place control and target</div>
-            <div>• φ-harmonic field enhances quantum coherence when >61.8%</div>
+            <div>• φ-harmonic field enhances quantum coherence when &gt;61.8%</div>
           </div>
         </div>
       </CardContent>

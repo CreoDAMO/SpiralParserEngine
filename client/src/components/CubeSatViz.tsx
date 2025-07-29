@@ -1,9 +1,9 @@
 // CubeSat Visualization Component - 3D orbital display with quantum entanglement
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Satellite, Zap, Radio, RefreshCw } from 'lucide-react';
 
 interface CubeSat {
@@ -26,10 +26,10 @@ export const CubeSatViz: React.FC<CubeSatVizProps> = ({
   className = '' 
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
-  const sceneRef = useRef<THREE.Scene>();
-  const rendererRef = useRef<THREE.WebGLRenderer>();
-  const cameraRef = useRef<THREE.PerspectiveCamera>();
-  const animationIdRef = useRef<number>();
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const animationIdRef = useRef<number | null>(null);
   const [selectedSat, setSelectedSat] = useState<string | null>(null);
   const [isAnimating, setIsAnimating] = useState(true);
 

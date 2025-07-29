@@ -16,7 +16,7 @@ interface QuantumState {
 
 export default function AdvancedQuantumVisualization() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
   const [isRunning, setIsRunning] = useState(true);
   const [quantumState, setQuantumState] = useState<QuantumState>({
     qubits: 127,

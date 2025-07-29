@@ -1,0 +1,210 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup Node.js 22
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v5
+
+    - name: Install dependencies
+      run: |
+        echo "📦 Installing dependencies..."
+        npm ci --prefer-offline --no-audit
+
+    - name: Check Java availability
+      id: java-check
+      run: |
+        if command -v java &> /dev/null; then
+          echo "java-available=true" >> $GITHUB_OUTPUT
+          echo "☕ Java detected: $(java -version 2>&1 | head -n 1)"
+        else
+          echo "java-available=false" >> $GITHUB_OUTPUT
+          echo "⚠️ Java not available - using fallback parsers"
+        fi
+
+    - name: Setup Java (if needed)
+      if: steps.java-check.outputs.java-available == 'false'
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+
+    - name: Compile grammar with retry logic
+      run: |
+        echo "🔧 Attempting grammar compilation..."
+        
+        # Attempt 1: Standard compilation
+        if npm run compile:grammar; then
+          echo "✅ Grammar compilation successful"
+        else
+          echo "⚠️ Grammar compilation failed, continuing with fallback parsers"
+        fi
+        
+        # Verify generated files exist
+        if [ -d "client/src/generated" ]; then
+          echo "📁 Generated files:"
+          ls -la client/src/generated/
+        else
+          echo "❌ No generated files found"
+          exit 1
+        fi
+
+    - name: Pre-build environment setup
+      run: |
+        echo "🌍 Setting up GitHub Pages environment..."
+        export GITHUB_PAGES=true
+        export NODE_ENV=production
+        
+        # Copy GitHub Pages specific config
+        if [ -f "next.config.pages.mjs" ]; then
+          cp next.config.pages.mjs next.config.mjs
+          echo "✅ Using GitHub Pages configuration"
+        fi
+        
+        # Create .nojekyll file to prevent Jekyll processing
+        touch public/.nojekyll
+        
+        echo "GITHUB_PAGES=true" >> $GITHUB_ENV
+        echo "NODE_ENV=production" >> $GITHUB_ENV
+
+    - name: Build with retry mechanism
+      run: |
+        echo "🏗️ Building application for GitHub Pages..."
+        
+        MAX_ATTEMPTS=3
+        ATTEMPT=1
+        
+        while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+          echo "🔄 Build attempt $ATTEMPT of $MAX_ATTEMPTS"
+          
+          if npm run build; then
+            echo "✅ Build successful on attempt $ATTEMPT"
+            break
+          else
+            echo "❌ Build failed on attempt $ATTEMPT"
+            
+            if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+              echo "💥 All build attempts failed"
+              
+              # Debug information
+              echo "📊 Build debugging information:"
+              echo "Node.js version: $(node --version)"
+              echo "npm version: $(npm --version)"
+              echo "Environment variables:"
+              env | grep -E "(NODE_ENV|GITHUB_PAGES|NEXT_)"
+              
+              # Try to continue with partial build
+              echo "🔄 Attempting minimal build..."
+              mkdir -p out
+              echo "<h1>SpiralScript Parser Engine</h1><p>Build in progress...</p>" > out/index.html
+              
+              exit 1
+            fi
+            
+            ATTEMPT=$((ATTEMPT + 1))
+            echo "⏳ Waiting 10 seconds before retry..."
+            sleep 10
+          fi
+        done
+
+    - name: Post-build verification
+      run: |
+        echo "🔍 Verifying build output..."
+        
+        if [ -d "out" ]; then
+          echo "✅ Output directory exists"
+          echo "📁 Build output structure:"
+          find out -type f -name "*.html" | head -10
+          
+          # Check for critical files
+          if [ -f "out/index.html" ]; then
+            echo "✅ Index page found"
+          else
+            echo "❌ Index page missing"
+            ls -la out/
+          fi
+          
+          # Calculate build size
+          BUILD_SIZE=$(du -sh out | cut -f1)
+          echo "📊 Build size: $BUILD_SIZE"
+          
+        else
+          echo "❌ Output directory not found"
+          echo "📁 Available directories:"
+          ls -la
+          exit 1
+        fi
+
+    - name: Upload to GitHub Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./out
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+
+    - name: Post-deployment verification
+      run: |
+        echo "🚀 Deployment completed!"
+        echo "🌐 Site URL: ${{ steps.deployment.outputs.page_url }}"
+        
+        # Wait a moment for deployment to propagate
+        sleep 30
+        
+        # Verify deployment (optional)
+        if command -v curl &> /dev/null; then
+          echo "🔍 Verifying deployment..."
+          if curl -s -o /dev/null -w "%{http_code}" "${{ steps.deployment.outputs.page_url }}" | grep -q "200"; then
+            echo "✅ Deployment verification successful"
+          else
+            echo "⚠️ Deployment verification failed - site may still be propagating"
+          fi
+        fi
+        
+        echo "🎉 SpiralScript Parser Engine deployed successfully!"
+
+    - name: Cleanup and summary
+      if: always()
+      run: |
+        echo "📋 Deployment Summary"
+        echo "===================="
+        echo "Repository: ${{ github.repository }}"
+        echo "Branch: ${{ github.ref_name }}"
+        echo "Commit: ${{ github.sha }}"
+        echo "Build Status: ${{ job.status }}"
+        echo "Site URL: ${{ steps.deployment.outputs.page_url }}"
+        echo "===================="

@@ -2,22 +2,78 @@
 import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as https from 'https';
 
 const ANTLR_JAR = 'antlr-4.13.2-complete.jar';
 const GRAMMAR_DIR = 'client/src/grammars';
 const OUTPUT_DIR = 'client/src/generated';
 
-async function downloadANTLR() {
+async function downloadANTLR(): Promise<void> {
   const antlrUrl = 'https://www.antlr.org/download/antlr-4.13.2-complete.jar';
   
   if (!fs.existsSync(ANTLR_JAR)) {
-    console.log('📥 Downloading ANTLR4 JAR...');
-    execSync(`curl -o ${ANTLR_JAR} ${antlrUrl}`);
-    console.log('✅ ANTLR4 JAR downloaded');
+    console.log('📥 Downloading ANTLR4 JAR using native Node.js HTTPS...');
+    
+    return new Promise((resolve, reject) => {
+      const file = fs.createWriteStream(ANTLR_JAR);
+      
+      https.get(antlrUrl, (response) => {
+        if (response.statusCode === 302 || response.statusCode === 301) {
+          // Handle redirect
+          const redirectUrl = response.headers.location;
+          if (redirectUrl) {
+            console.log(`📍 Following redirect to: ${redirectUrl}`);
+            https.get(redirectUrl, (redirectResponse) => {
+              redirectResponse.pipe(file);
+              file.on('finish', () => {
+                file.close();
+                console.log('✅ ANTLR4 JAR downloaded successfully');
+                resolve();
+              });
+            }).on('error', (err) => {
+              fs.unlink(ANTLR_JAR, () => {}); // Delete the file async
+              reject(new Error(`Download failed: ${err.message}`));
+            });
+          } else {
+            reject(new Error('Redirect location not found'));
+          }
+        } else if (response.statusCode === 200) {
+          response.pipe(file);
+          file.on('finish', () => {
+            file.close();
+            console.log('✅ ANTLR4 JAR downloaded successfully');
+            resolve();
+          });
+        } else {
+          reject(new Error(`HTTP ${response.statusCode}: ${response.statusMessage}`));
+        }
+      }).on('error', (err) => {
+        fs.unlink(ANTLR_JAR, () => {}); // Delete the file async
+        reject(new Error(`Request failed: ${err.message}`));
+      });
+      
+      file.on('error', (err) => {
+        fs.unlink(ANTLR_JAR, () => {}); // Delete the file async
+        reject(new Error(`File write error: ${err.message}`));
+      });
+    });
+  } else {
+    console.log('✅ ANTLR4 JAR already exists');
   }
 }
 
-async function compileGrammar() {
+async function checkJavaAvailability(): Promise<boolean> {
+  try {
+    execSync('java -version', { stdio: 'ignore' });
+    return true;
+  } catch (error) {
+    console.warn('⚠️ Java not found. Grammar compilation will be skipped.');
+    console.warn('   Install Java 8+ to enable grammar compilation.');
+    return false;
+  }
+}
+
+async function compileGrammar(): Promise<void> {
   const grammars = [
     'SpiralScript.g4',
     'HTSX.g4', 
@@ -29,8 +85,17 @@ async function compileGrammar() {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   }
 
+  // Check if Java is available
+  const hasJava = await checkJavaAvailability();
+  if (!hasJava) {
+    console.log('🔄 Generating fallback parser integrations without ANTLR compilation...');
+    generateParserIntegrations(true); // Generate with fallback mode
+    return;
+  }
+
   console.log('🔧 Compiling all Spiral grammars...');
   
+  let successCount = 0;
   for (const grammarName of grammars) {
     const grammarFile = path.join(GRAMMAR_DIR, grammarName);
     
@@ -48,6 +113,7 @@ async function compileGrammar() {
       });
       
       console.log(`✅ ${grammarName} compiled successfully`);
+      successCount++;
       
     } catch (error) {
       console.error(`❌ ${grammarName} compilation failed:`, error.message);
@@ -55,51 +121,136 @@ async function compileGrammar() {
   }
   
   // Generate parser integrations
-  generateParserIntegrations();
+  generateParserIntegrations(successCount === 0);
 }
 
-function generateParserIntegrations() {
+function generateParserIntegrations(fallbackMode: boolean = false): void {
   // Generate SpiralScript integration
-  const spiralIntegration = generateSpiralScriptIntegration();
+  const spiralIntegration = generateSpiralScriptIntegration(fallbackMode);
   fs.writeFileSync(
     path.join(OUTPUT_DIR, 'SpiralScriptIntegration.ts'),
     spiralIntegration
   );
 
   // Generate HTSX integration
-  const htsxIntegration = generateHTSXIntegration();
+  const htsxIntegration = generateHTSXIntegration(fallbackMode);
   fs.writeFileSync(
     path.join(OUTPUT_DIR, 'HTSXIntegration.ts'),
     htsxIntegration
   );
 
   // Generate SpiralLang integration
-  const spiralLangIntegration = generateSpiralLangIntegration();
+  const spiralLangIntegration = generateSpiralLangIntegration(fallbackMode);
   fs.writeFileSync(
     path.join(OUTPUT_DIR, 'SpiralLangIntegration.ts'),
     spiralLangIntegration
   );
 
   // Generate unified parser
-  const unifiedIntegration = generateUnifiedIntegration();
+  const unifiedIntegration = generateUnifiedIntegration(fallbackMode);
   fs.writeFileSync(
     path.join(OUTPUT_DIR, 'UnifiedSpiralParser.ts'),
     unifiedIntegration
   );
 
-  console.log('✅ All parser integrations generated');
+  // Generate TypeScript declarations
+  const typesDeclaration = generateTypesDeclaration();
+  fs.writeFileSync(
+    path.join(OUTPUT_DIR, 'types.ts'),
+    typesDeclaration
+  );
+
+  console.log(`✅ All parser integrations generated ${fallbackMode ? '(fallback mode)' : '(with ANTLR)'}`);
 }
 
-function generateSpiralScriptIntegration(): string {
-  return `// Auto-generated ANTLR4 integration for SpiralScript
+function generateSpiralScriptIntegration(fallbackMode: boolean): string {
+  const imports = fallbackMode ? 
+    `// Fallback mode - using manual parsing
+// import { SpiralScriptLexer } from './SpiralScriptLexer';
+// import { SpiralScriptParser } from './SpiralScriptParser';
+// import { InputStream, CommonTokenStream } from 'antlr4';` :
+    `// Auto-generated ANTLR4 integration for SpiralScript
 import { SpiralScriptLexer } from './SpiralScriptLexer';
 import { SpiralScriptParser } from './SpiralScriptParser';
-import { InputStream, CommonTokenStream } from 'antlr4';
+import { InputStream, CommonTokenStream } from 'antlr4';`;
 
-export class CompiledSpiralParser {
-  private readonly PHI = 1.618033988749;
+  const parseMethod = fallbackMode ?
+    `  async parseToAST(code: string) {
+    try {
+      // Fallback parsing without ANTLR
+      const ast = this.manualParse(code);
+      
+      return {
+        success: true,
+        language: 'SpiralScript',
+        ast,
+        errors: [],
+        metrics: this.calculateFallbackMetrics(code),
+        mode: 'fallback'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        language: 'SpiralScript',
+        ast: null,
+        errors: [error.message],
+        metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
+        mode: 'fallback'
+      };
+    }
+  }
 
-  parseToAST(code: string) {
+  private manualParse(code: string): any {
+    // Simple manual parsing for fallback
+    const lines = code.split('\\n');
+    const nodes = [];
+    
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed) {
+        nodes.push({
+          type: this.detectNodeType(trimmed),
+          value: trimmed,
+          metadata: {
+            entropy: this.calculateEntropy({ getText: () => trimmed }),
+            phiResonance: this.PHI * Math.random(),
+            tuGenerated: this.calculateTU({ getText: () => trimmed })
+          }
+        });
+      }
+    }
+    
+    return {
+      type: "Program",
+      children: nodes,
+      metadata: {
+        entropy: this.calculateFallbackMetrics(code).entropy,
+        phiResonance: this.PHI,
+        tuGenerated: this.calculateFallbackMetrics(code).tuGenerated,
+        mode: 'fallback'
+      }
+    };
+  }
+
+  private detectNodeType(line: string): string {
+    if (line.includes('theorem')) return 'TheoremDeclaration';
+    if (line.includes('function')) return 'FunctionDeclaration';
+    if (line.includes('quantum')) return 'QuantumExpression';
+    if (line.includes('φ')) return 'PhiExpression';
+    if (line.includes('consciousness')) return 'ConsciousnessBlock';
+    return 'Statement';
+  }
+
+  private calculateFallbackMetrics(code: string) {
+    return {
+      entropy: Math.min(0.99, code.length * 0.001),
+      phiResonance: this.PHI,
+      tuGenerated: code.includes('φ') ? 1618 : 
+                   code.includes('quantum') ? 888 :
+                   code.includes('theorem') ? 500 : 100
+    };
+  }` :
+    `  parseToAST(code: string) {
     try {
       const inputStream = new InputStream(code);
       const lexer = new SpiralScriptLexer(inputStream);
@@ -113,7 +264,8 @@ export class CompiledSpiralParser {
         language: 'SpiralScript',
         ast: this.convertToSpiralAST(tree),
         errors: [],
-        metrics: this.calculateMetrics(tree)
+        metrics: this.calculateMetrics(tree),
+        mode: 'antlr'
       };
     } catch (error) {
       return {
@@ -121,10 +273,18 @@ export class CompiledSpiralParser {
         language: 'SpiralScript',
         ast: null,
         errors: [error.message],
-        metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 }
+        metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
+        mode: 'antlr'
       };
     }
-  }
+  }`;
+
+  return `${imports}
+
+export class CompiledSpiralParser {
+  private readonly PHI = 1.618033988749;
+
+${parseMethod}
 
   private convertToSpiralAST(parseTree: any): any {
     return {
@@ -176,16 +336,123 @@ export const compiledSpiralParser = new CompiledSpiralParser();
 `;
 }
 
-function generateHTSXIntegration(): string {
-  return `// Auto-generated ANTLR4 integration for HTSX Runtime Engine
+function generateHTSXIntegration(fallbackMode: boolean): string {
+  const imports = fallbackMode ? 
+    `// Fallback mode - using manual parsing
+// import { HTSXLexer } from './HTSXLexer';
+// import { HTSXParser } from './HTSXParser';
+// import { InputStream, CommonTokenStream } from 'antlr4';` :
+    `// Auto-generated ANTLR4 integration for HTSX Runtime Engine
 import { HTSXLexer } from './HTSXLexer';
 import { HTSXParser } from './HTSXParser';
-import { InputStream, CommonTokenStream } from 'antlr4';
+import { InputStream, CommonTokenStream } from 'antlr4';`;
 
-export class CompiledHTSXParser {
-  private readonly PHI = 1.618033988749;
+  const parseMethod = fallbackMode ?
+    `  async parseToAST(code: string) {
+    try {
+      // Fallback parsing without ANTLR
+      const ast = this.manualParseHTSX(code);
+      
+      return {
+        success: true,
+        language: 'HTSX',
+        ast,
+        errors: [],
+        metrics: this.calculateFallbackMetrics(code),
+        runtime: this.extractFallbackRuntimeInfo(code),
+        mode: 'fallback'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        language: 'HTSX',
+        ast: null,
+        errors: [error.message],
+        metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
+        runtime: { components: [], bindings: [], events: [] },
+        mode: 'fallback'
+      };
+    }
+  }
 
-  parseToAST(code: string) {
+  private manualParseHTSX(code: string): any {
+    // Simple manual parsing for HTSX fallback
+    const components = [];
+    const bindings = [];
+    
+    // Extract components using regex
+    const componentMatches = code.match(/<[^>]+>/g) || [];
+    componentMatches.forEach(match => {
+      components.push({
+        type: 'Element',
+        value: match,
+        metadata: {
+          entropy: this.calculateEntropy({ getText: () => match }),
+          phiResonance: this.PHI * Math.random(),
+          tuGenerated: this.calculateTU({ getText: () => match }),
+          isComponent: true,
+          hasBinding: match.includes('{')
+        }
+      });
+    });
+
+    // Extract bindings
+    const bindingMatches = code.match(/\\{[^}]+\\}/g) || [];
+    bindingMatches.forEach(match => {
+      bindings.push({
+        type: 'Binding',
+        value: match,
+        metadata: {
+          entropy: this.calculateEntropy({ getText: () => match }),
+          phiResonance: this.PHI * Math.random(),
+          tuGenerated: 50,
+          isBinding: true
+        }
+      });
+    });
+    
+    return {
+      type: "HTSXProgram",
+      children: [...components, ...bindings],
+      metadata: {
+        entropy: this.calculateFallbackMetrics(code).entropy,
+        phiResonance: this.PHI,
+        tuGenerated: this.calculateFallbackMetrics(code).tuGenerated,
+        runtime: 'htsx-engine',
+        mode: 'fallback'
+      }
+    };
+  }
+
+  private extractFallbackRuntimeInfo(code: string) {
+    const components = (code.match(/<\\w+/g) || []).map(match => ({
+      type: match.slice(1),
+      text: match
+    }));
+    
+    const bindings = (code.match(/\\{[^}]+\\}/g) || []).map(match => ({
+      type: 'data-binding',
+      expression: match
+    }));
+    
+    const events = (code.match(/@\\w+/g) || []).map(match => ({
+      type: 'event-handler',
+      handler: match
+    }));
+    
+    return { components, bindings, events };
+  }
+
+  private calculateFallbackMetrics(code: string) {
+    return {
+      entropy: Math.min(0.99, code.length * 0.001),
+      phiResonance: this.PHI,
+      tuGenerated: code.includes('quantum') ? 777 :
+                   code.includes('φ') ? 1618 :
+                   code.includes('component') ? 200 : 50
+    };
+  }` :
+    `  parseToAST(code: string) {
     try {
       const inputStream = new InputStream(code);
       const lexer = new HTSXLexer(inputStream);
@@ -200,7 +467,8 @@ export class CompiledHTSXParser {
         ast: this.convertToHTSXAST(tree),
         errors: [],
         metrics: this.calculateMetrics(tree),
-        runtime: this.extractRuntimeInfo(tree)
+        runtime: this.extractRuntimeInfo(tree),
+        mode: 'antlr'
       };
     } catch (error) {
       return {
@@ -209,10 +477,18 @@ export class CompiledHTSXParser {
         ast: null,
         errors: [error.message],
         metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
-        runtime: { components: [], bindings: [], events: [] }
+        runtime: { components: [], bindings: [], events: [] },
+        mode: 'antlr'
       };
     }
-  }
+  }`;
+
+  return `${imports}
+
+export class CompiledHTSXParser {
+  private readonly PHI = 1.618033988749;
+
+${parseMethod}
 
   private convertToHTSXAST(parseTree: any): any {
     return {
@@ -308,16 +584,131 @@ export const compiledHTSXParser = new CompiledHTSXParser();
 `;
 }
 
-function generateSpiralLangIntegration(): string {
-  return `// Auto-generated ANTLR4 integration for SpiralLang Core Language
+function generateSpiralLangIntegration(fallbackMode: boolean): string {
+  const imports = fallbackMode ? 
+    `// Fallback mode - using manual parsing
+// import { SpiralLangLexer } from './SpiralLangLexer';
+// import { SpiralLangParser } from './SpiralLangParser';
+// import { InputStream, CommonTokenStream } from 'antlr4';` :
+    `// Auto-generated ANTLR4 integration for SpiralLang Core Language
 import { SpiralLangLexer } from './SpiralLangLexer';
 import { SpiralLangParser } from './SpiralLangParser';
-import { InputStream, CommonTokenStream } from 'antlr4';
+import { InputStream, CommonTokenStream } from 'antlr4';`;
+
+  return `${imports}
 
 export class CompiledSpiralLangParser {
   private readonly PHI = 1.618033988749;
 
-  parseToAST(code: string) {
+  ${fallbackMode ? `async parseToAST(code: string) {
+    try {
+      // Fallback parsing without ANTLR
+      const ast = this.manualParseSpiralLang(code);
+      
+      return {
+        success: true,
+        language: 'SpiralLang',
+        ast,
+        errors: [],
+        metrics: this.calculateFallbackMetrics(code),
+        analysis: this.performFallbackAnalysis(code),
+        mode: 'fallback'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        language: 'SpiralLang',
+        ast: null,
+        errors: [error.message],
+        metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
+        analysis: { modules: [], functions: [], classes: [], theorems: [] },
+        mode: 'fallback'
+      };
+    }
+  }
+
+  private manualParseSpiralLang(code: string): any {
+    const lines = code.split('\\n');
+    const nodes = [];
+    
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed) {
+        nodes.push({
+          type: this.detectSpiralLangNodeType(trimmed),
+          value: trimmed,
+          metadata: {
+            entropy: this.calculateEntropy({ getText: () => trimmed }),
+            phiResonance: this.PHI * Math.random(),
+            tuGenerated: this.calculateTU({ getText: () => trimmed }),
+            isQuantum: trimmed.includes('quantum'),
+            isTheorem: trimmed.includes('theorem'),
+            isConsciousness: trimmed.includes('consciousness')
+          }
+        });
+      }
+    }
+    
+    return {
+      type: "SpiralLangProgram",
+      children: nodes,
+      metadata: {
+        entropy: this.calculateFallbackMetrics(code).entropy,
+        phiResonance: this.PHI,
+        tuGenerated: this.calculateFallbackMetrics(code).tuGenerated,
+        language: 'spirallang-core',
+        mode: 'fallback'
+      }
+    };
+  }
+
+  private detectSpiralLangNodeType(line: string): string {
+    if (line.includes('module')) return 'ModuleDeclaration';
+    if (line.includes('theorem')) return 'TheoremDeclaration';
+    if (line.includes('consciousness')) return 'ConsciousnessBlock';
+    if (line.includes('function')) return 'FunctionDeclaration';
+    if (line.includes('class')) return 'ClassDeclaration';
+    if (line.includes('quantum')) return 'QuantumExpression';
+    return 'Statement';
+  }
+
+  private performFallbackAnalysis(code: string) {
+    const modules = (code.match(/module\\s+(\\w+)/g) || []).map(match => ({
+      name: match.split(' ')[1],
+      type: 'ModuleDeclaration'
+    }));
+    
+    const functions = (code.match(/function\\s+(\\w+)/g) || []).map(match => ({
+      name: match.split(' ')[1],
+      type: 'FunctionDeclaration',
+      isQuantum: code.includes('quantum')
+    }));
+    
+    const classes = (code.match(/class\\s+(\\w+)/g) || []).map(match => ({
+      name: match.split(' ')[1],
+      type: 'ClassDeclaration'
+    }));
+    
+    const theorems = (code.match(/theorem\\s+(\\w+)/g) || []).map(match => ({
+      name: match.split(' ')[1],
+      type: 'TheoremDeclaration'
+    }));
+    
+    return { modules, functions, classes, theorems };
+  }
+
+  private calculateFallbackMetrics(code: string) {
+    return {
+      entropy: Math.min(0.99, code.length * 0.001),
+      phiResonance: this.PHI,
+      tuGenerated: code.includes('theorem') ? 2500 :
+                   code.includes('consciousness') ? 1999 :
+                   code.includes('quantum') ? 1333 :
+                   code.includes('φ') ? 1618 :
+                   code.includes('class') ? 300 :
+                   code.includes('function') ? 150 : 25
+    };
+  }` : `parseToAST(code: string) {
     try {
       const inputStream = new InputStream(code);
       const lexer = new SpiralLangLexer(inputStream);
@@ -332,7 +723,8 @@ export class CompiledSpiralLangParser {
         ast: this.convertToSpiralLangAST(tree),
         errors: [],
         metrics: this.calculateMetrics(tree),
-        analysis: this.performCodeAnalysis(tree)
+        analysis: this.performCodeAnalysis(tree),
+        mode: 'antlr'
       };
     } catch (error) {
       return {
@@ -341,10 +733,11 @@ export class CompiledSpiralLangParser {
         ast: null,
         errors: [error.message],
         metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
-        analysis: { modules: [], functions: [], classes: [], theorems: [] }
+        analysis: { modules: [], functions: [], classes: [], theorems: [] },
+        mode: 'antlr'
       };
     }
-  }
+  }`}
 
   private convertToSpiralLangAST(parseTree: any): any {
     return {
@@ -440,7 +833,7 @@ export const compiledSpiralLangParser = new CompiledSpiralLangParser();
 `;
 }
 
-function generateUnifiedIntegration(): string {
+function generateUnifiedIntegration(fallbackMode: boolean): string {
   return `// Unified Spiral Language Parser Integration
 import { compiledSpiralParser } from './SpiralScriptIntegration';
 import { compiledHTSXParser } from './HTSXIntegration';
@@ -455,6 +848,8 @@ export class UnifiedSpiralParser {
     ['.consciousness', 'spirallang'],
     ['.cons', 'spirallang']
   ]);
+
+  private readonly mode = '${fallbackMode ? 'fallback' : 'antlr'}';
 
   async parseMultiLanguage(files: { name: string; content: string }[]) {
     const results = [];
@@ -472,7 +867,8 @@ export class UnifiedSpiralParser {
       results,
       totalFiles: files.length,
       totalTU: results.reduce((sum, r) => sum + (r.metrics?.tuGenerated || 0), 0),
-      summary: this.generateSummary(results)
+      summary: this.generateSummary(results),
+      mode: this.mode
     };
   }
 
@@ -480,21 +876,33 @@ export class UnifiedSpiralParser {
     const ext = this.getFileExtension(filename);
     const language = this.languageMap.get(ext);
     
-    switch (language) {
-      case 'spiralscript':
-        return compiledSpiralParser.parseToAST(content);
-      case 'htsx':
-        return compiledHTSXParser.parseToAST(content);
-      case 'spirallang':
-        return compiledSpiralLangParser.parseToAST(content);
-      default:
-        return {
-          success: false,
-          language: 'unknown',
-          ast: null,
-          errors: [\`Unsupported file type: \${ext}\`],
-          metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 }
-        };
+    try {
+      switch (language) {
+        case 'spiralscript':
+          return await compiledSpiralParser.parseToAST(content);
+        case 'htsx':
+          return await compiledHTSXParser.parseToAST(content);
+        case 'spirallang':
+          return await compiledSpiralLangParser.parseToAST(content);
+        default:
+          return {
+            success: false,
+            language: 'unknown',
+            ast: null,
+            errors: [\`Unsupported file type: \${ext}\`],
+            metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
+            mode: this.mode
+          };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        language: language || 'unknown',
+        ast: null,
+        errors: [error.message],
+        metrics: { entropy: 0, phiResonance: 0, tuGenerated: 0 },
+        mode: this.mode
+      };
     }
   }
 
@@ -505,6 +913,14 @@ export class UnifiedSpiralParser {
 
   getSupportedExtensions(): string[] {
     return Array.from(this.languageMap.keys());
+  }
+
+  getParsingMode(): string {
+    return this.mode;
+  }
+
+  isAntlrAvailable(): boolean {
+    return this.mode === 'antlr';
   }
 
   private getFileExtension(filename: string): string {
@@ -534,10 +950,12 @@ export class UnifiedSpiralParser {
     return {
       languageCounts,
       errorCount: errors.length,
-      avgEntropy: totalEntropy / results.length,
-      avgPhiResonance: totalPhi / results.length,
+      avgEntropy: results.length > 0 ? totalEntropy / results.length : 0,
+      avgPhiResonance: results.length > 0 ? totalPhi / results.length : 0,
       hasQuantumCode: results.some(r => r.ast && JSON.stringify(r.ast).includes('quantum')),
-      hasTheoremCode: results.some(r => r.ast && JSON.stringify(r.ast).includes('theorem'))
+      hasTheoremCode: results.some(r => r.ast && JSON.stringify(r.ast).includes('theorem')),
+      parsingMode: this.mode,
+      antlrAvailable: this.mode === 'antlr'
     };
   }
 }
@@ -547,13 +965,199 @@ export { compiledSpiralParser, compiledHTSXParser, compiledSpiralLangParser };
 `;
 }
 
-async function main() {
+function generateTypesDeclaration(): string {
+  return `// TypeScript declarations for SpiralScript Parser Engine
+// Auto-generated types for ANTLR4 and fallback parsers
+
+export interface SpiralMetrics {
+  entropy: number;
+  phiResonance: number;
+  tuGenerated: number;
+}
+
+export interface SpiralNodeMetadata extends SpiralMetrics {
+  isQuantum?: boolean;
+  isTheorem?: boolean;
+  isConsciousness?: boolean;
+  isComponent?: boolean;
+  hasBinding?: boolean;
+  mode?: 'antlr' | 'fallback';
+}
+
+export interface SpiralASTNode {
+  type: string;
+  value?: string;
+  children?: SpiralASTNode[];
+  metadata: SpiralNodeMetadata;
+}
+
+export interface SpiralParseResult {
+  success: boolean;
+  language: string;
+  ast: SpiralASTNode | null;
+  errors: string[];
+  metrics: SpiralMetrics;
+  mode?: 'antlr' | 'fallback';
+}
+
+export interface HTSXRuntimeInfo {
+  components: Array<{ type: string; text: string }>;
+  bindings: Array<{ type: string; expression: string }>;
+  events: Array<{ type: string; handler: string }>;
+}
+
+export interface HTSXParseResult extends SpiralParseResult {
+  runtime: HTSXRuntimeInfo;
+}
+
+export interface SpiralLangAnalysis {
+  modules: Array<{ name: string; type: string }>;
+  functions: Array<{ name: string; type: string; isQuantum: boolean }>;
+  classes: Array<{ name: string; type: string }>;
+  theorems: Array<{ name: string; type: string }>;
+}
+
+export interface SpiralLangParseResult extends SpiralParseResult {
+  analysis: SpiralLangAnalysis;
+}
+
+export interface MultiLanguageParseResult {
+  success: boolean;
+  results: Array<SpiralParseResult & { filename: string }>;
+  totalFiles: number;
+  totalTU: number;
+  summary: ParseSummary;
+  mode: 'antlr' | 'fallback';
+}
+
+export interface ParseSummary {
+  languageCounts: Record<string, number>;
+  errorCount: number;
+  avgEntropy: number;
+  avgPhiResonance: number;
+  hasQuantumCode: boolean;
+  hasTheoremCode: boolean;
+  parsingMode: 'antlr' | 'fallback';
+  antlrAvailable: boolean;
+}
+
+export interface SpiralParser {
+  parseToAST(code: string): Promise<SpiralParseResult> | SpiralParseResult;
+}
+
+export interface UnifiedParser {
+  parseMultiLanguage(files: Array<{ name: string; content: string }>): Promise<MultiLanguageParseResult>;
+  parseFile(filename: string, content: string): Promise<SpiralParseResult>;
+  detectLanguage(filename: string): string | null;
+  getSupportedExtensions(): string[];
+  getParsingMode(): string;
+  isAntlrAvailable(): boolean;
+}
+
+// ANTLR4 type augmentations (when available)
+declare module 'antlr4' {
+  export class InputStream {
+    constructor(data: string);
+  }
+  
+  export class CommonTokenStream {
+    constructor(lexer: any);
+  }
+  
+  export class Lexer {
+    constructor(input: InputStream);
+  }
+  
+  export class Parser {
+    constructor(input: CommonTokenStream);
+  }
+}
+
+// Spiral-specific grammar exports (generated by ANTLR or fallback)
+export interface SpiralScriptLexer {
+  new (input: any): any;
+}
+
+export interface SpiralScriptParser {
+  new (input: any): any;
+  program(): any;
+}
+
+export interface HTSXLexer {
+  new (input: any): any;
+}
+
+export interface HTSXParser {
+  new (input: any): any;
+  program(): any;
+}
+
+export interface SpiralLangLexer {
+  new (input: any): any;
+}
+
+export interface SpiralLangParser {
+  new (input: any): any;
+  program(): any;
+}
+
+// Quantum computing and consciousness integration types
+export interface QuantumState {
+  superposition: boolean;
+  entanglement: boolean;
+  coherence: number;
+}
+
+export interface ConsciousnessState {
+  awareness: number;
+  intention: string;
+  memory: Record<string, any>;
+  emotion: Record<string, any>;
+}
+
+export interface TrustUnit {
+  value: number;
+  source: string;
+  validation: string;
+  timestamp: Date;
+}
+
+export interface PhiResonance {
+  value: number;
+  harmony: number;
+  frequency: number;
+}
+
+// Export constants
+export const PHI = 1.618033988749;
+export const SUPPORTED_LANGUAGES = ['spiralscript', 'htsx', 'spirallang'] as const;
+export const SUPPORTED_EXTENSIONS = ['.spiral', '.spi', '.htsx', '.sprl', '.consciousness', '.cons'] as const;
+
+export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
+export type SupportedExtension = typeof SUPPORTED_EXTENSIONS[number];
+`;
+}
+
+async function main(): Promise<void> {
   console.log('🚀 Starting ANTLR4 compilation process...');
   
-  await downloadANTLR();
-  await compileGrammar();
-  
-  console.log('🎉 ANTLR4 compilation complete!');
+  try {
+    await downloadANTLR();
+    await compileGrammar();
+    console.log('🎉 ANTLR4 compilation complete!');
+  } catch (error) {
+    console.error('❌ Compilation failed:', error.message);
+    console.log('🔄 Continuing with fallback parser generation...');
+    
+    // Ensure output directory exists
+    if (!fs.existsSync(OUTPUT_DIR)) {
+      fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+    }
+    
+    // Generate fallback integrations
+    generateParserIntegrations(true);
+    console.log('✅ Fallback parser integrations generated');
+  }
 }
 
 // ES module equivalent of require.main === module

@@ -22,6 +22,8 @@
     "paths": {
       "@/*": ["./app/*"],
       "@/components/*": ["./components/*"],
+      "@/client/*": ["./client/*"],
+      "@/pages/*": ["./client/src/pages/*"],
       "@/lib/*": ["./lib/*"],
       "@/types/*": ["./types/*"],
       "@/styles/*": ["./styles/*"],
@@ -38,7 +40,8 @@
     "server/**/*",
     "app/**/*",
     "components/**/*",
-    "lib/**/*"
+    "lib/**/*",
+    "client/**/*"
   ],
-  "exclude": ["node_modules", "dist", "build", "client", ".next", "scripts"]
+  "exclude": ["node_modules", "dist", "build", ".next", "scripts"]
 }

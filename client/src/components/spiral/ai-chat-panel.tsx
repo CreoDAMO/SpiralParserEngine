@@ -186,13 +186,13 @@ Select a task type and AI model, then ask me anything! I support voice commands 
 
       // Set model-specific voice characteristics
       const voices = synthesis.current.getVoices();
-      let selectedVoice = voices.find(voice => voice.lang === voiceSettings.language);
+      let selectedVoice = voices.find((voice: SpeechSynthesisVoice) => voice.lang === voiceSettings.language);
 
       if (model && voices.length > 0) {
         switch (model) {
           case AIModel.GROK:
             // Use a more energetic voice for Grok
-            selectedVoice = voices.find(voice => 
+            selectedVoice = voices.find((voice: SpeechSynthesisVoice) => 
               voice.name.includes('Google') || voice.name.includes('Microsoft')
             ) || selectedVoice;
             utterance.pitch = Math.min(2, voiceSettings.pitch + 0.2);
