@@ -23,7 +23,8 @@
       "@/*": ["./*"],
       "@/client/*": ["./client/*"],
       "@/components/*": ["./components/*"],
-      "@/lib/*": ["./lib/*"]
+      "@/lib/*": ["./lib/*"],
+      "~/*": ["./client/src/*"]
     }
   },
   "include": [

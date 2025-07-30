@@ -8,14 +8,33 @@ import Link from 'next/link'
 export default function Home() {
   const router = useRouter()
 
-  useEffect(() => {
-    // Auto-redirect to spiral-ide after 2 seconds
-    const timer = setTimeout(() => {
-      router.push('/spiral-ide')
-    }, 2000)
-
-    return () => clearTimeout(timer)
-  }, [router])
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-purple-950 to-blue-950 flex items-center justify-center">
+      <div className="text-center space-y-8 p-8">
+        <h1 className="text-6xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+          SpiralScript Ecosystem
+        </h1>
+        <p className="text-xl text-gray-300 max-w-2xl">
+          Advanced consciousness-aware development environment integrating quantum computing, 
+          blockchain technology, and AI orchestration
+        </p>
+        <div className="flex gap-4 justify-center">
+          <Link 
+            href="/spiral-ide"
+            className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg text-lg transition-colors"
+          >
+            Launch IDE
+          </Link>
+          <Link 
+            href="/spiral-one"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg transition-colors"
+          >
+            SpiralOne Dashboard
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">

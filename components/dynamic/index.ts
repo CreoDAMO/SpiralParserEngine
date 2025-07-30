@@ -15,7 +15,7 @@ export const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
 })
 
 // Quantum Circuit Visualizer - SSR disabled  
-export const QuantumVisualizer = dynamic(() => import('../spiral/quantum-tools'), {
+export const QuantumVisualizer = dynamic(() => import('../../client/src/components/spiral/quantum-tools'), {
   ssr: false,
   loading: () => (
     <div className="flex items-center justify-center h-96 bg-gradient-to-br from-purple-900 to-blue-900 rounded-lg">
@@ -27,7 +27,7 @@ export const QuantumVisualizer = dynamic(() => import('../spiral/quantum-tools')
 })
 
 // Three.js Molecular Assembly - SSR disabled
-export const MolecularAssembly = dynamic(() => import('../spiral/enhanced-molecular-assembly'), {
+export const MolecularAssembly = dynamic(() => import('../../client/src/components/spiral/enhanced-molecular-assembly'), {
   ssr: false,
   loading: () => (
     <div className="flex items-center justify-center h-80 bg-gradient-to-r from-green-900 to-teal-900 rounded-lg">
@@ -39,7 +39,7 @@ export const MolecularAssembly = dynamic(() => import('../spiral/enhanced-molecu
 })
 
 // HYBRID Blockchain Visualizer - SSR disabled
-export const BlockchainVisualizer = dynamic(() => import('../spiral/hybrid-blockchain-viewer'), {
+export const BlockchainVisualizer = dynamic(() => import('../../client/src/components/spiral/hybrid-blockchain-viewer'), {
   ssr: false,
   loading: () => (
     <div className="flex items-center justify-center h-72 bg-gradient-to-tr from-indigo-900 to-purple-900 rounded-lg">
@@ -51,7 +51,7 @@ export const BlockchainVisualizer = dynamic(() => import('../spiral/hybrid-block
 })
 
 // AI Multi-Model Dashboard - SSR disabled
-export const AIDashboard = dynamic(() => import('../spiral/comprehensive-ai-orchestrator'), {
+export const AIDashboard = dynamic(() => import('../../client/src/components/spiral/comprehensive-ai-orchestrator'), {
   ssr: false,
   loading: () => (
     <div className="flex items-center justify-center h-56 bg-gradient-to-bl from-orange-900 to-red-900 rounded-lg">
@@ -63,7 +63,7 @@ export const AIDashboard = dynamic(() => import('../spiral/comprehensive-ai-orch
 })
 
 // Trust Unit Generator - SSR disabled
-export const TrustUnitGenerator = dynamic(() => import('../spiral/trust-wallet'), {
+export const TrustUnitGenerator = dynamic(() => import('../../client/src/components/spiral/trust-wallet'), {
   ssr: false,
   loading: () => (
     <div className="flex items-center justify-center h-64 bg-gradient-to-tl from-yellow-900 to-orange-900 rounded-lg">

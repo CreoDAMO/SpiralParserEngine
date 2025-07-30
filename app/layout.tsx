@@ -42,24 +42,18 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
-            <nav className="bg-black/90 backdrop-blur-sm border-b border-purple-500/30 sticky top-0 z-50">
+            <nav className="bg-gray-900/95 backdrop-blur-sm border-b border-purple-500/20 sticky top-0 z-50">
               <div className="container mx-auto px-4 py-3">
                 <div className="flex items-center justify-between">
-                  <Link href="/" className="text-xl font-bold text-white">
-                    SpiralScript Ecosystem
+                  <Link href="/" className="text-xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                    SpiralScript
                   </Link>
-                  <div className="flex space-x-6">
-                    <Link href="/spiral-ide" className="text-purple-300 hover:text-white">
+                  <div className="flex space-x-4">
+                    <Link href="/spiral-ide" className="text-gray-300 hover:text-purple-400 transition-colors">
                       IDE
                     </Link>
-                    <Link href="/spiral-one" className="text-purple-300 hover:text-white">
+                    <Link href="/spiral-one" className="text-gray-300 hover:text-blue-400 transition-colors">
                       SpiralOne
-                    </Link>
-                    <Link href="/hybrid-blockchain" className="text-purple-300 hover:text-white">
-                      Blockchain
-                    </Link>
-                    <Link href="/trust-wallet" className="text-purple-300 hover:text-white">
-                      Wallet
                     </Link>
                   </div>
                 </div>
