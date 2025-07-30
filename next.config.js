@@ -1,19 +1,12 @@
-// next.config.mjs
 import withPWA from '@ducanh2912/next-pwa';
 
 const nextConfig = {
   reactStrictMode: true,
   trailingSlash: true,
-
-  // Server external packages (moved from experimental)
   serverExternalPackages: ['antlr4ts', 'three'],
-
-  // Image optimization
   images: {
     unoptimized: true,
   },
-
-  // Webpack configuration for SpiralScript IDE
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     // ANTLR4 Grammar files (.g4) support
     config.module.rules.push({
@@ -21,7 +14,7 @@ const nextConfig = {
       use: 'raw-loader',
     });
 
-    // Three.js optimization for quantum visualizations
+    // Three.js optimization
     config.resolve.alias = {
       ...config.resolve.alias,
       'three/examples/jsm/controls/OrbitControls': 'three/examples/jsm/controls/OrbitControls.js',
@@ -29,7 +22,7 @@ const nextConfig = {
       'three/examples/jsm/postprocessing/EffectComposer': 'three/examples/jsm/postprocessing/EffectComposer.js',
     };
 
-    // Handle Node.js modules in browser environment
+    // Handle Node.js modules
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
@@ -42,7 +35,7 @@ const nextConfig = {
       process: false,
     };
 
-    // Quantum computing libraries support
+    // Quantum computing support
     config.externals = config.externals || [];
     if (!isServer) {  
       config.externals.push({  
@@ -51,7 +44,7 @@ const nextConfig = {
       })  
     }  
 
-    // Define global variables for browser compatibility  
+    // Define global variables
     config.plugins.push(  
       new webpack.ProvidePlugin({  
         Buffer: ['buffer', 'Buffer'],  
@@ -59,7 +52,7 @@ const nextConfig = {
       })  
     )  
 
-    // Optimize for quantum operations  
+    // Optimization
     config.optimization = {  
       ...config.optimization,  
       splitChunks: {  
@@ -84,32 +77,26 @@ const nextConfig = {
       },  
     }  
 
-    return config
+    return config;
   },
-
-  // Environment variables for multi-AI integration
   env: {
     NEXT_PUBLIC_QUANTUM_BACKEND: process.env.QUANTUM_BACKEND,
     NEXT_PUBLIC_HYBRID_NETWORK: process.env.HYBRID_NETWORK,
     NEXT_PUBLIC_PWA_ENABLED: process.env.PWA_ENABLED,
   },
-
-  // TypeScript configuration
   typescript: {
     tsconfigPath: './tsconfig.json',
   },
-
-  // Compression and optimization
   compress: true,
   poweredByHeader: false,
-
-  // Development configuration
-  ...(process.env.NODE_ENV === 'development' && {
-    devIndicators: {
-      position: 'bottom-right',
-    },
-  }),
 };
+
+// Conditional development config
+if (process.env.NODE_ENV === 'development') {
+  nextConfig.devIndicators = {
+    position: 'bottom-right',
+  };
+}
 
 export default withPWA({
   dest: 'public',
