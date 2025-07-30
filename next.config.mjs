@@ -106,8 +106,7 @@ const nextConfig = {
   // Development configuration
   ...(process.env.NODE_ENV === 'development' && {
     devIndicators: {
-      buildActivity: true,
-      buildActivityPosition: 'bottom-right',
+      position: 'bottom-right',
     },
   }),
 };
