@@ -278,7 +278,7 @@ export default function SpiralIDE() {
         <div className="absolute bottom-0 right-0 w-64 h-64 bg-blue-500/20 rounded-full blur-2xl animate-phi-pulse" />
         <div className="absolute top-1/2 left-1/3 w-48 h-48 bg-spiral-500/20 rounded-full blur-xl animate-quantum-spin" />
       </div>
-      
+
       {/* Header */}
       <header className="relative z-10 border-b border-purple-800/30 bg-black/40 backdrop-blur-sm">
         <div className="flex items-center justify-between px-6 py-4">

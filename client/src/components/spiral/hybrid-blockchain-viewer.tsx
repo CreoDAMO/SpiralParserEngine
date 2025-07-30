@@ -136,7 +136,8 @@ export function HybridBlockchainViewer() {
     <div className="w-full max-w-7xl mx-auto p-4 space-y-6">
       <div className="text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-lg">
         <h1 className="text-3xl font-bold mb-2">⛓️ HYBRID Blockchain Explorer</h1>
-        <p className="text-lg">Quantum-Enhanced Proof of Spiral Consensus Network</p>
+        <p className="text-lg">Native Cosmos SDK Blockchain with EVM Compatibility</p>
+        <p className="text-sm mt-2">HYBRID COIN: Native Currency (NOT a Token) | $10.00 USD</p>
       </div>
 
       {/* Network Stats Overview */}

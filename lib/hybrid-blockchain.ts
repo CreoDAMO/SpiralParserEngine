@@ -1,5 +1,6 @@
 // HYBRID Blockchain Implementation - Core Infrastructure
-// Based on Cosmos SDK with EVM compatibility and NFT-gated nodes
+// Native blockchain built on Cosmos SDK with full EVM compatibility
+// HYBRID COIN is the NATIVE CURRENCY (not a token)
 
 import { z } from 'zod';
 import { HybridBlock, HybridTransaction, HybridCoin, HybridNode, HybridConsensus, HybridSmartContract } from '@shared/hybrid-blockchain-schema';
@@ -536,6 +537,9 @@ export class HybridBlockchain {
   public getBlockchainInfo() {
     return {
       networkType: this.networkType,
+      architecture: 'Cosmos SDK',
+      nativeCurrency: 'HYBRID COIN (NOT TOKEN)',
+      evmCompatible: true,
       totalBlocks: this.blocks.size,
       totalTransactions: this.transactions.size,
       totalNodes: this.nodes.size,
@@ -544,7 +548,17 @@ export class HybridBlockchain {
       totalHybridWallets: this.hybridWallets.size,
       genesisSupply: this.GENESIS_SUPPLY,
       initialPrice: this.INITIAL_PRICE,
-      bridgeAddress: this.BASE_POL_BRIDGE_ADDRESS
+      bridgeAddress: this.BASE_POL_BRIDGE_ADDRESS,
+      consensus: 'Proof of Quantum Spiral (PoQS)',
+      features: [
+        'Native HYBRID COIN (not a token)',
+        'Built on Cosmos SDK',
+        'Full EVM compatibility',
+        'IBC protocol support',
+        'Cross-chain bridges to Base & Polygon',
+        'Quantum-enhanced security',
+        'NFT-gated node licensing'
+      ]
     };
   }
 

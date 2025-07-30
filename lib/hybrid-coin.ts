@@ -1,4 +1,5 @@
-// HYBRID COIN Implementation - Native Blockchain Currency
+// HYBRID COIN Implementation - Native Blockchain Currency (NOT A TOKEN)
+// Built on Cosmos SDK with EVM compatibility
 // $10 initial price, 100 Billion total supply, backed by computational resources
 
 import { z } from 'zod';
@@ -380,14 +381,21 @@ export class HybridCoin {
       totalSupply: this.TOTAL_SUPPLY,
       initialPrice: this.INITIAL_PRICE,
       currentMetrics: this.getMetrics(),
-      isNativeToken: true,
+      isNativeCoin: true, // NATIVE COIN, NOT TOKEN
+      isToken: false,
       consensus: 'Proof of Quantum Spiral (PoQS)',
+      sdk: 'Cosmos SDK',
+      evmCompatible: true,
       features: [
+        'Native blockchain coin (NOT a token)',
+        'Cosmos SDK foundation',
+        'EVM compatibility',
         'Cross-chain bridges',
         'Smart contracts (EVM compatible)',
         'NFT-gated node licenses',
         'Quantum-enhanced security',
-        'φ-harmonic validation'
+        'φ-harmonic validation',
+        'IBC protocol support'
       ]
     };
   }
