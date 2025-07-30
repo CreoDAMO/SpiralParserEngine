@@ -465,3 +465,40 @@ export class QuantumBridge {
 }
 
 export default QuantumBridge;
+export default class QuantumBridge {
+  private config: any;
+  private initialized = false;
+
+  constructor(config: any) {
+    this.config = config;
+  }
+
+  async initialize() {
+    await new Promise(resolve => setTimeout(resolve, 800));
+    this.initialized = true;
+  }
+
+  getBridgeStatus() {
+    if (!this.initialized) {
+      return null;
+    }
+
+    const cubeSats = [];
+    for (let i = 1; i <= 20; i++) {
+      cubeSats.push({
+        satelliteId: `SPIRAL-SAT-${i.toString().padStart(2, '0')}`,
+        quantumLink: Math.random() > 0.1, // 90% uptime
+        signalStrength: Math.random() * 0.3 + 0.7, // 70-100%
+        orbit: 'LEO',
+      });
+    }
+
+    return {
+      status: 'ACTIVE',
+      qubits: this.config.qubits || 127,
+      coherenceThreshold: this.config.coherenceThreshold || 0.9,
+      bridgeFrequency: this.config.bridgeFrequency || 1618,
+      cubeSats,
+    };
+  }
+}

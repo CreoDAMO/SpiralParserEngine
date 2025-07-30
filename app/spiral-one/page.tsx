@@ -10,12 +10,12 @@ const SpiralOneDashboard = dynamic(() => import('../../client/src/components/Spi
   loading: () => <div className="h-96 bg-gray-900 rounded animate-pulse flex items-center justify-center text-purple-400">Loading SpiralOne Dashboard...</div>
 })
 
-const SpiralGenesisDashboard = dynamic(() => import('../../client/src/components/spiral/spiral-genesis-dashboard'), {
+const SpiralGenesisDashboard = dynamic(() => import('../../client/src/components/spiral/spiral-genesis-dashboard').then(mod => ({ default: mod.SpiralGenesisDashboard })), {
   ssr: false,
   loading: () => <div className="h-64 bg-gray-900 rounded animate-pulse flex items-center justify-center text-blue-400">Loading Genesis NFT Dashboard...</div>
 })
 
-const SpiralFlowDashboard = dynamic(() => import('../../client/src/components/spiral/spiral-flow-dashboard'), {
+const SpiralFlowDashboard = dynamic(() => import('../../client/src/components/spiral/spiral-flow-dashboard').then(mod => ({ default: mod.SpiralFlowDashboard })), {
   ssr: false,
   loading: () => <div className="h-64 bg-gray-900 rounded animate-pulse flex items-center justify-center text-green-400">Loading SpiralFlow Dashboard...</div>
 })
