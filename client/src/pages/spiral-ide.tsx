@@ -35,19 +35,19 @@ import {
 } from 'lucide-react';
 
 // Import all spiral components
-import { FileExplorer } from '@/components/spiral/file-explorer';
-import { MonacoEditor } from '@/components/spiral/monaco-editor';
-import { ASTViewer } from '@/components/spiral/ast-viewer';
-import { TrustWallet } from '@/components/spiral/trust-wallet';
-import { HybridBlockchainViewer } from '@/components/spiral/hybrid-blockchain-viewer';
-import { QuantumTools } from '@/components/spiral/quantum-tools';
-import { MolecularAssembly } from '@/components/spiral/molecular-assembly';
-import AIChatPanel from '@/components/spiral/ai-chat-panel';
-import { TerminalConsole } from '@/components/spiral/terminal-console';
-import { RevenueDashboard } from '@/components/spiral/revenue-dashboard';
-import { FounderWalletDashboard } from '@/components/spiral/founder-wallet-dashboard';
-import OmniverseVisualization from '@/components/spiral/omniverse-visualization';
-import { SpiralGenesisDashboard } from '@/components/spiral/spiral-genesis-dashboard';
+import { FileExplorer } from '@/client/src/components/spiral/file-explorer';
+import { MonacoEditor } from '@/client/src/components/spiral/monaco-editor';
+import { ASTViewer } from '@/client/src/components/spiral/ast-viewer';
+import { TrustWallet } from '@/client/src/components/spiral/trust-wallet';
+import { HybridBlockchainViewer } from '@/client/src/components/spiral/hybrid-blockchain-viewer';
+import { QuantumTools } from '@/client/src/components/spiral/quantum-tools';
+import { MolecularAssembly } from '@/client/src/components/spiral/molecular-assembly';
+import AIChatPanel from '@/client/src/components/spiral/ai-chat-panel';
+import { TerminalConsole } from '@/client/src/components/spiral/terminal-console';
+import { RevenueDashboard } from '@/client/src/components/spiral/revenue-dashboard';
+import { FounderWalletDashboard } from '@/client/src/components/spiral/founder-wallet-dashboard';
+import OmniverseVisualization from '@/client/src/components/spiral/omniverse-visualization';
+import { SpiralGenesisDashboard } from '@/client/src/components/spiral/spiral-genesis-dashboard';
 
 // System status data with real operational metrics
 const systemStatus = {
