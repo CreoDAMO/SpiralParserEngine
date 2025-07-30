@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { hybridBlockchain, SpiralGenesisNFT } from '@/lib/hybrid-blockchain';
 import { Crown, Users, Wallet, ExternalLink, Copy, Check } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/lib/hooks/use-toast';
 
 export function SpiralGenesisDashboard() {
   const [nfts, setNfts] = useState<SpiralGenesisNFT[]>([]);

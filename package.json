@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
-    "build": "npm run compile:grammar && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "compile:grammar": "tsx scripts/compile-grammar.ts || echo 'Grammar compilation skipped'",
