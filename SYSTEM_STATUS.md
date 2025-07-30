@@ -1,5 +1,5 @@
 # SpiralScript Ecosystem Status Report
-Generated: Tue Jul 29 12:59:14 UTC 2025
+Generated: Wed Jul 30 12:58:27 UTC 2025
 
 ## System Environment
 - Node.js: v22.17.1
@@ -57,8 +57,8 @@ spiral-parser-engine@1.0.0 /home/runner/work/SpiralParserEngine/SpiralParserEngi
 ├── @types/node@20.19.9
 ├── @types/passport-local@1.0.38
 ├── @types/passport@1.0.17
-├── @types/react-dom@19.1.6
-├── @types/react@19.1.8
+├── @types/react-dom@19.1.7
+├── @types/react@19.1.9
 ├── @types/ws@8.18.1
 ├── antlr4-c3@3.4.4
 ├── antlr4@4.13.2
@@ -74,12 +74,12 @@ spiral-parser-engine@1.0.0 /home/runner/work/SpiralParserEngine/SpiralParserEngi
 ├── crypto-browserify@3.12.1
 ├── d3@7.9.0
 ├── date-fns@3.6.0
-├── drizzle-kit@0.18.1
-├── drizzle-orm@0.44.3
+├── drizzle-kit@0.31.4
+├── drizzle-orm@0.44.4
 ├── drizzle-zod@0.7.1
 ├── embla-carousel-react@8.6.0
 ├── esbuild@0.25.8
-├── eslint-config-next@15.4.3
+├── eslint-config-next@15.4.4
 ├── express-rate-limit@7.5.1
 ├── express-session@1.18.2
 ├── express@5.1.0
@@ -88,12 +88,12 @@ spiral-parser-engine@1.0.0 /home/runner/work/SpiralParserEngine/SpiralParserEngi
 ├── helmet@8.1.0
 ├── input-otp@1.4.2
 ├── lucide-react@0.525.0
-├── mathjs@14.5.3
+├── mathjs@14.6.0
 ├── memorystore@1.6.7
 ├── nanoid@5.1.5
 ├── next-pwa@4.0.0-beta.0
 ├── next-themes@0.4.6
-├── next@15.4.3
+├── next@15.4.4
 ├── openai@5.10.2
 ├── passport-local@1.0.0
 ├── passport@0.7.0
@@ -101,11 +101,11 @@ spiral-parser-engine@1.0.0 /home/runner/work/SpiralParserEngine/SpiralParserEngi
 ├── process@0.11.10
 ├── raw-loader@4.0.2
 ├── react-day-picker@8.10.1
-├── react-dom@19.1.0
+├── react-dom@19.1.1
 ├── react-hook-form@7.61.1
 ├── react-icons@5.5.0
 ├── react-resizable-panels@2.1.9
-├── react@19.1.0
+├── react@19.1.1
 ├── recharts@2.15.4
 ├── socket.io@4.8.1
 ├── stream-browserify@3.0.0
@@ -114,7 +114,7 @@ spiral-parser-engine@1.0.0 /home/runner/work/SpiralParserEngine/SpiralParserEngi
 ├── tailwindcss@4.1.11
 ├── three@0.178.0
 ├── tsx@4.20.3
-├── tw-animate-css@1.3.5
+├── tw-animate-css@1.3.6
 ├── typescript@5.8.3
 ├── util@0.12.5
 ├── vaul@1.1.2
