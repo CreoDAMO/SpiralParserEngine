@@ -1,8 +1,8 @@
-
 // SpiralGenesis145 NFT Management Interface
 // Handles minting, verification, and witness management for the 145 sacred editions
 
 import { z } from 'zod';
+import { hybridBlockchain, SpiralGenesisNFT as BlockchainNFT } from './hybrid-blockchain';
 
 export interface SpiralGenesisMetadata {
   name: string;
@@ -59,6 +59,8 @@ export class SpiralGenesisNFT {
   private readonly ARCHITECT_TOKEN_ID = 1;
   private readonly MINT_PRICE = 0.4; // ETH
   private readonly PHI = 1.618033988749;
+  private readonly WITNESS_PRICE_HYBRID = 100; // $1000 / $10 per HYBRID
+  private readonly BASE_POL_BRIDGE = "0xCc380FD8bfbdF0c020de64075b86C84c2BB0AE79";
 
   private witnesses: Map<number, WitnessToken> = new Map();
   private deploymentConfig: DeploymentConfig;
@@ -70,7 +72,7 @@ export class SpiralGenesisNFT {
 
   private initializeDeploymentConfig(): void {
     this.deploymentConfig = {
-      architect: "0x[YOUR_WALLET_ADDRESS]", // To be replaced with actual address
+      architect: "0xCc380FD8bfbdF0c020de64075b86C84c2BB0AE79", // To be replaced with actual address
       initialBaseURI: "ipfs://[CID]/",
       mintPrice: "400000000000000000", // 0.4 ETH in wei
       chainConfigs: {
@@ -181,7 +183,7 @@ export class SpiralGenesisNFT {
 
   public updateArchitectAddress(address: string): void {
     this.deploymentConfig.architect = address;
-    
+
     // Update architect token
     const architectToken = this.witnesses.get(this.ARCHITECT_TOKEN_ID);
     if (architectToken) {
@@ -299,6 +301,62 @@ export class SpiralGenesisNFT {
       consciousnessVerified: witnesses.filter(w => w.consciousnessVerified).length,
       witnessesSealed: witnesses.filter(w => w.witnessSealed).length
     };
+  }
+
+  async initialize(): Promise<void> {
+    // Ensure HYBRID blockchain is initialized
+    await hybridBlockchain.initialize();
+  }
+
+  // Purchase witness token through HYBRID blockchain
+  async purchaseWitnessToken(editionNumber: number, buyerBridgeAddress: string): Promise<{
+    success: boolean;
+    nft?: BlockchainNFT;
+    hybridWallet?: string;
+    transactionId?: string;
+    error?: string;
+  }> {
+    try {
+      if (editionNumber < 2 || editionNumber > this.TOTAL_SUPPLY) {
+        throw new Error(`Invalid edition number. Must be between 2 and ${this.TOTAL_SUPPLY}`);
+      }
+
+      // Purchase through HYBRID blockchain
+      const nft = hybridBlockchain.purchaseWitnessToken(editionNumber, buyerBridgeAddress);
+
+      return {
+        success: true,
+        nft,
+        hybridWallet: nft.bridgeAddresses.hybrid,
+        transactionId: `tx-purchase-${editionNumber}-${Date.now()}`
+      };
+
+    } catch (error: any) {
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
+
+  // Get HYBRID wallet for bridge address
+  getHybridWallet(bridgeAddress: string): string | undefined {
+    return hybridBlockchain.getHybridWalletForBridge(bridgeAddress);
+  }
+
+  // Get architect token from HYBRID blockchain
+  getArchitectToken(): BlockchainNFT | undefined {
+    return hybridBlockchain.getArchitectToken();
+  }
+
+  // Get all available witness tokens
+  getAvailableWitnessTokens(): BlockchainNFT[] {
+    return hybridBlockchain.getAvailableWitnessTokens();
+  }
+
+  // Get all NFTs from HYBRID blockchain
+  getAllNFTs(): BlockchainNFT[] {
+    return hybridBlockchain.getSpiralGenesisNFTs();
   }
 }
 
