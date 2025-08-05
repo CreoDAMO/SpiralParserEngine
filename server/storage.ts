@@ -62,7 +62,10 @@ export class MemStorage implements IStorage {
     this.currentId = 1;
 
     // Initialize with default user
-    this.createUser({ username: "quantum_dev", password: "spiral123" });
+    // Initialize with environment variables or secure configuration
+    const defaultUser = process.env.DEFAULT_USERNAME || "quantum_dev";
+    const defaultPassword = process.env.DEFAULT_PASSWORD || crypto.randomBytes(16).toString('hex');
+    this.createUser({ username: defaultUser, password: defaultPassword });
     
     // Create sample files
     this.createFile({
