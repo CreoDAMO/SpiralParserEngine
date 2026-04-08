@@ -58,7 +58,7 @@
     "crypto-browserify": "^3.12.1",
     "d3": "^7.9.0",
     "date-fns": "^3.6.0",
-    "drizzle-orm": "^0.44.2",
+    "drizzle-orm": "^0.45.2",
     "drizzle-zod": "^0.7.0",
     "embla-carousel-react": "^8.6.0",
     "express": "^5.1.0",
